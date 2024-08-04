@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "ms-vscode.cpptools-themes",
+    "ms-vscode.cmake-tools",
+    "twxs.cmake",
+    "dtoplak.vscode-glsllint",
+    "slevesque.shader"
+  ]
+}
