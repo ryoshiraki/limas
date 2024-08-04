@@ -13,7 +13,7 @@
 #include "system/Logger.h"
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 
 using namespace std;
 
@@ -289,4 +289,4 @@ class Font {
   UnitSize unit_size_;
 };
 
-}  // namespace rs
+}  // namespace limas

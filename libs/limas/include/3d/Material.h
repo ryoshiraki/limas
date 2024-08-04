@@ -1,10 +1,10 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 class Material {
  public:
   Material() {}
 };
 
-}  // namespace rs
+}  // namespace limas

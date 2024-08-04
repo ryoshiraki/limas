@@ -7,7 +7,7 @@
 #include <OpenGL/CGLDevice.h>
 #endif
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 #if __APPLE__
@@ -51,4 +51,4 @@ class ContextScope {
 #endif
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

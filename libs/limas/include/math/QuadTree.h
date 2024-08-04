@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace math {
 
 using namespace std;
@@ -227,4 +227,4 @@ class QuadTree {
 };
 
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

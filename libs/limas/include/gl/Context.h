@@ -1,7 +1,7 @@
 #pragma once
 #include "math/Math.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 template <typename StateType>
@@ -376,4 +376,4 @@ class Context {
   ScissorBoxState scissor_box_state_;
 };
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

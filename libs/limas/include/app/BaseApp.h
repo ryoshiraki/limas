@@ -6,7 +6,7 @@
 #include "utils/FileSystem.h"
 #include "utils/Stats.h"
 
-namespace rs {
+namespace limas {
 
 class BaseApp {
  public:
@@ -182,4 +182,4 @@ class BaseApp {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

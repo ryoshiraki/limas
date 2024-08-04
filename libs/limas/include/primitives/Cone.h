@@ -1,7 +1,7 @@
 #pragma once
 #include "geom/Mesh.h"
 
-namespace rs {
+namespace limas {
 namespace prim {
 
 class Cone : public geom::Mesh {
@@ -72,4 +72,4 @@ class Cone : public geom::Mesh {
 };
 
 }  // namespace prim
-}  // namespace rs
+}  // namespace limas

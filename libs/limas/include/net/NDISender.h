@@ -6,7 +6,7 @@
 #include "system/Logger.h"
 #include "utils/PingPong.h"
 
-namespace rs {
+namespace limas {
 
 template <typename T>
 class BaseNDISender {
@@ -111,4 +111,4 @@ class NDISender : public BaseNDISender<uint8_t> {
   NDISender() : BaseNDISender<uint8_t>(NDIlib_FourCC_video_type_RGBA) {}
 };
 
-}  // namespace rs
+}  // namespace limas

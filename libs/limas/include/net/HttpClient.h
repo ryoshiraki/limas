@@ -1,7 +1,7 @@
 #pragma once
 #include "system/SharedPtr.h"
 
-namespace rs {
+namespace limas {
 namespace net {
 
 using boost::asio::ip::tcp;
@@ -86,4 +86,4 @@ class HttpClient : public SharedPtr<HttpClient>,
 };
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

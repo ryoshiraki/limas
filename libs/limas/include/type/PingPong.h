@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 template <class T>
 class PingPong {
@@ -19,7 +19,7 @@ class PingPong {
   void swap() {
     front_ = &(bodies_[(flag_) % 2]);
     back_ = &(bodies_[++(flag_) % 2]);
-  } 
+  }
 
   T& operator[](int n) { return bodies_[n]; }
 
@@ -30,4 +30,4 @@ class PingPong {
   unsigned int flag_;
 };
 
-}  // namespace rs
+}  // namespace limas

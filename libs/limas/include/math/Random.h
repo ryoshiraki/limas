@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 namespace math {
 
 class Random {
@@ -132,4 +132,4 @@ inline float shuffle(std::vector<T>& input) {
 }
 
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

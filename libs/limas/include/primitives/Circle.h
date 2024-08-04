@@ -1,7 +1,7 @@
 #pragma once
 #include "geom/Mesh.h"
 
-namespace rs {
+namespace limas {
 namespace prim {
 
 class Ellipse : public geom::Mesh {
@@ -37,4 +37,4 @@ class Circle : public Ellipse {
 };
 
 }  // namespace prim
-}  // namespace rs
+}  // namespace limas

@@ -1,7 +1,7 @@
 #pragma once
 #include "type/Parameter.h"
 
-namespace rs {
+namespace limas {
 
 class ParameterGroup {
   struct Data {
@@ -201,4 +201,4 @@ inline std::ostream& operator<<(std::ostream& os, const ParameterGroup& group) {
   return os;
 }
 
-}  // namespace rs
+}  // namespace limas

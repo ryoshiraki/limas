@@ -8,7 +8,7 @@
 #include "system/Observable.h"
 #include "type/ParameterGroup.h"
 
-namespace rs {
+namespace limas {
 namespace ui = ImGui;
 }
 

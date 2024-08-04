@@ -1,7 +1,7 @@
 #pragma once
 #include "GeomUtils.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 template <typename T>
@@ -95,4 +95,4 @@ std::ostream& operator<<(std::ostream& o, const PlaneT<T>& p) {
 }
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

@@ -2,7 +2,7 @@
 #include "pp/BasePass.h"
 #include "pp/Gaussian.h"
 
-namespace rs {
+namespace limas {
 namespace pp {
 
 class DofLight : public BasePass {
@@ -35,4 +35,4 @@ class DofLight : public BasePass {
 };
 
 }  // namespace pp
-}  // namespace rs
+}  // namespace limas

@@ -1,6 +1,6 @@
 #include "RSSyphonObject.h"
 
-namespace rs {
+namespace limas {
 class RSSyphonServer {
  public:
   RSSyphonServer();
@@ -11,4 +11,4 @@ class RSSyphonServer {
  protected:
   RSSyphonObject syphon_;
 };
-}  // namespace rs
+}  // namespace limas

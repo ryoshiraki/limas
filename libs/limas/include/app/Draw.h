@@ -5,7 +5,7 @@
 #include "gl/GLUtils.h"
 #include "gl/Renderer.h"
 
-namespace rs {
+namespace limas {
 
 class FloatColor;
 using Color = FloatColor;
@@ -269,7 +269,7 @@ inline void drawBitmapString(const std::string& text, float x, float y) {
 
 #pragma mark LEGACY STYLE
 namespace legacy {
-inline void begin(GLenum mode) { rs::app::getRenderer()->begin(mode); }
+inline void begin(GLenum mode) { app::getRenderer()->begin(mode); }
 inline void end() { app::getRenderer()->end(); }
 inline void addVertex(const glm::vec3& v) { app::getRenderer()->addVertex(v); }
 inline void addVertex(float x, float y, float z) {
@@ -291,4 +291,4 @@ inline void addIndex(int i) { app::getRenderer()->addIndex(i); }
 }  // namespace legacy
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

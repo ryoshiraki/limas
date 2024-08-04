@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 template <class V>
@@ -110,4 +110,4 @@ inline std::ostream& operator<<(std::ostream& os, const BasePolyline<V>& poly) {
 using Polyline = BasePolyline<glm::vec3>;
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

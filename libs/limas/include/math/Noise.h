@@ -1,7 +1,7 @@
 #pragma once
 #include "FastNoiseLite.h"
 
-namespace rs {
+namespace limas {
 namespace math {
 
 enum class NoiseType {
@@ -136,4 +136,4 @@ using SimplexSmoothNoiseFbm =
 using ValueNoiseFbm = FractalNoise<NoiseType::Value, FractalType::Fbm>;
 
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

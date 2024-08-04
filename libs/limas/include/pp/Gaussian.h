@@ -1,12 +1,13 @@
 #pragma once
 #include "pp/BasePass.h"
 
-namespace rs {
+namespace limas {
 namespace pp {
 
 class Gaussian : public BasePass {
  public:
-  Gaussian(const std::string& name, size_t width, size_t height) : BasePass(name) {
+  Gaussian(const std::string& name, size_t width, size_t height)
+      : BasePass(name) {
     blur_shader_ = gl::Shader::create();
     blur_shader_->loadVertex(fs::getCommonResourcesPath() +
                              "shaders/thru.vert");
@@ -85,4 +86,4 @@ class Gaussian : public BasePass {
 };
 
 }  // namespace pp
-}  // namespace rs
+}  // namespace limas

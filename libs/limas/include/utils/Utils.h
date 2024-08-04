@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace util {
 
 using namespace std;
@@ -88,4 +88,4 @@ inline vector<string> getSplit(const string& src, const string& delim) {
 }
 
 }  // namespace util
-}  // namespace rs
+}  // namespace limas

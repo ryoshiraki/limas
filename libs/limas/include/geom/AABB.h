@@ -1,7 +1,7 @@
 #pragma once
 #include "geom/Mesh.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 template <class T, int dim = 3>
@@ -188,4 +188,4 @@ using AABB2D = AABB<glm::vec2, 2>;
 using AABB3D = AABB<glm::vec3, 3>;
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

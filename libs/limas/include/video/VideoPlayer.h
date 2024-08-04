@@ -18,7 +18,7 @@ extern "C" {
 #include "system/Thread.h"
 #include "utils/Stopwatch.h"
 
-namespace rs {
+namespace limas {
 class VideoPlayer : public Thread {
   struct Context {
     int width;
@@ -422,4 +422,4 @@ class VideoPlayer : public Thread {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

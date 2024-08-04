@@ -4,7 +4,7 @@
 #include "gl/Texture2D.h"
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class Fbo {
@@ -165,4 +165,4 @@ class Fbo {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

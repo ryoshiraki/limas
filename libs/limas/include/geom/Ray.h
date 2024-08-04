@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 class Ray {
@@ -117,4 +117,4 @@ std::ostream& operator<<(std::ostream& o, const Ray& r) {
 }
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

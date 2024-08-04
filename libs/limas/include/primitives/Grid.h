@@ -1,7 +1,7 @@
 #pragma once
 #include "geom/Mesh.h"
 
-namespace rs {
+namespace limas {
 namespace prim {
 
 class Grid : public geom::Mesh {
@@ -18,8 +18,8 @@ class Grid : public geom::Mesh {
   }
 
  protected:
-  Grid(){};
+  Grid() {};
 };
 
 }  // namespace prim
-}  // namespace rs
+}  // namespace limas

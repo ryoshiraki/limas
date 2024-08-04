@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 namespace math {
 
 class Combination {
@@ -62,4 +62,4 @@ inline std::vector<std::vector<int>> getPermutations(std::vector<int> input) {
 }
 
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

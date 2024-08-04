@@ -4,7 +4,7 @@
 
 #import "SyphonNameboundClient.h"
 
-using namespace rs;
+using namespace limas;
 
 RSSyphonClient::RSSyphonClient() {}
 

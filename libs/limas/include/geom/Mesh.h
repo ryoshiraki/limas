@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 template <class V, class N, class C, class T, class I>
@@ -149,4 +149,4 @@ inline std::ostream& operator<<(std::ostream& os,
 using Mesh = BaseMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2, int>;
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

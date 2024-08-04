@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace math {
 
 class Homography {
@@ -91,4 +91,4 @@ class Homography {
 };
 
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

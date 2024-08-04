@@ -1,7 +1,7 @@
 #pragma once
 #include "math/Math.h"
 
-namespace rs {
+namespace limas {
 class MatrixStack : public std::stack<glm::mat4> {
  public:
   MatrixStack() { push(glm::mat4(1.0f)); }
@@ -64,4 +64,4 @@ class MatrixStack : public std::stack<glm::mat4> {
 
   MatrixStack& transform(const glm::mat4& m) { return mult(m); }
 };
-}  // namespace rs
+}  // namespace limas

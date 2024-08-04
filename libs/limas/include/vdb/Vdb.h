@@ -7,10 +7,10 @@
 
 #include "geom/AABB.h"
 #include "gl/Texture3D.h"
-#include "graphics/Pixels.h"
 #include "gl/VboMesh.h"
+#include "graphics/Pixels.h"
 
-namespace rs {
+namespace limas {
 namespace vdb {
 
 using FloatGridType = openvdb::FloatGrid;
@@ -229,8 +229,7 @@ inline geom::AABB3D getAABB(const typename openvdb::Grid<T>& grid) {
 }
 
 template <typename T>
-inline FloatPixels3D toTextureData(
-    const typename openvdb::Grid<T>& grid) {
+inline FloatPixels3D toTextureData(const typename openvdb::Grid<T>& grid) {
   openvdb::CoordBBox bbox = grid.evalActiveVoxelBoundingBox();
   int width = bbox.dim().x();
   int height = bbox.dim().y();
@@ -259,4 +258,4 @@ inline FloatPixels3D toTextureData(
 // }
 
 }  // namespace vdb
-}  // namespace rs
+}  // namespace limas

@@ -1,7 +1,7 @@
 #pragma once
 #include "pp/BasePass.h"
 
-namespace rs {
+namespace limas {
 namespace pp {
 
 template <int ITERATIONS = 5>
@@ -57,4 +57,4 @@ using Blur9 = Blur<9>;
 using Blur13 = Blur<13>;
 
 }  // namespace pp
-}  // namespace rs
+}  // namespace limas

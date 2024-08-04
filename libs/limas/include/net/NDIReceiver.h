@@ -7,7 +7,7 @@
 #include "system/Logger.h"
 #include "system/Thread.h"
 
-namespace rs {
+namespace limas {
 
 template <typename T>
 class BaseNDIReceiver : public Thread {
@@ -196,4 +196,4 @@ class NDIReceiver : public BaseNDIReceiver<uint8_t> {
       : BaseNDIReceiver<uint8_t>(NDIlib_recv_color_format_RGBX_RGBA) {}
 };
 
-}  // namespace rs
+}  // namespace limas

@@ -5,7 +5,7 @@
 #include "utils/FileSystem.h"
 #include "utils/Utils.h"
 
-namespace rs {
+namespace limas {
 namespace log {
 
 static struct endlog_t {
@@ -210,4 +210,4 @@ inline Logger& errorToFile(const std::string& name = "") {
 }
 
 }  // namespace log
-}  // namespace rs
+}  // namespace limas

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 template <typename T>
 class Singleton {
@@ -30,4 +30,4 @@ std::unique_ptr<T> Singleton<T>::instance_;
 template <typename T>
 std::once_flag Singleton<T>::init_flag_;
 
-}  // namespace rs
+}  // namespace limas

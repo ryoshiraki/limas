@@ -1,7 +1,7 @@
 #pragma once
 #include "gl/BufferObject.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 template <typename T>
@@ -11,4 +11,4 @@ class Vbo : public BufferObject<T> {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

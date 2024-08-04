@@ -2,7 +2,7 @@
 #include "math/Easing.h"
 #include "utils/Timer.h"
 
-namespace rs {
+namespace limas {
 
 template <typename Clock>
 class BaseTween : public BaseTimer<Clock> {
@@ -73,4 +73,4 @@ class BaseTween : public BaseTimer<Clock> {
 using Tween = BaseTween<std::chrono::system_clock>;
 using PreciseTween = BaseTween<std::chrono::high_resolution_clock>;
 using SteadyTween = BaseTween<std::chrono::steady_clock>;
-}  // namespace rs
+}  // namespace limas

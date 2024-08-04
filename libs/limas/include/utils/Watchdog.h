@@ -6,7 +6,7 @@
 #include "system/Thread.h"
 #include "utils/Stopwatch.h"
 
-namespace rs {
+namespace limas {
 
 class Watchdog : public Thread {
  public:
@@ -54,4 +54,4 @@ class Watchdog : public Thread {
   Connection conn_;
 };
 
-}  // namespace rs
+}  // namespace limas

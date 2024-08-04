@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace net {
 
 using boost::asio::ip::udp;
@@ -51,4 +51,4 @@ class UdpServer {
 };
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

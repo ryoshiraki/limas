@@ -1,7 +1,7 @@
 #pragma once
 #include "utils/Stopwatch.h"
 
-namespace rs {
+namespace limas {
 
 template <typename Clock>
 class BaseTimer {
@@ -151,4 +151,4 @@ using Timer = BaseTimer<std::chrono::system_clock>;
 using PreciseTimer = BaseTimer<std::chrono::high_resolution_clock>;
 using Steadyimer = BaseTimer<std::chrono::steady_clock>;
 
-}  // namespace rs
+}  // namespace limas

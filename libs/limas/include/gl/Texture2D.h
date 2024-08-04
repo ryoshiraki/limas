@@ -1,7 +1,7 @@
 #pragma once
 #include "gl/TextureBase.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class Texture2D : public TextureBase {
@@ -24,4 +24,4 @@ class Texture2D : public TextureBase {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

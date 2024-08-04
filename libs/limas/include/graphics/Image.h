@@ -5,7 +5,7 @@
 #include "stb_image_resize.h"
 #include "stb_image_write.h"
 
-namespace rs {
+namespace limas {
 
 template <typename PixelType>
 class BaseImage {
@@ -164,4 +164,4 @@ using ShortImage = BaseImage<short>;
 using IntImage = BaseImage<int>;
 using FloatImage = BaseImage<float>;
 
-}  // namespace rs
+}  // namespace limas

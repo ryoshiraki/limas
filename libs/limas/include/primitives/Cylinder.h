@@ -1,7 +1,7 @@
 #pragma once
 #include "geom/Mesh.h"
 
-namespace rs {
+namespace limas {
 namespace prim {
 
 class Cylinder : public geom::Mesh {
@@ -101,4 +101,4 @@ class Cylinder : public geom::Mesh {
 };
 
 }  // namespace prim
-}  // namespace rs
+}  // namespace limas

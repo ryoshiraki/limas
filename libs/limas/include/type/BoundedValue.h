@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 template <typename T>
 struct IsVector : std::false_type {};
@@ -81,4 +81,4 @@ class BoundedValue {
   bool has_min_;
   bool has_max_;
 };
-}  // namespace rs
+}  // namespace limas

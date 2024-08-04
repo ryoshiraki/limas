@@ -4,7 +4,7 @@
 #include "gl/Shader.h"
 #include "gl/Vao.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 template <class V, class N, class C, class T, class I>
@@ -133,4 +133,4 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
 using VboMesh = BaseVboMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2, int>;
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

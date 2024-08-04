@@ -3,7 +3,7 @@
 
 namespace compute = boost::compute;
 
-namespace rs {
+namespace limas {
 namespace cl {
 
 using compute::dim;
@@ -96,4 +96,4 @@ static void printDeviceVector(const compute::command_queue &queue,
 }
 
 }  // namespace cl
-}  // namespace rs
+}  // namespace limas

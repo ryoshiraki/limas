@@ -7,7 +7,7 @@
 #include "system/Exception.h"
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 
 namespace py = boost::python;
 namespace np = boost::python::numpy;
@@ -218,4 +218,4 @@ class NdArray {
   np::ndarray arr_;
 };
 
-}  // namespace rs
+}  // namespace limas

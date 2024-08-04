@@ -3,7 +3,7 @@
 
 #include "geom/Mesh.h"
 
-namespace rs {
+namespace limas {
 namespace prim {
 
 class IcoSphere : public geom::Mesh {
@@ -101,4 +101,4 @@ class IcoSphere : public geom::Mesh {
 };
 
 }  // namespace prim
-}  // namespace rs
+}  // namespace limas

@@ -19,7 +19,7 @@ inline std::ostream& operator<<(std::ostream& os, const glm::mat4& m) {
   return os << glm::to_string(m);
 }
 
-namespace rs {
+namespace limas {
 namespace math {
 
 inline float pi() { return glm::pi<float>(); }
@@ -91,4 +91,4 @@ inline std::vector<int> getCommonDivisors(const std::vector<int>& nums) {
 }
 
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

@@ -2,7 +2,7 @@
 #include "app/Window.h"
 #include "system/Observable.h"
 
-namespace rs {
+namespace limas {
 
 class Clickable {
  public:
@@ -156,4 +156,4 @@ class ClickableRectangle : public Clickable {
   virtual void onDragged(const MouseEventArgs& e) {}
 };
 
-}  // namespace rs
+}  // namespace limas

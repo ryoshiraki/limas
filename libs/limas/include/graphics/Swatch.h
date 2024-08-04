@@ -5,7 +5,7 @@
 #include "math/Math.h"
 #include "utils/Clickable.h"
 
-namespace rs {
+namespace limas {
 class ColorHandle : public ClickableCircle {
  public:
   using Ptr = std::shared_ptr<ColorHandle>;
@@ -155,4 +155,4 @@ class Swatch {
   Pixels2D pixels_;
   std::vector<ColorHandle::Ptr> handles_;
 };
-}  // namespace rs
+}  // namespace limas

@@ -2,7 +2,7 @@
 #include "gl/ShaderBase.h"
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class ComputeShader : public ShaderBase {
@@ -45,4 +45,4 @@ class ComputeShader : public ShaderBase {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class TransformFeedback {
@@ -43,4 +43,4 @@ class TransformFeedback {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

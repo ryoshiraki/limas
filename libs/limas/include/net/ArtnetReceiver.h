@@ -3,7 +3,7 @@
 #include "system/Exception.h"
 #include "system/Thread.h"
 
-namespace rs {
+namespace limas {
 namespace net {
 
 class ArtnetReceiver : public Thread {
@@ -70,4 +70,4 @@ class ArtnetReceiver : public Thread {
   }
 };
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

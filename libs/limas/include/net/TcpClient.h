@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace net {
 
 using boost::asio::ip::tcp;
@@ -35,4 +35,4 @@ class TcpClient {
 };
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

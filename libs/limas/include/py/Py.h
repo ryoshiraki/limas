@@ -6,7 +6,7 @@
 #include "system/Observable.h"
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 
 class Py {
   class LibraryManager {
@@ -124,4 +124,4 @@ class Py {
   Observable<const PyObject> done_;
 };
 
-}  // namespace rs
+}  // namespace limas

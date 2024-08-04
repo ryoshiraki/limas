@@ -5,7 +5,7 @@
 
 // INCOMPLETED
 
-namespace rs {
+namespace limas {
 namespace net {
 class ArtnetSender {
  public:
@@ -36,4 +36,4 @@ class ArtnetSender {
 };
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

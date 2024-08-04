@@ -5,7 +5,7 @@
 #include "system/Logger.h"
 #include "utils/FileSystem.h"
 
-namespace rs {
+namespace limas {
 
 class ImageIO {
  public:
@@ -97,4 +97,4 @@ class ImageIO {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

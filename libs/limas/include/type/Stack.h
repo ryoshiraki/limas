@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 template <class T>
 class Stack {
@@ -29,4 +29,4 @@ class Stack {
   std::stack<T> states_;
 };
 
-}  // namespace rs
+}  // namespace limas

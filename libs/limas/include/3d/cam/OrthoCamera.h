@@ -1,7 +1,7 @@
 #pragma once
 #include "3d/cam/Camera.h"
 
-namespace rs {
+namespace limas {
 
 class OrthoCamera : public Camera {
  public:
@@ -14,4 +14,4 @@ class OrthoCamera : public Camera {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

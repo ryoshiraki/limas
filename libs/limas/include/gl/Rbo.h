@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class Rbo {
@@ -23,7 +23,7 @@ class Rbo {
   std::shared_ptr<BufferData> data_;
 
  public:
-  Rbo(){};
+  Rbo() {};
   virtual ~Rbo() {}
 
   void allocate(GLsizei width, GLsizei height,
@@ -41,4 +41,4 @@ class Rbo {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

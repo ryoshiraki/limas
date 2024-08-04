@@ -1,7 +1,7 @@
 #pragma once
 #include "math/Math.h"
 
-namespace rs {
+namespace limas {
 namespace math {
 
 class Drunk {
@@ -72,4 +72,4 @@ class Drunk {
   void setAllowDuplicate(bool allow) { allow_duplicate_ = allow; }
 };
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

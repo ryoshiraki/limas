@@ -1,7 +1,7 @@
 #pragma once
 #include "geom/Mesh.h"
 
-namespace rs {
+namespace limas {
 
 class Frustum {
  public:
@@ -111,4 +111,4 @@ class Frustum {
   std::vector<glm::vec3> vertices_;
 };
 
-}  // namespace rs
+}  // namespace limas

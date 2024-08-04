@@ -3,7 +3,7 @@
 #include "system/Logger.h"
 #include "system/Noncopyable.h"
 
-namespace rs {
+namespace limas {
 
 using Locker = std::unique_lock<std::mutex>;
 
@@ -70,4 +70,4 @@ class Thread : private Noncopyable {
   std::atomic<bool> b_should_stop_;
 };
 
-}  // namespace rs
+}  // namespace limas

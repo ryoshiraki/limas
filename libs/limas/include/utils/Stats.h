@@ -8,7 +8,7 @@
 #define TVAL2MSEC(tval) ((tval.seconds * 1000) + (tval.microseconds / 1000))
 #define TVAL2SEC(tval) ((tval.seconds) + (tval.microseconds / 1000000.0))
 
-namespace rs {
+namespace limas {
 
 class Stats {
   struct TimeInfo {
@@ -88,4 +88,4 @@ class Stats {
   PreciseStopwatch stopwatch_;
 };
 
-}  // namespace rs
+}  // namespace limas

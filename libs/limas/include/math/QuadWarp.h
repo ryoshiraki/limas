@@ -3,7 +3,7 @@
 #include "math/Math.h"
 #include "utils/Clickable.h"
 
-namespace rs {
+namespace limas {
 
 class QuadWarp;
 class Corner : public ClickableCircle {
@@ -145,4 +145,4 @@ class QuadWarp {
   void update(const MouseEventArgs& e) { homography_ = getHomography(); }
 };
 
-}  // namespace rs
+}  // namespace limas

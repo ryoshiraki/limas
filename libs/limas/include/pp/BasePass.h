@@ -6,7 +6,7 @@
 #include "type/ParameterGroup.h"
 #include "type/PingPong.h"
 
-namespace rs {
+namespace limas {
 namespace pp {
 
 class BasePass : public std::enable_shared_from_this<BasePass> {
@@ -74,4 +74,4 @@ class BasePass : public std::enable_shared_from_this<BasePass> {
 };
 
 }  // namespace pp
-}  // namespace rs
+}  // namespace limas

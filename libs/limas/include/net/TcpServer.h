@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace net {
 
 using boost::asio::ip::tcp;
@@ -61,4 +61,4 @@ class TcpServer {
 };
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

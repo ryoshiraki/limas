@@ -3,11 +3,12 @@
 #include "primitives/Rectangle.h"
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 class FillScreen {
   friend class Singleton<FillScreen>;
-public:
+
+ public:
   void render() const { rectangle_.draw(GL_TRIANGLE_FAN); }
 
  private:
@@ -20,4 +21,4 @@ inline void fillScreen() {
 }
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

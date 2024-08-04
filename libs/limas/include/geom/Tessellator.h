@@ -3,7 +3,7 @@
 #include "earcut.hpp"
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 class Tessellator {
@@ -36,9 +36,7 @@ class Tessellator {
 
     polygon_.clear();
     std::transform(cbegin(polygon), cend(polygon), std::back_inserter(polygon_),
-                   [](T p) {
-                     return Point{p[0], p[1]};
-                   });
+                   [](T p) { return Point{p[0], p[1]}; });
   }
 
   template <typename T>
@@ -47,9 +45,7 @@ class Tessellator {
 
     std::vector<Point> hole;
     std::transform(cbegin(_hole), cend(_hole), std::back_inserter(hole),
-                   [](T p) {
-                     return Point{p[0], p[1]};
-                   });
+                   [](T p) { return Point{p[0], p[1]}; });
     holes_.push_back(hole);
   }
 
@@ -70,4 +66,4 @@ class Tessellator {
 };
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

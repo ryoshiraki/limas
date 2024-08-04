@@ -1,7 +1,7 @@
 #pragma once
 #include "math/Math.h"
 
-namespace rs {
+namespace limas {
 namespace math {
 
 class Oscillator {
@@ -57,4 +57,4 @@ class SquareWave : public Oscillator {
 };
 
 }  // namespace math
-}  // namespace rs
+}  // namespace limas

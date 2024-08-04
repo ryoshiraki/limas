@@ -3,11 +3,11 @@
 #include "3d/Light.h"
 #include "gl/GLUtils.h"
 
-namespace rs {
+namespace limas {
 
 class SpotLight : public Light {
  public:
   SpotLight() : Light() {}
 };
 
-}  // namespace rs
+}  // namespace limas

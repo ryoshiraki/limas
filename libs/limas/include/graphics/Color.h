@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 struct Hsv {
   float data_[3];
@@ -346,4 +346,4 @@ inline std::ostream& operator<<(std::ostream& os, const BaseColor<T>& c) {
   return os;
 }
 
-}  // namespace rs
+}  // namespace limas

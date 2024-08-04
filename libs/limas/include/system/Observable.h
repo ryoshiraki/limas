@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Noncopyable.h"
 
-namespace rs {
+namespace limas {
 
 class Connection {
  public:
@@ -108,4 +108,4 @@ struct CoreObservable {
   Observable<const FileDropEventArgs> file_dropped;
 };
 
-}  // namespace rs
+}  // namespace limas

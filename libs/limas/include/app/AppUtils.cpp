@@ -6,7 +6,7 @@
 #include "system/Observable.h"
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 namespace app {
 
 std::shared_ptr<BaseApp>& getPtr() {
@@ -72,4 +72,4 @@ Connection setOnKeyReleased(
 void exit() { return getPtr()->exit(); }
 
 }  // namespace app
-}  // namespace rs
+}  // namespace limas

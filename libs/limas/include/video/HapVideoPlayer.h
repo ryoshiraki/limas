@@ -23,7 +23,7 @@ extern "C" {
 #include "system/Thread.h"
 #include "utils/Stopwatch.h"
 
-namespace rs {
+namespace limas {
 class HapVideoPlayer : public Thread {
   static int roundUpToMultipleOf4(int n) {
     if (0 != (n & 3)) n = (n + 3) & ~3;
@@ -454,4 +454,4 @@ class HapVideoPlayer : public Thread {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

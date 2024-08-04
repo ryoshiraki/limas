@@ -2,7 +2,7 @@
 #include "gl/Shader.h"
 #include "utils/FileObserver.h"
 
-namespace rs {
+namespace limas {
 
 class HotReloader : public FileObserver {
  public:
@@ -23,4 +23,4 @@ class HotReloader : public FileObserver {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

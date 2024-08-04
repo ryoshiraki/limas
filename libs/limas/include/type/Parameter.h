@@ -8,7 +8,7 @@
 #include "utils/Json.h"
 #include "utils/Utils.h"
 
-namespace rs {
+namespace limas {
 
 template <typename T>
 class Parameter;
@@ -165,4 +165,4 @@ inline std::ostream& operator<<(std::ostream& os, const Parameter<U>& param) {
   return os;
 }
 
-}  // namespace rs
+}  // namespace limas

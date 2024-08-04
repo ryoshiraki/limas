@@ -105,7 +105,7 @@ struct adl_serializer<rs::BaseColor<T>> {
 
 using json = nlohmann::json;
 
-namespace rs {
+namespace limas {
 
 inline json loadJson(const std::string& path) {
   std::ifstream ifs(path);
@@ -119,4 +119,4 @@ inline void saveJson(json& j, const std::string& path) {
   ofs << j;
 }
 
-}  // namespace rs
+}  // namespace limas

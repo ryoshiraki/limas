@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 class Exception : public std::exception {
  public:
@@ -13,4 +13,4 @@ class Exception : public std::exception {
   std::string msg_;
 };
 
-}  // namespace rs
+}  // namespace limas

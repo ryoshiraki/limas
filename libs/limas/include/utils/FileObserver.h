@@ -4,7 +4,7 @@
 #include "system/Observable.h"
 #include "utils/FileSystem.h"
 
-namespace rs {
+namespace limas {
 
 class FileObserver {
  protected:
@@ -92,4 +92,4 @@ class FileObserver {
   std::map<std::string, ObservableItem::Ptr> watches_;
 };
 
-}  // namespace rs
+}  // namespace limas

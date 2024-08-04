@@ -4,7 +4,7 @@
 #include "osc/OscReceivedElements.h"
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace net {
 
 class OscReceiver : public osc::OscPacketListener {
@@ -183,4 +183,4 @@ class OscReceiver : public osc::OscPacketListener {
 };
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

@@ -2,7 +2,7 @@
 #include "clipper.h"
 #include "system/Singleton.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 class BooleanOp {
@@ -86,4 +86,4 @@ class BooleanOp {
 };
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

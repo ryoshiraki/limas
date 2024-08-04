@@ -4,7 +4,7 @@
 #include "system/Logger.h"
 #include "utils/Utils.h"
 
-namespace rs {
+namespace limas {
 namespace fs {
 
 using namespace std;
@@ -227,4 +227,4 @@ inline void saveCsv(const string& path, const vector<vector<string> >& rows) {
 }
 
 }  // namespace fs
-}  // namespace rs
+}  // namespace limas

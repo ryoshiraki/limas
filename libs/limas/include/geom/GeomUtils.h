@@ -2,7 +2,7 @@
 #include "glm/gtx/exterior_product.hpp"  //for cross product of vec2
 #include "math/Math.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 using namespace std;
 
@@ -132,4 +132,4 @@ inline glm::quat getRotationBetween(const glm::vec3& _from,
 }
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

@@ -2,7 +2,7 @@
 #include "3d/Node.h"
 #include "gl/GLUtils.h"
 
-namespace rs {
+namespace limas {
 
 class Camera : public Node {
  public:
@@ -75,4 +75,4 @@ class Camera : public Node {
   glm::vec3 lens_offset_;
 };
 
-}  // namespace rs
+}  // namespace limas

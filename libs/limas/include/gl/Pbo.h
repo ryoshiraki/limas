@@ -4,7 +4,7 @@
 #include "graphics/Pixels.h"
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class PboPacker {
@@ -159,4 +159,4 @@ class PboUnpacker {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <iostream>
 
-namespace rs {
+namespace limas {
 
 template <typename T>
 inline void printDuration(T dur) {
@@ -121,4 +121,4 @@ class ScopedStopwatch : public PreciseStopwatch {
   std::string name_;
 };
 
-}  // namespace rs
+}  // namespace limas

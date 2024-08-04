@@ -1,7 +1,7 @@
 #pragma once
 #include "pp/BasePass.h"
 
-namespace rs {
+namespace limas {
 namespace pp {
 
 class SSAO : public BasePass {
@@ -30,4 +30,4 @@ class SSAO : public BasePass {
 };
 
 }  // namespace pp
-}  // namespace rs
+}  // namespace limas

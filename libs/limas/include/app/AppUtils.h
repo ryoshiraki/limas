@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 
 namespace gl {
 class Renderer;
@@ -58,4 +58,4 @@ Connection setOnKeyReleased(
 void exit();
 
 }  // namespace app
-}  // namespace rs
+}  // namespace limas

@@ -8,7 +8,7 @@
 #include "system/Logger.h"
 #include "utils/FileSystem.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 class MeshIO {
@@ -89,4 +89,4 @@ class MeshIO {
 };
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

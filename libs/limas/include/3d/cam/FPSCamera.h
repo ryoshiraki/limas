@@ -3,7 +3,7 @@
 #include "app/Window.h"
 #include "system/Observable.h"
 
-namespace rs {
+namespace limas {
 
 class FPSCamera : public Camera {
  public:
@@ -158,4 +158,4 @@ class FPSCamera : public Camera {
   Connection mouse_scrolled_;
 };
 
-}  // namespace rs
+}  // namespace limas

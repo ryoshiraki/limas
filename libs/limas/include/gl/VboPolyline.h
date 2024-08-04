@@ -3,7 +3,7 @@
 #include "gl/Shader.h"
 #include "gl/Vao.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 template <class V>
@@ -61,4 +61,4 @@ class BaseVboPolyline : public geom::BasePolyline<V> {
 using VboPolyline = BaseVboPolyline<glm::vec3>;
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

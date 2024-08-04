@@ -2,7 +2,7 @@
 #include "pp/BasePass.h"
 #include "primitives/Rectangle.h"
 
-namespace rs {
+namespace limas {
 
 class PostProcessing {
  public:
@@ -82,4 +82,4 @@ class PostProcessing {
   std::map<std::string, pp::BasePass::Ptr> passes_;
 };
 
-}  // namespace rs
+}  // namespace limas

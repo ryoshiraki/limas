@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace net {
 
 using boost::asio::ip::udp;
@@ -36,4 +36,4 @@ class UdpClient {
 };
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

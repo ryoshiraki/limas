@@ -6,7 +6,7 @@
 #include "splines/uniform_cr_spline.h"
 #include "splines/uniform_cubic_bspline.h"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 enum SplineType {
@@ -144,4 +144,4 @@ class BaseBSpline : public BaseSplineCurve<T> {
 using BSpline = BaseBSpline<glm::vec3>;
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

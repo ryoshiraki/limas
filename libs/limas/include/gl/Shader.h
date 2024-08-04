@@ -1,7 +1,7 @@
 #pragma once
 #include "gl/ShaderBase.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class Shader : public ShaderBase {
@@ -37,4 +37,4 @@ class Shader : public ShaderBase {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

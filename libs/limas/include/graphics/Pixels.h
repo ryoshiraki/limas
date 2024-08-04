@@ -3,7 +3,7 @@
 #include "graphics/Color.h"
 #include "system/Exception.h"
 
-namespace rs {
+namespace limas {
 
 template <typename PixelType>
 class BasePixels3D {
@@ -312,4 +312,4 @@ using ShortPixels3D = BasePixels3D<short>;
 using IntPixels3D = BasePixels3D<int>;
 using FloatPixels3D = BasePixels3D<float>;
 
-}  // namespace rs
+}  // namespace limas

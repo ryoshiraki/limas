@@ -7,7 +7,7 @@
 #include "system/Noncopyable.h"
 #include "type/Stack.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 struct DefaultUniforms {
@@ -433,4 +433,4 @@ class Renderer : private Noncopyable {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

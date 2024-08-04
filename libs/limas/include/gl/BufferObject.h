@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 template <typename T>
@@ -77,4 +77,4 @@ class BufferObject {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

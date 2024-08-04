@@ -3,7 +3,7 @@
 #include "system/Logger.h"
 #include "system/Observable.h"
 
-namespace rs {
+namespace limas {
 
 class Window {
  public:
@@ -401,4 +401,4 @@ class Window {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

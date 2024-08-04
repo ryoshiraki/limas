@@ -1,7 +1,7 @@
 #pragma once
 #include "py/NdArray.h"
 
-namespace rs {
+namespace limas {
 
 namespace py = boost::python;
 namespace np = boost::python::numpy;
@@ -163,4 +163,4 @@ class PyObject {
   py::object obj_;
 };
 
-}  // namespace rs
+}  // namespace limas

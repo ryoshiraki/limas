@@ -2,7 +2,7 @@
 #include "ip/UdpSocket.h"
 #include "osc/OscOutboundPacketStream.h"
 
-namespace rs {
+namespace limas {
 namespace net {
 
 class OscSender {
@@ -59,4 +59,4 @@ class OscSender {
 // });
 
 }  // namespace net
-}  // namespace rs
+}  // namespace limas

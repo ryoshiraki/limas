@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 inline void checkError(const std::string& name = "GL") {
@@ -505,4 +505,4 @@ static size_t getByteOfPixel(GLenum internal_format) {
 }
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

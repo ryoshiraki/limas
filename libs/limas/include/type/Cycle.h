@@ -1,7 +1,7 @@
 #pragma once
 #include "system/Exception.h"
 
-namespace rs {
+namespace limas {
 
 template <typename T>
 class Cycle {
@@ -59,4 +59,4 @@ class Cycle {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

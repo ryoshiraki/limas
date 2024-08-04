@@ -2,7 +2,7 @@
 #include "gl/Tbo.h"
 #include "gl/TextureBase.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class TextureBuffer : public TextureBase {
@@ -22,4 +22,4 @@ class TextureBuffer : public TextureBase {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

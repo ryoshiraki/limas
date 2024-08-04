@@ -17,7 +17,7 @@ extern "C" {
 #include "system/Logger.h"
 #include "utils/Stopwatch.h"
 
-namespace rs {
+namespace limas {
 class VideoExporter {
   gl::Fbo fbo_;
   gl::PboPacker pbo_;
@@ -255,4 +255,4 @@ class VideoExporter {
     return true;
   }
 };
-}  // namespace rs
+}  // namespace limas

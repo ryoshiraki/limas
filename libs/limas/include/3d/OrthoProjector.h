@@ -1,9 +1,9 @@
 #pragma once
 #include "3d/OrthoCamera.h"
 
-namespace rs {
+namespace limas {
 class OrthoProjector : public OrthoCamera {
  public:
   // incomplete
 };
-}  // namespace rs
+}  // namespace limas

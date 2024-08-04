@@ -4,7 +4,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/opencv.hpp"
 
-namespace rs {
+namespace limas {
 
 template <typename PixelType>
 inline cv::Mat toCv(const BasePixels2D<PixelType>& pix) {
@@ -25,4 +25,4 @@ inline void toPixels(const cv::Mat& mat, BasePixels2D<PixelType>& pixels) {
   pixels.loadData(mat.ptr<PixelType>(), mat.cols, mat.rows);
 }
 
-}  // namespace rs
+}  // namespace limas

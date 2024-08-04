@@ -1,7 +1,7 @@
 #pragma once
 #include "bezier.hpp"
 
-namespace rs {
+namespace limas {
 namespace geom {
 
 using namespace std;
@@ -16,9 +16,8 @@ class BezierCurve {
     }
     vector<Bezier::Point> control_points;
     transform(cbegin(_control_points), cend(_control_points),
-              back_inserter(control_points), [](T p) {
-                return Bezier::Point{p.x, p.y};
-              });
+              back_inserter(control_points),
+              [](T p) { return Bezier::Point{p.x, p.y}; });
 
     bezier_ = make_shared<Bezier::Bezier<N>>(control_points);
     return true;
@@ -66,4 +65,4 @@ template <class T>
 class QuadraticBezier : public BezierCurve<T, 2> {};
 
 }  // namespace geom
-}  // namespace rs
+}  // namespace limas

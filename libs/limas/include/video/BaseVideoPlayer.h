@@ -4,7 +4,7 @@
 #include "system/Thread.h"
 #include "utils/Stopwatch.h"
 
-namespace rs {
+namespace limas {
 class BaseVideoPlayer {
   struct VideoState {
     VideoState()
@@ -94,4 +94,4 @@ class BaseVideoPlayer {
   virtual void threadedFunction() = 0;
 };
 
-}  // namespace rs
+}  // namespace limas

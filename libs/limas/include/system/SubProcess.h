@@ -10,7 +10,7 @@
 #include "system/Exception.h"
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace subprocess {
 
 inline int execute(const std::string& command, std::string* output = nullptr) {
@@ -65,4 +65,4 @@ inline int reboot() {
 }
 
 }  // namespace subprocess
-}  // namespace rs
+}  // namespace limas

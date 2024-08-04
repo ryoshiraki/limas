@@ -3,7 +3,7 @@
 
 // CFNotificationCallback implementation
 
-using namespace rs;
+using namespace limas;
 
 static void notificationHandler(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef user_info) {
 

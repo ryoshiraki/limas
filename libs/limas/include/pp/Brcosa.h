@@ -1,12 +1,13 @@
 #pragma once
 #include "pp/BasePass.h"
 
-namespace rs {
+namespace limas {
 namespace pp {
 
 class Brcosa : public BasePass {
  public:
-  Brcosa(const std::string& name, size_t width, size_t height) : BasePass(name) {
+  Brcosa(const std::string& name, size_t width, size_t height)
+      : BasePass(name) {
     shader_ = gl::Shader::create();
     shader_->loadVertex(fs::getCommonResourcesPath() + "shaders/thru.vert");
     shader_->loadFragment(fs::getCommonResourcesPath() +
@@ -41,4 +42,4 @@ class Brcosa : public BasePass {
 };
 
 }  // namespace pp
-}  // namespace rs
+}  // namespace limas

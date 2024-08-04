@@ -1,7 +1,7 @@
 #include "RSSyphonServer.h"
 #import <Syphon/Syphon.h>
 
-using namespace rs;
+using namespace limas;
 
 RSSyphonServer::RSSyphonServer() {}
 

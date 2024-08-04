@@ -6,7 +6,7 @@
 #define GLFW_EXPOSE_NATIVE_NSGL
 #include "GLFW/glfw3native.h"
 
-using namespace rs;
+using namespace limas;
 
 void Window::setFullScreen(int monitor_index) {
   if (state_.b_fullscreen) return;

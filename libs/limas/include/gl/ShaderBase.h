@@ -13,7 +13,7 @@
 #define SCALE_ATTRIBUTE 6
 #define INSTANCE_COLOR_ATTRIBUTE 7
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class ShaderBase {
@@ -312,4 +312,4 @@ class ShaderBase {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

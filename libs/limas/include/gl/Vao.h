@@ -2,7 +2,7 @@
 #include "Ibo.h"
 #include "Vbo.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class Vao {
@@ -114,4 +114,4 @@ class Vao {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

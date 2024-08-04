@@ -6,7 +6,7 @@
 #include "system/Logger.h"
 #include "system/Noncopyable.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class TextureBase {
@@ -176,4 +176,4 @@ class TextureBase {
 };
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

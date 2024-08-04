@@ -3,7 +3,7 @@
 #include "gl/Shader.h"
 #include "system/Logger.h"
 
-namespace rs {
+namespace limas {
 namespace gl {
 
 class GBuffer {
@@ -68,4 +68,4 @@ gl::Shader GBuffer::geom_pass_shader_;
 gl::Shader GBuffer::light_pass_shader_;
 
 }  // namespace gl
-}  // namespace rs
+}  // namespace limas

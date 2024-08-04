@@ -3,7 +3,7 @@
 #include "RSSyphonObject.h"
 #include "gl/Texture2D.h"
 
-namespace rs {
+namespace limas {
 class RSSyphonClient {
  public:
   RSSyphonClient(/* args */);
@@ -23,4 +23,4 @@ class RSSyphonClient {
   gl::Texture2D texture_;
 };
 
-}  // namespace rs
+}  // namespace limas

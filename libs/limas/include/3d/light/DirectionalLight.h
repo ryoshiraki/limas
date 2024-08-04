@@ -2,11 +2,11 @@
 #include "3d/Light.h"
 #include "gl/GLUtils.h"
 
-namespace rs {
+namespace limas {
 
 class DirectionalLight : public Light {
  public:
   DirectionalLight() : Light() {}
 };
 
-}  // namespace rs
+}  // namespace limas

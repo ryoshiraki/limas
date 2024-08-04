@@ -2,7 +2,7 @@
 #include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/quaternion.hpp"
 
-namespace rs {
+namespace limas {
 
 class Node {
  public:
@@ -150,4 +150,4 @@ class Node {
   }
 };
 
-}  // namespace rs
+}  // namespace limas

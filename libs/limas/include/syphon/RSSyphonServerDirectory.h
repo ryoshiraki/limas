@@ -4,7 +4,7 @@
 
 #include "system/Observable.h"
 
-namespace rs {
+namespace limas {
 class RSSyphonServerDirectory;
 class RSSyphonServerDescription {
  public:
@@ -72,4 +72,4 @@ class RSSyphonServerDirectory {
 
   std::vector<RSSyphonServerDescription> servers_;
 };
-}  // namespace rs
+}  // namespace limas

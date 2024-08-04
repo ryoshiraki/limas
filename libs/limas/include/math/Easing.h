@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rs {
+namespace limas {
 namespace math {
 namespace easing {
 
@@ -388,4 +388,4 @@ inline float atanInOut(float t, float a = 15) {
 
 }  // namespace easing
 }  // namespace math
-}  // namespace rs
+}  // namespace limas
