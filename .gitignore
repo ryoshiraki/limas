@@ -1,7 +1,0 @@
-apps/**
-addons/**
-assets/**
-examples/**
-**/build/*
-scripts/conf.ini
-.DS_Store
