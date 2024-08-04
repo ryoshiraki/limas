@@ -73,12 +73,12 @@ with open(os.path.join(project_dir, workspace_file_name), 'r+') as f:
     for folder in data['folders']:
         if folder['name'] == "template":
             folder['name'] = project_name
-        elif folder['name'] == "rs":
-            folder['path'] = os.path.join(rel_path_from_project_to_root, "libs/rs")
-        elif folder['name'] == "addons":
-            folder['path'] = os.path.join(rel_path_from_project_to_root, "addons")
-        elif folder['name'] == "resources":
-            folder['path'] = os.path.join(rel_path_from_project_to_root, "resources")
+        elif folder['name'] == "limas":
+            folder['path'] = os.path.join(rel_path_from_project_to_root, "libs/limas")
+        # elif folder['name'] == "addons":
+        #     folder['path'] = os.path.join(rel_path_from_project_to_root, "addons")
+        # elif folder['name'] == "resources":
+        #     folder['path'] = os.path.join(rel_path_from_project_to_root, "resources")
 
     f.seek(0)
     json.dump(data, f, indent=4)
@@ -87,7 +87,7 @@ with open(os.path.join(project_dir, workspace_file_name), 'r+') as f:
 with open(os.path.join(project_dir, ".vscode/c_cpp_properties.json"), 'r+') as f:
     data = json.load(f)
 
-    library_path = os.path.join(rel_path_from_project_to_root, "libs/rs/**")
+    library_path = os.path.join(rel_path_from_project_to_root, "libs/limas/**")
     for configuration in data["configurations"]:
         configuration["includePath"].append(library_path)
     
@@ -101,7 +101,7 @@ with open(os.path.join(project_dir, "CMakeLists.txt"), "w") as f:
     f.write("set(FRAMEWORK_PATH ${PROJECT_SOURCE_DIR}/" + os.path.relpath(root_dir, project_dir) + ")\n")
     # f.write("set(FRAMEWORK_PATH \"" + root_dir + "\")\n")
     f.write("add_definitions(-DFRAMEWORK_PATH=\"${FRAMEWORK_PATH}\")\n")
-    f.write("include(${FRAMEWORK_PATH}/scripts/rsfw.cmake)\n\n")
+    f.write("include(${FRAMEWORK_PATH}/scripts/limas.cmake)\n\n")
     
 #    for addon in addon_cmakes:
 #        f.write("include(${ROOT_DIR}/"+f"{addon})\n")

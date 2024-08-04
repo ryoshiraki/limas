@@ -72,7 +72,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17)
 
 target_precompile_headers(${PROJECT_NAME}
 PRIVATE
- ${FRAMEWORK_PATH}/libs/rs/include/pch.h
+ ${FRAMEWORK_PATH}/libs/limas/include/pch.h
 )
 
 find_package(OpenGL REQUIRED)
@@ -103,7 +103,7 @@ set(CORE_HEADERS
     ${Snappy_INCLUDE_DIR}
 
     ${PROJECT_SOURCE_DIR}/src
-    ${FRAMEWORK_PATH}/libs/rs/include 
+    ${FRAMEWORK_PATH}/libs/limas/include 
     ${FRAMEWORK_PATH}/libs/json/include
     ${FRAMEWORK_PATH}/libs/stb/include
     ${FRAMEWORK_PATH}/libs/oscpack/include
@@ -130,7 +130,7 @@ set(CORE_HEADERS
 )
 
 set(CORE_SOURCES
-    ${FRAMEWORK_PATH}/libs/rs/include/app/AppUtils.cpp
+    ${FRAMEWORK_PATH}/libs/limas/include/app/AppUtils.cpp
 
     ${FRAMEWORK_PATH}/libs/imgui/include/imgui.cpp
     ${FRAMEWORK_PATH}/libs/imgui/include/imgui_demo.cpp
@@ -143,10 +143,10 @@ set(CORE_SOURCES
 
     ${FRAMEWORK_PATH}/libs/hap/src/hap.c
     ${FRAMEWORK_PATH}/libs/Syphon/src/SyphonNameboundClient.mm
-    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonClient.mm
-    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonServer.mm
-    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonServerDirectory.mm
-    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonObject.mm
+    ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonClient.mm
+    ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonServer.mm
+    ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonServerDirectory.mm
+    ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonObject.mm
 
     # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformMove.cpp
     # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformRender.cpp
@@ -157,9 +157,9 @@ set(CORE_SOURCES
 )
 
 set_source_files_properties(${FRAMEWORK_PATH}/libs/Syphon/src/SyphonNameboundClient.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
-set_source_files_properties(${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonClient.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
-set_source_files_properties(${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonServer.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
-set_source_files_properties(${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonObject.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+set_source_files_properties(${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonClient.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+set_source_files_properties(${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonServer.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+set_source_files_properties(${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonObject.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
 
 set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
     Boost::system

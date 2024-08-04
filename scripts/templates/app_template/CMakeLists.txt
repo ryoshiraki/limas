@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(template CXX OBJCXX)
 set(ROOT_DIR ${PROJECT_SOURCE_DIR}/../../..)
-include(${ROOT_DIR}/scripts/rsfw.cmake)
+include(${ROOT_DIR}/scripts/limas.cmake)
 
 # set(PYTHON_HEADER "/Users/rs/opt/anaconda3/envs/rs/include/python3.11")
 # set(PYTHON_LIBRARY "/Users/rs/opt/anaconda3/envs/rs/lib/libpython3.11.dylib")
