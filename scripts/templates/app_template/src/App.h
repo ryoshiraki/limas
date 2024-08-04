@@ -1,7 +1,7 @@
 #pragma once
 #include "app/BaseApp.h"
 
-namespace rs {
+namespace limas {
 
 using namespace std;
 
@@ -33,27 +33,27 @@ class App : public BaseApp {
     gl::popMatrix();
   }
 
-  void keyPressed(const rs::KeyEventArgs &e) {
+  void keyPressed(const KeyEventArgs &e) {
     if (e.key == 'f') getMainWindow()->toggleFullscreen();
   }
 
-  void keyReleased(const rs::KeyEventArgs &e) {}
+  void keyReleased(const KeyEventArgs &e) {}
 
-  void mouseMoved(const rs::MouseEventArgs &e) {}
+  void mouseMoved(const MouseEventArgs &e) {}
 
-  void mousePressed(const rs::MouseEventArgs &e) {}
+  void mousePressed(const MouseEventArgs &e) {}
 
-  void mouseReleased(const rs::MouseEventArgs &e) {}
+  void mouseReleased(const MouseEventArgs &e) {}
 
-  void mouseScrolled(const rs::ScrollEventArgs &e) {}
+  void mouseScrolled(const ScrollEventArgs &e) {}
 
-  void windowResized(const rs::ResizeEventArgs &e) {}
+  void windowResized(const ResizeEventArgs &e) {}
 
-  void windowRefreshed(const rs::EventArgs &e) {}
+  void windowRefreshed(const EventArgs &e) {}
 
-  void windowClosed(const rs::EventArgs &e) {}
+  void windowClosed(const EventArgs &e) {}
 
-  void fileDropped(const rs::FileDropEventArgs &e) {}
+  void fileDropped(const FileDropEventArgs &e) {}
 };
 
-}  // namespace rs
+}  // namespace limas

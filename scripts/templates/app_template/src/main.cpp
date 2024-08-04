@@ -2,7 +2,7 @@
 #include "app/AppUtils.h"
 
 int main() {
-  rs::Window::Settings settings;
+  limas::Window::Settings settings;
   settings.x = 0;
   settings.y = 0;
   settings.width = 1024;
@@ -24,8 +24,8 @@ int main() {
   settings.doublebuffering = true;
   settings.hide_cursor = false;
 
-  auto& app = rs::app::getPtr();
-  app = std::make_shared<rs::App>(settings);
+  auto& app = limas::app::getPtr();
+  app = std::make_shared<limas::App>(settings);
   app->run();
 
   return 0;
