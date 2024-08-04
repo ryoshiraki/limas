@@ -1,0 +1,41 @@
+{
+  "folders": [
+    {
+      "name": "vao_example",
+      "path": "."
+    },
+    {
+      "name": "rs",
+      "path": "../../libs/rs"
+    },
+    {
+      "name": "addons",
+      "path": "../../addons"
+    },
+    {
+      "name": "resources",
+      "path": "../../resources"
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "ostream": "cpp",
+      "ios": "cpp",
+      "iomanip": "cpp",
+      "vector": "cpp",
+      "__bit_reference": "cpp",
+      "algorithm": "cpp",
+      "bitset": "cpp",
+      "chrono": "cpp",
+      "map": "cpp",
+      "set": "cpp",
+      "unordered_map": "cpp",
+      "memory": "cpp",
+      "regex": "cpp",
+      "utility": "cpp"
+    }
+  },
+  "extensions": {
+    "recommendations": []
+  }
+}

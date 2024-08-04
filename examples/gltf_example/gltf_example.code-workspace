@@ -1,0 +1,29 @@
+{
+    "folders": [
+        {
+            "name": "gltf_example",
+            "path": "."
+        },
+        {
+            "name": "rs",
+            "path": "../../libs/rs"
+        },
+        {
+            "name": "addons",
+            "path": "../../addons"
+        },
+        {
+            "name": "resources",
+            "path": "../../resources"
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "ostream": "cpp",
+            "ios": "cpp"
+        }
+    },
+    "extensions": {
+        "recommendations": []
+    }
+}

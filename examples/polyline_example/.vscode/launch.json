@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C++ Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      // "windows": {
+      // },
+      // "osx": {
+      "MIMode": "lldb",
+      "program": "${workspaceRoot}/build/${workspaceFolderBasename}.app/Contents/MacOS/${workspaceFolderBasename}"
+      //  }
+    }
+  ]
+}

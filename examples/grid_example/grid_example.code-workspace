@@ -1,0 +1,55 @@
+{
+  "folders": [
+    {
+      "name": "grid_example",
+      "path": "."
+    },
+    {
+      "name": "rs",
+      "path": "../../libs/rs"
+    },
+    {
+      "name": "addons",
+      "path": "../../addons"
+    },
+    {
+      "name": "resources",
+      "path": "../../resources"
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "ostream": "cpp",
+      "ios": "cpp",
+      "iomanip": "cpp",
+      "random": "cpp",
+      "ratio": "cpp",
+      "__bit_reference": "cpp",
+      "__hash_table": "cpp",
+      "__split_buffer": "cpp",
+      "__tree": "cpp",
+      "array": "cpp",
+      "deque": "cpp",
+      "filesystem": "cpp",
+      "forward_list": "cpp",
+      "initializer_list": "cpp",
+      "iterator": "cpp",
+      "list": "cpp",
+      "map": "cpp",
+      "set": "cpp",
+      "span": "cpp",
+      "string": "cpp",
+      "string_view": "cpp",
+      "unordered_map": "cpp",
+      "unordered_set": "cpp",
+      "valarray": "cpp",
+      "vector": "cpp",
+      "chrono": "cpp",
+      "format": "cpp",
+      "numbers": "cpp"
+    }
+  },
+  "extensions": {
+    "recommendations": []
+  }
+}
