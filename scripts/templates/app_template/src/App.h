@@ -15,11 +15,7 @@ class App : public BaseApp {
     log::info() << std::left << std::setw(12)
                 << "Project:" << fs::getProjectPath() << log::endl;
     log::info() << std::left << std::setw(12)
-                << "Executable:" << fs::getExecutablePath() << log::endl;
-    log::info() << std::left << std::setw(12)
                 << "Assets:" << fs::getAssetsPath() << log::endl;
-    log::info() << std::left << std::setw(12)
-                << "Framework:" << fs::getFrameworkPath() << log::endl;
     log::info() << std::left << std::setw(12)
                 << "Resources:" << fs::getResourcesPath() << log::endl;
   }

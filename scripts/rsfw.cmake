@@ -20,8 +20,8 @@ if (APPLE)
     )
     
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${ROOT_DIR}/libs/Syphon/lib/osx/Syphon.framework ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Syphon.framework
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${ROOT_DIR}/resources ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources/common
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${FRAMEWORK_PATH}/libs/Syphon/lib/osx/Syphon.framework ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Syphon.framework
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${FRAMEWORK_PATH}/resources ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources/common
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/resources ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources
         ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks/Syphon.framework
         COMMENT "Copying assets directory to .app bundle"
@@ -72,7 +72,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17)
 
 target_precompile_headers(${PROJECT_NAME}
 PRIVATE
- ${ROOT_DIR}/libs/rs/include/pch.h
+ ${FRAMEWORK_PATH}/libs/rs/include/pch.h
 )
 
 find_package(OpenGL REQUIRED)
@@ -83,6 +83,8 @@ find_package(Boost 1.85.0 REQUIRED COMPONENTS system iostreams filesystem python
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(Assimp REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(LibXml2 REQUIRED)
+find_package(Snappy REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET libavcodec libavformat libavutil libswscale libswresample libavfilter)
@@ -97,67 +99,67 @@ set(CORE_HEADERS
     ${FFMPEG_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
+    ${LIBXML2_INCLUDE_DIR}
+    ${Snappy_INCLUDE_DIR}
 
     ${PROJECT_SOURCE_DIR}/src
-    ${ROOT_DIR}/libs/rs/include 
-    ${ROOT_DIR}/libs/json/include
-    ${ROOT_DIR}/libs/stb/include
-    ${ROOT_DIR}/libs/oscpack/include
+    ${FRAMEWORK_PATH}/libs/rs/include 
+    ${FRAMEWORK_PATH}/libs/json/include
+    ${FRAMEWORK_PATH}/libs/stb/include
+    ${FRAMEWORK_PATH}/libs/oscpack/include
 
-    ${ROOT_DIR}/libs/imgui/include
-    ${ROOT_DIR}/libs/FastNoiseLite/include
-    ${ROOT_DIR}/libs/earcut/include
-    ${ROOT_DIR}/libs/spline_library/include
-    ${ROOT_DIR}/libs/bezier/include
-    ${ROOT_DIR}/libs/Clipper2Lib/include
-    ${ROOT_DIR}/libs/snappy/include
-    ${ROOT_DIR}/libs/hap/src
-    ${ROOT_DIR}/libs/Syphon/src
-    ${ROOT_DIR}/libs/svgtiny/include
-    ${ROOT_DIR}/libs/libxml2/include
-    ${ROOT_DIR}/libs/tinygltf/include
+    ${FRAMEWORK_PATH}/libs/imgui/include
+    ${FRAMEWORK_PATH}/libs/FastNoiseLite/include
+    ${FRAMEWORK_PATH}/libs/earcut/include
+    ${FRAMEWORK_PATH}/libs/spline_library/include
+    ${FRAMEWORK_PATH}/libs/bezier/include
+    ${FRAMEWORK_PATH}/libs/Clipper2Lib/include
+    ${FRAMEWORK_PATH}/libs/hap/src
+    ${FRAMEWORK_PATH}/libs/Syphon/src
+    ${FRAMEWORK_PATH}/libs/svgtiny/include
+    ${FRAMEWORK_PATH}/libs/tinygltf/include
 
-    # ${ROOT_DIR}/libs/NDISDK/include
-    # ${ROOT_DIR}/libs/opencv/include/opencv4
-    # ${ROOT_DIR}/libs/openvdb/include
-    # ${ROOT_DIR}/libs/openvdb/include/openvdb
-    # ${ROOT_DIR}/libs/openvdb/include/nanovdb
-    # ${ROOT_DIR}/libs/tbb/include
-    # ${ROOT_DIR}/libs/c-blosc/include
-    # ${ROOT_DIR}/libs/libgizmo/include
+    # ${FRAMEWORK_PATH}/libs/NDISDK/include
+    # ${FRAMEWORK_PATH}/libs/opencv/include/opencv4
+    # ${FRAMEWORK_PATH}/libs/openvdb/include
+    # ${FRAMEWORK_PATH}/libs/openvdb/include/openvdb
+    # ${FRAMEWORK_PATH}/libs/openvdb/include/nanovdb
+    # ${FRAMEWORK_PATH}/libs/tbb/include
+    # ${FRAMEWORK_PATH}/libs/c-blosc/include
+    # ${FRAMEWORK_PATH}/libs/libgizmo/include
 )
 
 set(CORE_SOURCES
-    ${ROOT_DIR}/libs/rs/include/app/AppUtils.cpp
+    ${FRAMEWORK_PATH}/libs/rs/include/app/AppUtils.cpp
 
-    ${ROOT_DIR}/libs/imgui/include/imgui.cpp
-    ${ROOT_DIR}/libs/imgui/include/imgui_demo.cpp
-    ${ROOT_DIR}/libs/imgui/include/imgui_tables.cpp
-    ${ROOT_DIR}/libs/imgui/include/imgui_widgets.cpp
-    ${ROOT_DIR}/libs/imgui/include/imgui_draw.cpp
-    ${ROOT_DIR}/libs/imgui/include/imgui_draw.cpp
-    ${ROOT_DIR}/libs/imgui/include/imgui_impl_opengl3.cpp
-    ${ROOT_DIR}/libs/imgui/include/imgui_impl_glfw.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui_demo.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui_tables.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui_widgets.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui_draw.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui_draw.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui_impl_opengl3.cpp
+    ${FRAMEWORK_PATH}/libs/imgui/include/imgui_impl_glfw.cpp
 
-    ${ROOT_DIR}/libs/hap/src/hap.c
-    ${ROOT_DIR}/libs/Syphon/src/SyphonNameboundClient.mm
-    ${ROOT_DIR}/libs/rs/include/syphon/RSSyphonClient.mm
-    ${ROOT_DIR}/libs/rs/include/syphon/RSSyphonServer.mm
-    ${ROOT_DIR}/libs/rs/include/syphon/RSSyphonServerDirectory.mm
-    ${ROOT_DIR}/libs/rs/include/syphon/RSSyphonObject.mm
+    ${FRAMEWORK_PATH}/libs/hap/src/hap.c
+    ${FRAMEWORK_PATH}/libs/Syphon/src/SyphonNameboundClient.mm
+    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonClient.mm
+    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonServer.mm
+    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonServerDirectory.mm
+    ${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonObject.mm
 
-    # ${ROOT_DIR}/libs/libgizmo/include/GizmoTransformMove.cpp
-    # ${ROOT_DIR}/libs/libgizmo/include/GizmoTransformRender.cpp
-    # ${ROOT_DIR}/libs/libgizmo/include/GizmoTransformRotate.cpp
-    # ${ROOT_DIR}/libs/libgizmo/include/GizmoTransformScale.cpp
-    # ${ROOT_DIR}/libs/libgizmo/include/ZBaseMaths.cpp
-    # ${ROOT_DIR}/libs/libgizmo/include/ZMathsFunc.cpp
+    # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformMove.cpp
+    # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformRender.cpp
+    # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformRotate.cpp
+    # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformScale.cpp
+    # ${FRAMEWORK_PATH}/libs/libgizmo/include/ZBaseMaths.cpp
+    # ${FRAMEWORK_PATH}/libs/libgizmo/include/ZMathsFunc.cpp
 )
 
-set_source_files_properties(${ROOT_DIR}/libs/Syphon/src/SyphonNameboundClient.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
-set_source_files_properties(${ROOT_DIR}/libs/rs/include/syphon/RSSyphonClient.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
-set_source_files_properties(${ROOT_DIR}/libs/rs/include/syphon/RSSyphonServer.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
-set_source_files_properties(${ROOT_DIR}/libs/rs/include/syphon/RSSyphonObject.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+set_source_files_properties(${FRAMEWORK_PATH}/libs/Syphon/src/SyphonNameboundClient.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+set_source_files_properties(${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonClient.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+set_source_files_properties(${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonServer.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
+set_source_files_properties(${FRAMEWORK_PATH}/libs/rs/include/syphon/RSSyphonObject.mm PROPERTIES COMPILE_FLAGS "${CMAKE_OBJCXX_FLAGS}")
 
 set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
     Boost::system
@@ -168,24 +170,24 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
     ${Python3_LIBRARIES}
     ${ASSIMP_LIBRARIES}
     ${FREETYPE_LIBRARIES}
+    ${LIBXML2_LIBRARIES}
+    ${Snappy_LIBRARIES}
 
     PkgConfig::FFMPEG
 
-    ${ROOT_DIR}/libs/oscpack/lib/liboscpack.a
-    ${ROOT_DIR}/libs/snappy/lib/libsnappy.a
-    ${ROOT_DIR}/libs/Syphon/lib/osx/Syphon.framework
-    ${ROOT_DIR}/libs/svgtiny/lib/osx/svgtiny.a
-    ${ROOT_DIR}/libs/libxml2/lib/osx/xml2.a
-    ${ROOT_DIR}/libs/tinygltf/lib/libtinygltf.a
+    ${FRAMEWORK_PATH}/libs/oscpack/lib/liboscpack.a
+    ${FRAMEWORK_PATH}/libs/Syphon/lib/osx/Syphon.framework
+    ${FRAMEWORK_PATH}/libs/svgtiny/lib/osx/svgtiny.a
+    ${FRAMEWORK_PATH}/libs/tinygltf/lib/libtinygltf.a
 
-    # ${ROOT_DIR}/libs/NDISDK/lib/libndi.dylib //TODO: change to static library
+    # ${FRAMEWORK_PATH}/libs/NDISDK/lib/libndi.dylib //TODO: change to static library
 
-    # ${ROOT_DIR}/libs/openvdb/lib/libopenvdb.a
-    # ${ROOT_DIR}/libs/tbb/lib/libtbb.a
-    # ${ROOT_DIR}/libs/tbb/lib/libtbbmalloc.a
-    # ${ROOT_DIR}/libs/c-blosc/lib/libblosc.a
-    # ${ROOT_DIR}/libs/opencv/lib/libopencv_core.a
-    # ${ROOT_DIR}/libs/opencv/lib/libopencv_imgproc.a
+    # ${FRAMEWORK_PATH}/libs/openvdb/lib/libopenvdb.a
+    # ${FRAMEWORK_PATH}/libs/tbb/lib/libtbb.a
+    # ${FRAMEWORK_PATH}/libs/tbb/lib/libtbbmalloc.a
+    # ${FRAMEWORK_PATH}/libs/c-blosc/lib/libblosc.a
+    # ${FRAMEWORK_PATH}/libs/opencv/lib/libopencv_core.a
+    # ${FRAMEWORK_PATH}/libs/opencv/lib/libopencv_imgproc.a
 )    
 
 set(CORE_DEFINITIONS 

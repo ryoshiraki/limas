@@ -98,8 +98,10 @@ with open(os.path.join(project_dir, ".vscode/c_cpp_properties.json"), 'r+') as f
 with open(os.path.join(project_dir, "CMakeLists.txt"), "w") as f:
     f.write("cmake_minimum_required(VERSION 3.5)\n\n")
     f.write(f"project({project_name} CXX OBJCXX)\n")
-    f.write("set(ROOT_DIR ${PROJECT_SOURCE_DIR}/" + os.path.relpath(root_dir, project_dir) + ")\n")
-    f.write("include(${ROOT_DIR}/scripts/rsfw.cmake)\n\n")
+    f.write("set(FRAMEWORK_PATH ${PROJECT_SOURCE_DIR}/" + os.path.relpath(root_dir, project_dir) + ")\n")
+    # f.write("set(FRAMEWORK_PATH \"" + root_dir + "\")\n")
+    f.write("add_definitions(-DFRAMEWORK_PATH=\"${FRAMEWORK_PATH}\")\n")
+    f.write("include(${FRAMEWORK_PATH}/scripts/rsfw.cmake)\n\n")
     
 #    for addon in addon_cmakes:
 #        f.write("include(${ROOT_DIR}/"+f"{addon})\n")

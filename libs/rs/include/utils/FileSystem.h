@@ -117,11 +117,15 @@ inline std::string getProjectPath() {
 }
 
 inline std::string getFrameworkPath() {
+#ifdef FRAMEWORK_PATH
+  return std::string(FRAMEWORK_PATH) + "/";
+#else
   filesystem::path path = getProjectPath();
-  while (path.stem() != "rsfw") {
+  while (path.stem() != "limas") {
     path = path.parent_path();
   }
   return path.string() + "/";
+#endif
 }
 
 inline std::string getAssetsPath(const std::string& path = "") {
@@ -205,8 +209,8 @@ inline vector<string> readFileLineByLine(const string& path) {
   return lines;
 }
 
-inline vector<vector<string>> loadCsv(const string& path) {
-  vector<vector<string>> rows;
+inline vector<vector<string> > loadCsv(const string& path) {
+  vector<vector<string> > rows;
   auto lines = readFileLineByLine(path);
   for (auto& l : lines) {
     auto elems = util::getSplit(l, ",");
@@ -215,7 +219,7 @@ inline vector<vector<string>> loadCsv(const string& path) {
   return rows;
 }
 
-inline void saveCsv(const string& path, const vector<vector<string>>& rows) {
+inline void saveCsv(const string& path, const vector<vector<string> >& rows) {
   ofstream ofs(path);
   for (auto& row : rows)
     for (auto& ele : row) ofs << ele << ',';
