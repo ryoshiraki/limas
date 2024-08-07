@@ -65,7 +65,7 @@ class FileObserver {
   void watch(const std::string& path,
              const std::function<void(const std::string&)>& callback) {
     if (!fs::isExists(path)) {
-      throw rs::Exception(path + " does not exist");
+      throw Exception(path + " does not exist");
       return;
     }
 

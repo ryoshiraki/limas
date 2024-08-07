@@ -21,6 +21,13 @@ class HotReloader : public FileObserver {
       shader.link();
     });
   }
+
+  void watchGeometryShader(gl::Shader& shader, const std::string& filepath) {
+    watch(filepath, [&](const std::string& e) {
+      shader.loadGeometry(e);
+      shader.link();
+    });
+  }
 };
 
 }  // namespace limas

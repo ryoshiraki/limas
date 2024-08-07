@@ -105,6 +105,14 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
     }
   }
 
+  void drawSubsection(GLenum mode, GLsizei count, GLsizei start = 0) const {
+    if (this->getNumIndices()) {
+      vao_.drawElements(mode, count);
+    } else {
+      vao_.drawArrays(mode, start, count);
+    }
+  }
+
   Vao& getVao() { return vao_; };
   const Vao& getVao() const { return vao_; };
 

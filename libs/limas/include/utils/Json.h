@@ -88,12 +88,12 @@ struct adl_serializer<glm::mat<4, 4, T, Q>> {
 
 // Color
 template <typename T>
-struct adl_serializer<rs::BaseColor<T>> {
-  static void to_json(json& j, const rs::BaseColor<T>& c) {
+struct adl_serializer<limas::BaseColor<T>> {
+  static void to_json(json& j, const limas::BaseColor<T>& c) {
     j = json{c[0], c[1], c[2], c[3]};
   }
 
-  static void from_json(const json& j, rs::BaseColor<T>& c) {
+  static void from_json(const json& j, limas::BaseColor<T>& c) {
     c[0] = j[0].get<T>();
     c[1] = j[1].get<T>();
     c[2] = j[2].get<T>();
