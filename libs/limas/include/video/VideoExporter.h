@@ -5,6 +5,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 // #include <libavutil/imgutils.h>
 // #include <libavutil/pixdesc.h>
+#include <libavutil/opt.h>
 #include <libswscale/swscale.h>
 }
 
@@ -19,6 +20,7 @@ extern "C" {
 
 namespace limas {
 class VideoExporter {
+#define ENCODE_HEVC 0
   gl::Fbo fbo_;
   gl::PboPacker pbo_;
   std::vector<unsigned char> pixel_data_;
@@ -90,9 +92,18 @@ class VideoExporter {
       context_.codec_context->pix_fmt = AV_PIX_FMT_YUV444P10;
       context_.codec_context->codec_id = AV_CODEC_ID_PRORES;
       context_.codec_context->profile = FF_PROFILE_PRORES_4444;
+
       // context_.codec_context->bit_rate = your_desired_bit_rate;
       // context_.codec_context->qmin = your_desired_min_quantizer;
       // context_.codec_context->qmax = your_desired_max_quantizer;
+
+      // av_opt_set(context_.codec_context->priv_data, "color_primaries",
+      // "bt709",
+      //            0);
+      // av_opt_set(context_.codec_context->priv_data, "color_trc", "bt709", 0);
+      // av_opt_set(context_.codec_context->priv_data, "colorspace",
+      // "smpte170m",
+      //            0);
 
       // generate global header when the format requires it
       if (context_.format_context->oformat->flags & AVFMT_GLOBALHEADER) {
@@ -132,7 +143,7 @@ class VideoExporter {
                 context_.codec_context->width, context_.codec_context->height,
                 AV_PIX_FMT_RGBA, context_.codec_context->width,
                 context_.codec_context->height, context_.codec_context->pix_fmt,
-                SWS_LANCZOS, nullptr, nullptr, nullptr))) {
+                SWS_BILINEAR, nullptr, nullptr, nullptr))) {
         log::error("VideoExporter") << "Couldn't get sws context" << log::end();
         break;
       }
@@ -178,7 +189,6 @@ class VideoExporter {
     if (context_.sws_context) sws_freeContext(context_.sws_context);
     if (context_.frame) av_frame_free(&context_.frame);
     if (context_.codec_context) avcodec_free_context(&context_.codec_context);
-    if (context_.codec_context) avcodec_close(context_.codec_context);
     if (context_.format_context) avformat_free_context(context_.format_context);
 
     is_setup_ = false;

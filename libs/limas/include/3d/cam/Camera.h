@@ -54,18 +54,18 @@ class Camera : public Node {
     return projection;
   }
 
-  glm::vec3 getCustomWorldToScreen(const glm::vec3& p, int x, int y, int w,
-                                   int h, float fov_x, float fov_y) const {
+  glm::vec3 getWorldToScreenWithFOVs(const glm::vec3& p, int x, int y, int w,
+                                     int h, float fov_x, float fov_y) const {
     glm::vec4 viewport(x, y, w, h);
-    auto proj = getCustomProjectionMatrix(x, y, w, h, fov_x, fov_y);
+    auto proj = getProjectionMatrixWithFOVs(fov_x, fov_y);
     auto view = getModelViewMatrix();
     auto sp = glm::project(p, view, proj, viewport);
     sp[1] = h - sp[1];
     return sp;
   }
 
-  virtual glm::mat4 getCustomProjectionMatrix(int x, int y, int w, int h,
-                                              float fov_x, float fov_y) const {
+  virtual glm::mat4 getProjectionMatrixWithFOVs(float fov_x,
+                                                float fov_y) const {
     float tan_half_fov_x = tan(glm::radians(fov_x) / 2.0f);
     float tan_half_fov_y = tan(glm::radians(fov_y) / 2.0f);
 
