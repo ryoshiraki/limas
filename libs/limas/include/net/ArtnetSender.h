@@ -12,8 +12,10 @@ class ArtnetSender {
   void setup(boost::asio::io_service& io_service, const std::string& ip,
              int port = 6454) {
     client_ = std::make_shared<UdpClient>(io_service, ip, port);
-    dmx_.fill(0);
+    reset();
   }
+
+  void reset() { dmx_.fill(0); }
 
   void set(uint16_t ch, uint8_t val) {
     if ((ch - 1) < 0 || (ch - 1) > dmx_.size()) {
@@ -22,14 +24,14 @@ class ArtnetSender {
     dmx_[ch - 1] = val;
   }
 
-  uint8_t getValue(uint16_t ch) {
+  uint8_t getValue(uint16_t ch) const {
     if ((ch - 1) < 0 || (ch - 1) > dmx_.size()) {
       throw limas::Exception("Invalid channel range specified.");
     }
     return dmx_[ch - 1];
   }
 
-  void send() {
+  void send() const {
     std::array<uint8_t, 530> packet;  // Art-Net header + DMX data (512 bytes)
     std::fill(packet.begin(), packet.end(), 0);
 
