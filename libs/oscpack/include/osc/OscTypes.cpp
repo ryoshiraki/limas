@@ -34,16 +34,19 @@
 	requested that these non-binding requests be included whenever the
 	above license is reproduced.
 */
-#ifndef INCLUDED_OSCPACK_TIMERLISTENER_H
-#define INCLUDED_OSCPACK_TIMERLISTENER_H
-
+#include "OscTypes.h"
 
 namespace osc{
-class TimerListener{
-public:
-    virtual ~TimerListener() {}
-    virtual void TimerExpired() = 0;
-};
-}
 
-#endif /* INCLUDED_OSCPACK_TIMERLISTENER_H */
+BundleInitiator BeginBundleImmediate(1);
+BundleTerminator EndBundle;
+MessageTerminator EndMessage;
+NilType OscNil;
+#ifndef _OBJC_OBJC_H_
+NilType Nil; // Objective-C defines Nil. so our Nil is deprecated. use OscNil instead
+#endif
+InfinitumType Infinitum;
+ArrayInitiator BeginArray;
+ArrayTerminator EndArray;
+
+} // namespace osc

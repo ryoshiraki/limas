@@ -16,7 +16,7 @@ class OscSender {
  public:
   virtual ~OscSender() = default;
 
-  void setup(const std::string& ip, int port) {
+  void setup(const std::string& ip, uint16_t port) {
     ip_ = ip;
     port_ = port;
     socket_ =

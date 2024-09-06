@@ -31,7 +31,14 @@ class ParameterGroup {
   ParameterGroup(const std::shared_ptr<Data>& data) : data_(data) {}
 
   void setName(const std::string& name) { data_->name_ = name; }
-  const std::string& getName() const { return data_->name_; }
+  const std::string& getName() const {
+    if (data_->name_.empty()) {
+      static std::string name =
+          "##unnamed_" + std::to_string(reinterpret_cast<uintptr_t>(this));
+      return name;
+    }
+    return data_->name_;
+  }
 
   ParameterGroup addChild(const ParameterGroup& child) {
     if (hasChild(child.getName())) {

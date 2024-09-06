@@ -68,7 +68,14 @@ class Parameter : public AbstractParameter {
   }
 
   void setName(const std::string& name) override { data_->name_ = name; };
-  const std::string& getName() const override { return data_->name_; }
+  const std::string& getName() const override {
+    if (data_->name_.empty()) {
+      static std::string name =
+          "##unnamed_" + std::to_string(reinterpret_cast<uintptr_t>(this));
+      return name;
+    }
+    return data_->name_;
+  }
 
   json serialize() const override {
     json j;
