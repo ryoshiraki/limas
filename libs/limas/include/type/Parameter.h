@@ -20,7 +20,7 @@ class AbstractParameter {
   template <typename T>
   Parameter<T>& as() {
     if (getType() != typeid(T)) {
-      throw rs::Exception("Type mismatch during casting " + getName());
+      throw limas::Exception("Type mismatch during casting " + getName());
     }
     return static_cast<Parameter<T>&>(*this);
   }
@@ -83,11 +83,11 @@ class Parameter : public AbstractParameter {
   void deserialize(const json& j) override {
     if (j.contains("type")) {
       if (j["type"].get<std::string>() != typeid(T).name()) {
-        throw rs::Exception("Type mismatch during deserialization " +
-                            getName());
+        throw limas::Exception("Type mismatch during deserialization " +
+                               getName());
       }
     } else {
-      throw rs::Exception("Serialized data missing 'type' field.");
+      throw limas::Exception("Serialized data missing 'type' field.");
     }
 
     if (j.contains("name")) setName(j["name"].get<std::string>());

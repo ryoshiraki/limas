@@ -53,7 +53,7 @@ class ParameterGroup {
   ParameterGroup getChild(const std::string& name) {
     auto it = findChild(name);
     if (it == data_->children_.end())
-      throw rs::Exception("Child '" + name + "'not found");
+      throw limas::Exception("Child '" + name + "'not found");
     return ParameterGroup(*it);
   }
 
@@ -100,7 +100,7 @@ class ParameterGroup {
   Parameter<T>& getParam(const std::string& name) {
     auto it = findParam(name);
     if (it == data_->params_.end())
-      throw rs::Exception("Parameter'" + name + "' not found");
+      throw limas::Exception("Parameter'" + name + "' not found");
     return (*it)->template as<T>();
   }
 
@@ -121,7 +121,7 @@ class ParameterGroup {
   std::type_index getType(const std::string& name) const {
     auto it = findParam(name);
     if (it == data_->params_.end())
-      throw rs::Exception("Parameter'" + name + "' not found");
+      throw limas::Exception("Parameter'" + name + "' not found");
     return (*it)->getType();
   }
 

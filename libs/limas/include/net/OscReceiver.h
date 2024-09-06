@@ -33,6 +33,11 @@ class OscReceiver : public osc::OscPacketListener {
     }
 
     template <>
+    char getArg<char>(osc::ReceivedMessage::const_iterator& it) {
+      return (it++)->AsChar();
+    }
+
+    template <>
     int getArg<int>(osc::ReceivedMessage::const_iterator& it) {
       return (it++)->AsInt32();
     }
@@ -79,8 +84,9 @@ class OscReceiver : public osc::OscPacketListener {
     if (socket_) socket_.reset();
   }
 
-  void setup(int port) {
+  void setup(uint16_t port) {
     try {
+      port_ = port;
       IpEndpointName name(IpEndpointName::ANY_ADDRESS, port);
       auto deleter = [](UdpListeningReceiveSocket* s) { s->Break(); };
       socket_ = std::unique_ptr<UdpListeningReceiveSocket, decltype(deleter)>(
@@ -103,6 +109,8 @@ class OscReceiver : public osc::OscPacketListener {
 
     thread_.detach();
   }
+
+  u_int16_t getPort() const { return port_; }
 
   // 特殊化版: 関数ポインタ
   template <typename... Args>
@@ -180,6 +188,7 @@ class OscReceiver : public osc::OscPacketListener {
   std::thread thread_;
   std::mutex mutex_;
   std::map<std::string, BaseOscHandler::Ptr> handlers_;
+  uint16_t port_;
 };
 
 }  // namespace net

@@ -106,7 +106,8 @@ struct adl_serializer<limas::BaseColor<T>> {
 using json = nlohmann::json;
 
 namespace limas {
-
+namespace utils {
+  
 inline json loadJson(const std::string& path) {
   std::ifstream ifs(path);
   if (!ifs) throw Exception("failed to load json from " + path);
@@ -119,4 +120,5 @@ inline void saveJson(json& j, const std::string& path) {
   ofs << j;
 }
 
+}
 }  // namespace limas

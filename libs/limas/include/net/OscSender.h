@@ -17,6 +17,8 @@ class OscSender {
   virtual ~OscSender() = default;
 
   void setup(const std::string& ip, int port) {
+    ip_ = ip;
+    port_ = port;
     socket_ =
         std::make_unique<UdpTransmitSocket>(IpEndpointName(ip.c_str(), port));
   }
@@ -31,9 +33,14 @@ class OscSender {
     socket_->Send(packet.Data(), packet.Size());
   }
 
+  const std::string& getIp() const { return ip_; }
+  uint16_t getPort() const { return port_; }
+
  private:
   static constexpr int OUTPUT_BUFFER_SIZE = 4096;
   std::unique_ptr<UdpTransmitSocket> socket_;
+  std::string ip_;
+  uint16_t port_;
 
   void appendArgs(osc::OutboundPacketStream&) {}
 
@@ -41,20 +48,9 @@ class OscSender {
     packet << (osc::int64)first;
   }
 
-  void appendArgs(osc::OutboundPacketStream& packet, bool first) {
+  template <typename T>
+  void appendArgs(osc::OutboundPacketStream& packet, const T& first) {
     packet << first;
-  }
-
-  void appendArgs(osc::OutboundPacketStream& packet, float first) {
-    packet << first;
-  }
-
-  void appendArgs(osc::OutboundPacketStream& packet, double first) {
-    packet << first;
-  }
-
-  void appendArgs(osc::OutboundPacketStream& packet, const std::string& first) {
-    packet << first.c_str();
   }
 
   template <typename T, typename... Rest>

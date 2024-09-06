@@ -14,14 +14,14 @@ namespace ui = ImGui;
 
 namespace ImGui {
 
-static rs::CoreObservable observables_;
+static limas::CoreObservable observables_;
 
 inline void MouseButtonCallback(GLFWwindow *window, int button, int action,
                                 int mods) {
   ImGuiIO &io = GetIO();
   ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
   if (io.WantCaptureMouse == true) {
-    rs::MouseEventArgs e{io.MousePos.x, io.MousePos.y, button};
+    limas::MouseEventArgs e{io.MousePos.x, io.MousePos.y, button};
     if (action == GLFW_PRESS)
       observables_.mouse_pressed.notify(e);
     else if (action == GLFW_RELEASE)
@@ -29,7 +29,7 @@ inline void MouseButtonCallback(GLFWwindow *window, int button, int action,
   }
 }
 
-inline void initialize(rs::Window::Ptr &window) {
+inline void initialize(limas::Window::Ptr &window) {
   IMGUI_CHECKVERSION();
   CreateContext();
   ImGuiIO &io = GetIO();
@@ -46,17 +46,17 @@ inline void initialize(rs::Window::Ptr &window) {
 
   glfwSetMouseButtonCallback(window->getHandle(), MouseButtonCallback);
 
-  window->setOnLoopBegin([&window](const rs::EventArgs &) {
+  window->setOnLoopBegin([&window](const limas::EventArgs &) {
     ImGuiIO &io = GetIO();
     io.MousePos = ImVec2(window->getMouseX(), window->getMouseY());
-    io.MouseDown[0] = window->getMouseButton() == rs::MOUSE_BUTTON_LEFT;
-    io.MouseDown[1] = window->getMouseButton() == rs::MOUSE_BUTTON_RIGHT;
+    io.MouseDown[0] = window->getMouseButton() == limas::MOUSE_BUTTON_LEFT;
+    io.MouseDown[1] = window->getMouseButton() == limas::MOUSE_BUTTON_RIGHT;
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     NewFrame();
   });
 
-  window->setOnLoopEnd([&window](const rs::EventArgs &) { EndFrame(); });
+  window->setOnLoopEnd([&window](const limas::EventArgs &) { EndFrame(); });
 }
 
 inline void draw() {
@@ -65,14 +65,14 @@ inline void draw() {
 }
 
 template <typename Callback>
-inline rs::Connection setOnMousePressed(Callback callback) {
-  std::function<void(const rs::MouseEventArgs &)> func = callback;
+inline limas::Connection setOnMousePressed(Callback callback) {
+  std::function<void(const limas::MouseEventArgs &)> func = callback;
   return observables_.mouse_pressed.addObserver(callback);
 }
 
 template <typename Callback>
-inline rs::Connection setOnMouseReleased(Callback callback) {
-  std::function<void(const rs::MouseEventArgs &)> func = callback;
+inline limas::Connection setOnMouseReleased(Callback callback) {
+  std::function<void(const limas::MouseEventArgs &)> func = callback;
   return observables_.mouse_released.addObserver(callback);
 }
 
@@ -111,9 +111,9 @@ inline bool SliderVec(const std::string &label, glm::vec<N, T> *v,
 }
 
 template <typename T>
-inline bool SliderColor(const std::string &label, rs::BaseColor<T> *v,
-                        const rs::BaseColor<T> &min,
-                        const rs::BaseColor<T> &max) {
+inline bool SliderColor(const std::string &label, limas::BaseColor<T> *v,
+                        const limas::BaseColor<T> &min,
+                        const limas::BaseColor<T> &max) {
   ImGuiDataType type;
   if constexpr (std::is_same_v<T, unsigned char>) {
     type = ImGuiDataType_U8;
@@ -135,7 +135,7 @@ inline bool SliderColor(const std::string &label, rs::BaseColor<T> *v,
 #pragma mark PARAMETER
 
 template <typename T>
-inline bool addParam(rs::Parameter<T> &param, T min, T max) {
+inline bool addParam(limas::Parameter<T> &param, T min, T max) {
   ImGuiDataType type;
   if constexpr (std::is_same_v<T, char>) {
     type = std::is_signed_v<T> ? ImGuiDataType_S8 : ImGuiDataType_U8;
@@ -161,12 +161,12 @@ inline bool addParam(rs::Parameter<T> &param, T min, T max) {
 }
 
 template <typename T>
-inline bool addParam(rs::Parameter<T> &param) {
+inline bool addParam(limas::Parameter<T> &param) {
   return addParam<T>(param, param.getMin(), param.getMax());
 }
 
 template <>
-inline bool addParam<bool>(rs::Parameter<bool> &param) {
+inline bool addParam<bool>(limas::Parameter<bool> &param) {
   bool tmp = param.getValue();
   if (Checkbox(param.getName().c_str(), &tmp)) {
     param.setValue(tmp);
@@ -176,7 +176,7 @@ inline bool addParam<bool>(rs::Parameter<bool> &param) {
 }
 
 template <>
-inline bool addParam<std::string>(rs::Parameter<std::string> &param) {
+inline bool addParam<std::string>(limas::Parameter<std::string> &param) {
   std::string tmp = param.getValue();
   if (InputTextString(param.getName().c_str(), &tmp)) {
     param.setValue(tmp);
@@ -186,7 +186,7 @@ inline bool addParam<std::string>(rs::Parameter<std::string> &param) {
 }
 
 template <typename T, int N>
-inline bool addParam(rs::Parameter<glm::vec<N, T>> &param,
+inline bool addParam(limas::Parameter<glm::vec<N, T>> &param,
                      const glm::vec<N, T> &min, const glm::vec<N, T> &max) {
   ImGuiDataType type;
   if constexpr (std::is_same_v<T, float>) {
@@ -205,11 +205,11 @@ inline bool addParam(rs::Parameter<glm::vec<N, T>> &param,
 }
 
 template <typename T, int N>
-inline bool addParam(rs::Parameter<glm::vec<N, T>> &param) {
+inline bool addParam(limas::Parameter<glm::vec<N, T>> &param) {
   return addParam<T, N>(param, param.getMin(), param.getMax());
 }
 
-inline void addParams(rs::ParameterGroup &params) {
+inline void addParams(limas::ParameterGroup &params) {
   if (CollapsingHeader(params.getName().c_str(),
                        ImGuiTreeNodeFlags_DefaultOpen)) {
     for (auto &param : params.getParams()) {
@@ -233,8 +233,9 @@ inline void addParams(rs::ParameterGroup &params) {
       } else if (type == typeid(std::string)) {
         addParam(param->as<std::string>());
       } else {
-        rs::log::error("GUI") << type.name() << " of " << param->getName()
-                              << " is not supported now" << rs::log::end();
+        limas::log::error("GUI")
+            << type.name() << " of " << param->getName()
+            << " is not supported now" << limas::log::end();
       }
     }
   }
@@ -242,7 +243,7 @@ inline void addParams(rs::ParameterGroup &params) {
 
 #pragma mark SCOPED GUI
 
-struct ScopedWindow : public rs::Noncopyable {
+struct ScopedWindow : public limas::Noncopyable {
   ScopedWindow(const std::string &label, int x, int y,
                ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize) {
     SetNextWindowPos(ImVec2(x, y), ImGuiCond_Once);
@@ -251,12 +252,12 @@ struct ScopedWindow : public rs::Noncopyable {
   ~ScopedWindow() { End(); }
 };
 
-struct ScopedGroup : public rs::Noncopyable {
+struct ScopedGroup : public limas::Noncopyable {
   ScopedGroup() { BeginGroup(); }
   ~ScopedGroup() { EndGroup(); }
 };
 
-struct ScopedTreeNode : public rs::Noncopyable {
+struct ScopedTreeNode : public limas::Noncopyable {
   ScopedTreeNode(const std::string &label) { TreeNode(label.c_str()); }
   ~ScopedTreeNode() { TreePop(); }
 
@@ -264,7 +265,7 @@ struct ScopedTreeNode : public rs::Noncopyable {
   bool b_opened_;
 };
 
-struct ScopedMenuBar : public rs::Noncopyable {
+struct ScopedMenuBar : public limas::Noncopyable {
   ScopedMenuBar() { b_opened_ = BeginMenuBar(); }
   ~ScopedMenuBar() {
     if (b_opened_) EndMenuBar();
@@ -274,7 +275,7 @@ struct ScopedMenuBar : public rs::Noncopyable {
   bool b_opened_;
 };
 
-struct ScopedMainMenuBar : public rs::Noncopyable {
+struct ScopedMainMenuBar : public limas::Noncopyable {
   ScopedMainMenuBar() { b_opened_ = BeginMainMenuBar(); }
   ~ScopedMainMenuBar() {
     if (b_opened_) EndMainMenuBar();

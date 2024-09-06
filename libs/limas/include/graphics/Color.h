@@ -126,6 +126,13 @@ class FloatColor : public BaseColor<float> {
     }
   }
 
+  FloatColor(const glm::vec4& vec) {
+    data_[0] = vec.r;
+    data_[1] = vec.g;
+    data_[2] = vec.b;
+    data_[3] = vec.a;
+  }
+
   inline FloatColor& operator=(const BaseColor<unsigned char>& other) {
     for (int i = 0; i < 4; ++i) {
       data_[i] = other[i] / 255.0f;
