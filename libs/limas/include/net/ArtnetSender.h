@@ -19,36 +19,28 @@ class ArtnetSender {
 
   void reset() { dmx_.fill(0); }
 
-  void set(uint16_t ch, uint8_t val) {
+  void setChannel(uint16_t ch, uint8_t val) {
     if ((ch - 1) < 0 || (ch - 1) >= 512) {
       throw limas::Exception("Invalid channel range specified.");
     }
     dmx_[ch - 1] = val;
   }
 
-  void set(uint16_t ch, std::vector<uint8_t> values) {
+  void setChannel(uint16_t ch, std::vector<uint8_t> values) {
     if ((ch - 1) < 0 || (ch + values.size() - 1) > 512) {
       throw limas::Exception("Invalid channel range specified.");
     }
     std::copy(values.begin(), values.end(), dmx_.begin() + ch - 1);
   }
 
-  uint8_t getValue(uint16_t ch) const {
+  uint8_t getChannel(uint16_t ch) const {
     if ((ch - 1) < 0 || (ch - 1) >= 512) {
       throw limas::Exception("Invalid channel range specified.");
     }
     return dmx_[ch - 1];
   }
 
-  std::vector<uint8_t> getValues(uint16_t ch, size_t size) const {
-    if ((ch - 1) < 0 || (ch + size - 1) > 512) {
-      throw limas::Exception("Invalid channel range specified.");
-    }
-    std::vector<uint8_t> values(size);
-    std::copy(dmx_.begin() + ch - 1, dmx_.begin() + ch - 1 + size,
-              values.begin());
-    return values;
-  }
+  std::array<uint8_t, 512>& getChannels() { return dmx_; }
 
   const std::string& getIp() const { return ip_; }
   u_int16_t getPort() const { return port_; }

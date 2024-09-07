@@ -8,7 +8,7 @@ namespace net {
 using boost::asio::ip::udp;
 
 class UdpServer : public Thread {
-  static const int MAX_BUFFER_SIZE = 1024;  // Adjust buffer size as needed
+  static const int MAX_BUFFER_SIZE = 4096;  // Adjust buffer size as needed
   using MessageHandler = std::function<void(const std::string&)>;
 
  public:
@@ -38,10 +38,15 @@ class UdpServer : public Thread {
                     boost::asio::placeholders::bytes_transferred));
   }
 
-  void handleReceive(const boost::system::error_code& error,
-                     std::size_t bytes_recvd) {
+  void handleReceive(const boost::system::error_code& error, std::size_t size) {
     if (!error || error == boost::asio::error::message_size) {
-      handler_(std::string(recv_buffer_.data(), bytes_recvd));
+      if (size > MAX_BUFFER_SIZE) {
+        log::warn("UdpServer")
+            << "Received message size exceeds MAX_BUFFER_SIZE: " << size
+            << " bytes" << log::end();
+      } else {
+        handler_(std::string(recv_buffer_.data(), size));
+      }
       startReceive();
     }
   }

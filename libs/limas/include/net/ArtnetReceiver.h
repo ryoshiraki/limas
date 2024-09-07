@@ -69,7 +69,7 @@ class ArtnetReceiver {
     });
   }
 
-  uint8_t getValue(uint16_t universe, uint16_t ch) const {
+  uint8_t getChannel(uint16_t universe, uint16_t ch) const {
     auto locker = server_->getLock();
 
     auto it = dmx_.find(universe);
@@ -86,22 +86,16 @@ class ArtnetReceiver {
     return it->second[ch - 1];
   }
 
-  std::vector<uint8_t> getValues(uint16_t universe, uint16_t ch,
-                                 uint16_t size) const {
+  const std::array<uint8_t, 512>& getChannels(uint16_t universe) const {
     auto locker = server_->getLock();
 
     auto it = dmx_.find(universe);
 
     if (it == dmx_.end()) {
       throw limas::Exception("Invalid universe specified");
-    };
-
-    if ((ch - 1) < 0 || (ch + size - 1) > 512) {
-      throw limas::Exception("Invalid channel range specified.");
     }
 
-    return std::vector<uint8_t>(it->second.begin() + ch - 1,
-                                it->second.begin() + ch - 1 + size);
+    return it->second;
   }
 
   const std::array<uint8_t, 512>& getValues(uint16_t universe) const {
