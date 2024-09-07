@@ -67,7 +67,7 @@ class OscReceiver : public Thread {
  public:
   OscReceiver() {}
 
-  void setup(uint16_t port = 6454) {
+  void setup(uint16_t port) {
     server_ = std::make_unique<net::UdpServer>(port);
     port_ = port;
 
