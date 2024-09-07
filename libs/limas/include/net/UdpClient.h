@@ -7,10 +7,9 @@ using boost::asio::ip::udp;
 
 class UdpClient {
  public:
-  UdpClient(boost::asio::io_service& io_service, const std::string& host,
-            int port)
-      : socket_(io_service),
-        endpoint_(*udp::resolver{io_service}
+  UdpClient(const std::string& host, int port)
+      : socket_(io_service_),
+        endpoint_(*udp::resolver{io_service_}
                        .resolve(udp::v4(), host, std::to_string(port))
                        .begin()) {
     socket_.open(udp::v4());
@@ -31,6 +30,7 @@ class UdpClient {
   }
 
  private:
+  boost::asio::io_service io_service_;
   udp::socket socket_;
   udp::endpoint endpoint_;
 };

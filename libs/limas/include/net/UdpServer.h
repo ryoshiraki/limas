@@ -11,20 +11,14 @@ class UdpServer {
   using MessageHandler = std::function<void(const std::string&)>;
 
  public:
-  using Ptr = std::shared_ptr<UdpServer>;
-  static Ptr create(boost::asio::io_service& io_service, int port) {
-    Ptr instance(new UdpServer(io_service, port));
-    return instance;
-  }
-
-  UdpServer(boost::asio::io_service& io_service, int port)
-      : socket_(io_service, udp::endpoint(udp::v4(), port)) {
+  UdpServer(int port) : socket_(io_service_, udp::endpoint(udp::v4(), port)) {
     handler_ = [](const std::string& m) {
       log::info("UdpServer") << m << log::end();
     };
     startReceive();
   }
 
+  void run() { io_service_.run(); }
   void setCallback(const MessageHandler& handler) { handler_ = handler; }
 
  private:
@@ -44,6 +38,7 @@ class UdpServer {
     }
   }
 
+  boost::asio::io_service io_service_;
   udp::socket socket_;
   udp::endpoint remote_endpoint_;
   boost::array<char, MAX_BUFFER_SIZE> recv_buffer_;

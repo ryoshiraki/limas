@@ -28,10 +28,8 @@ class ArtnetReceiver : public Thread {
     return it->second.fill(0);
   }
 
-  void start(boost::asio::io_service& io_service,
-             const std::vector<uint16_t>& universes, uint16_t port = 6454) {
-    io_service_ = &io_service;
-    server_ = net::UdpServer::create(io_service, port);
+  void setup(const std::vector<uint16_t>& universes, uint16_t port = 6454) {
+    server_ = net::UdpServer::create(port);
     universes_ = universes;
     port_ = port;
 
@@ -126,7 +124,6 @@ class ArtnetReceiver : public Thread {
   uint16_t getPort() const { return port_; }
 
  protected:
-  boost::asio::io_service* io_service_;
   net::UdpServer::Ptr server_;
   std::map<uint16_t, std::array<uint8_t, 512>> dmx_;
   std::vector<uint16_t> universes_;
@@ -134,7 +131,7 @@ class ArtnetReceiver : public Thread {
 
  private:
   void threadedFunction() {
-    io_service_->run();
+    server_->run();
     while (isThreadRunning()) {
     }
   }

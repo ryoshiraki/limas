@@ -9,9 +9,8 @@ namespace limas {
 namespace net {
 class ArtnetSender {
  public:
-  void setup(boost::asio::io_service& io_service, const std::string& ip,
-             uint16_t universe, int port = 6454) {
-    client_ = std::make_shared<UdpClient>(io_service, ip, port);
+  void setup(const std::string& ip, uint16_t universe, int port = 6454) {
+    client_ = std::make_shared<UdpClient>(ip, port);
     ip_ = ip;
     port_ = port;
     universe_ = universe;
@@ -78,7 +77,6 @@ class ArtnetSender {
   }
 
  protected:
-  boost::asio::io_service* io_service_;
   std::shared_ptr<net::UdpClient> client_;
   std::string ip_;
   uint16_t universe_ = 0;

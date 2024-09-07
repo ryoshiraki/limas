@@ -106,7 +106,8 @@ set(CORE_HEADERS
     ${FRAMEWORK_PATH}/libs/limas/include 
     ${FRAMEWORK_PATH}/libs/json/include
     ${FRAMEWORK_PATH}/libs/stb/include
-    ${FRAMEWORK_PATH}/libs/oscpack/include
+    # ${FRAMEWORK_PATH}/libs/oscpack/include
+    ${FRAMEWORK_PATH}/libs/oscpp/include
 
     ${FRAMEWORK_PATH}/libs/imgui/include
     ${FRAMEWORK_PATH}/libs/FastNoiseLite/include
@@ -175,7 +176,7 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
 
     PkgConfig::FFMPEG
 
-    ${FRAMEWORK_PATH}/libs/oscpack/lib/liboscpack.a
+    # ${FRAMEWORK_PATH}/libs/oscpack/lib/liboscpack.a
     ${FRAMEWORK_PATH}/libs/Syphon/lib/osx/Syphon.framework
     ${FRAMEWORK_PATH}/libs/svgtiny/lib/osx/svgtiny.a
     ${FRAMEWORK_PATH}/libs/tinygltf/lib/libtinygltf.a

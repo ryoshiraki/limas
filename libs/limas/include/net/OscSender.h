@@ -1,36 +1,28 @@
 #pragma once
-#include "ip/PacketListener.h"
-#include "ip/UdpSocket.h"
-#include "osc/OscOutboundPacketStream.h"
+#include "net/UdpClient.h"
+#include "oscpp/client.hpp"
 
 namespace limas {
 namespace net {
-
-// osc::OutboundPacketStream& operator<<(osc::OutboundPacketStream& p, int rhs)
-// {
-//   p << (osc::int32)rhs;
-//   return p;
-// }
 
 class OscSender {
  public:
   virtual ~OscSender() = default;
 
   void setup(const std::string& ip, uint16_t port) {
+    client_ = std::make_unique<UdpClient>(ip, port);
     ip_ = ip;
     port_ = port;
-    socket_ =
-        std::make_unique<UdpTransmitSocket>(IpEndpointName(ip.c_str(), port));
   }
 
   template <typename... Args>
   void send(const std::string& address, const Args&... args) {
-    char buffer[OUTPUT_BUFFER_SIZE];
-    osc::OutboundPacketStream packet(buffer, OUTPUT_BUFFER_SIZE);
-    packet << osc::BeginMessage(address.c_str());
+    std::vector<unsigned char> buffer(OUTPUT_BUFFER_SIZE);
+    OSCPP::Client::Packet packet(buffer.data(), buffer.size());
+    packet.openMessage(address.c_str(), sizeof...(Args));
     appendArgs(packet, args...);
-    packet << osc::EndMessage;
-    socket_->Send(packet.Data(), packet.Size());
+    packet.closeMessage();
+    client_->send(buffer);
   }
 
   const std::string& getIp() const { return ip_; }
@@ -38,53 +30,77 @@ class OscSender {
 
  private:
   static constexpr int OUTPUT_BUFFER_SIZE = 4096;
-  std::unique_ptr<UdpTransmitSocket> socket_;
+  std::unique_ptr<net::UdpClient> client_;
   std::string ip_;
   uint16_t port_;
 
-  void appendArgs(osc::OutboundPacketStream&) {}
-
-  void appendArgs(osc::OutboundPacketStream& packet, int first) {
-    packet << (osc::int64)first;
-  }
+  void appendArgs(OSCPP::Client::Packet& packet) {}
 
   template <typename T>
-  void appendArgs(osc::OutboundPacketStream& packet, const T& first) {
-    packet << first;
+  void appendArgs(OSCPP::Client::Packet& packet, T first);
+
+  template <>
+  void appendArgs<int>(OSCPP::Client::Packet& packet, int first) {
+    packet.int32(first);
+  }
+
+  template <>
+  void appendArgs<float>(OSCPP::Client::Packet& packet, float first) {
+    packet.float32(first);
+  }
+
+  template <>
+  void appendArgs<std::string>(OSCPP::Client::Packet& packet,
+                               std::string first) {
+    packet.string(first.c_str());
+  }
+
+  template <>
+  void appendArgs<const char*>(OSCPP::Client::Packet& packet,
+                               const char* first) {
+    packet.string(first);
+  }
+
+  template <>
+  void appendArgs<bool>(OSCPP::Client::Packet& packet, bool first) {
+    packet.int32(static_cast<bool>(first));
+  }
+
+  template <>
+  void appendArgs<unsigned int>(OSCPP::Client::Packet& packet,
+                                unsigned int first) {
+    packet.int32(first);
+  }
+
+  template <>
+  void appendArgs<double>(OSCPP::Client::Packet& packet, double first) {
+    packet.float32(first);
   }
 
   template <typename T, typename... Rest>
-  void appendArgs(osc::OutboundPacketStream& packet, const T& first,
+  void appendArgs(OSCPP::Client::Packet& packet, T first, const Rest&... rest) {
+    appendArgs(packet, first);
+    appendArgs(packet, rest...);
+  }
+
+  template <typename T, typename... Rest>
+  void appendArgs(OSCPP::Client::Packet& packet, const std::vector<T>& first,
                   const Rest&... rest) {
-    appendArgs(packet, first);    // 先頭の引数を処理
-    appendArgs(packet, rest...);  // 残りの引数を再帰的に処理
-  }
-
-  template <typename T, typename... Rest>
-  void appendArgs(osc::OutboundPacketStream& packet,
-                  const std::vector<T>& first, const Rest&... rest) {
     for (const auto& e : first) {
-      appendArgs(packet, e);  // vector内の要素を個別に処理
+      appendArgs(packet, e);
     }
-    appendArgs(packet, rest...);  // 残りの引数を処理
+    appendArgs(packet, rest...);
   }
 
   template <typename T, size_t N, typename... Rest>
-  void appendArgs(osc::OutboundPacketStream& packet,
-                  const std::array<T, N>& first, const Rest&... rest) {
+  void appendArgs(OSCPP::Client::Packet& packet, const std::array<T, N>& first,
+                  const Rest&... rest) {
     for (const auto& e : first) {
-      appendArgs(packet, e);  // array内の要素を個別に処理
+      appendArgs(packet, e);
     }
-    appendArgs(packet, rest...);  // 残りの引数を処理
+    appendArgs(packet, rest...);
   }
 };
-
-// Parameter<int> param;
-// OscClient client;
-// client.setup("localhost", 54321);
-// param.onChange([=](const int& a) {
-//   client.send("/test", a);
-// });
 
 }  // namespace net
 }  // namespace limas
