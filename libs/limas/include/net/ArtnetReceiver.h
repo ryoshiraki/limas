@@ -6,20 +6,19 @@
 namespace limas {
 namespace net {
 
-class ArtnetReceiver : public Thread {
+class ArtnetReceiver {
  public:
   ArtnetReceiver() {}
 
   void reset() {
-    auto locker = getLock();
+    auto locker = server_->getLock();
     for (auto& universes : dmx_) {
       universes.second.fill(0);
     }
   }
 
   void reset(uint16_t universe) {
-    auto locker = getLock();
-
+    auto locker = server_->getLock();
     auto it = dmx_.find(universe);
     if (it == dmx_.end()) {
       return;
@@ -29,7 +28,7 @@ class ArtnetReceiver : public Thread {
   }
 
   void setup(const std::vector<uint16_t>& universes, uint16_t port = 6454) {
-    server_ = net::UdpServer::create(port);
+    server_ = std::make_unique<net::UdpServer>(port);
     universes_ = universes;
     port_ = port;
 
@@ -37,7 +36,7 @@ class ArtnetReceiver : public Thread {
       dmx_[universe].fill(0);
     }
 
-    server_->setCallback([&](const string& packet) {
+    server_->start([&](const string& packet) {
       static const int HEADER_LENGTH = 18;
       static const short OP_OUTPUT = 0x5000;
 
@@ -57,7 +56,7 @@ class ArtnetReceiver : public Thread {
             const uint8_t* dmx_data =
                 reinterpret_cast<const uint8_t*>(data + HEADER_LENGTH);
 
-            auto locker = getLock();
+            auto locker = server_->getLock();
             std::memcpy(it->second.data(), dmx_data,
                         it->second.size() * sizeof(uint8_t));
           } else {
@@ -68,11 +67,10 @@ class ArtnetReceiver : public Thread {
         }
       }
     });
-    startThread();
   }
 
   uint8_t getValue(uint16_t universe, uint16_t ch) const {
-    auto locker = getLock();
+    auto locker = server_->getLock();
 
     auto it = dmx_.find(universe);
 
@@ -90,13 +88,12 @@ class ArtnetReceiver : public Thread {
 
   std::vector<uint8_t> getValues(uint16_t universe, uint16_t ch,
                                  uint16_t size) const {
-    auto locker = getLock();
+    auto locker = server_->getLock();
 
     auto it = dmx_.find(universe);
 
     if (it == dmx_.end()) {
       throw limas::Exception("Invalid universe specified");
-      return {};
     };
 
     if ((ch - 1) < 0 || (ch + size - 1) > 512) {
@@ -108,14 +105,13 @@ class ArtnetReceiver : public Thread {
   }
 
   const std::array<uint8_t, 512>& getValues(uint16_t universe) const {
-    auto locker = getLock();
+    auto locker = server_->getLock();
 
     auto it = dmx_.find(universe);
 
     if (it == dmx_.end()) {
       throw limas::Exception("Invalid universe specified");
-      return {};
-    };
+    }
 
     return it->second;
   }
@@ -124,17 +120,10 @@ class ArtnetReceiver : public Thread {
   uint16_t getPort() const { return port_; }
 
  protected:
-  net::UdpServer::Ptr server_;
+  std::unique_ptr<net::UdpServer> server_;
   std::map<uint16_t, std::array<uint8_t, 512>> dmx_;
   std::vector<uint16_t> universes_;
   uint16_t port_;
-
- private:
-  void threadedFunction() {
-    server_->run();
-    while (isThreadRunning()) {
-    }
-  }
 };
 
 }  // namespace net

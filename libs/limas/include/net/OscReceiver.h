@@ -8,7 +8,7 @@
 namespace limas {
 namespace net {
 
-class OscReceiver : public Thread {
+class OscReceiver {
   class BaseOscHandler {
    public:
     virtual bool handle(OSCPP::Server::ArgStream& args) = 0;
@@ -71,7 +71,7 @@ class OscReceiver : public Thread {
     server_ = std::make_unique<net::UdpServer>(port);
     port_ = port;
 
-    server_->setCallback([&](const string& buffer) {
+    server_->start([&](const string& buffer) {
       OSCPP::Server::Packet packet =
           OSCPP::Server::Packet(buffer.data(), buffer.size());
       try {
@@ -82,7 +82,6 @@ class OscReceiver : public Thread {
         log::error("OSC Receiver") << e.what() << log::end();
       }
     });
-    startThread();
   }
   uint16_t getPort() const { return port_; }
 
@@ -143,7 +142,6 @@ class OscReceiver : public Thread {
   template <typename... Args>
   void listenMessage(const std::string& address,
                      const std::function<void(Args...)>& func) {
-    std::lock_guard<std::mutex> lock(mutex_);
     if (handlers_.find(address) != handlers_.end()) {
       return;
     }
@@ -159,13 +157,6 @@ class OscReceiver : public Thread {
   std::unique_ptr<net::UdpServer> server_;
   uint16_t port_;
   std::map<std::string, std::unique_ptr<BaseOscHandler>> handlers_;
-
- private:
-  void threadedFunction() {
-    server_->run();
-    while (isThreadRunning()) {
-    }
-  }
 };
 
 }  // namespace net

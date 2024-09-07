@@ -1,12 +1,13 @@
 #pragma once
 #include "system/Logger.h"
+#include "system/Thread.h"
 
 namespace limas {
 namespace net {
 
 using boost::asio::ip::udp;
 
-class UdpServer {
+class UdpServer : public Thread {
   static const int MAX_BUFFER_SIZE = 1024;  // Adjust buffer size as needed
   using MessageHandler = std::function<void(const std::string&)>;
 
@@ -18,8 +19,15 @@ class UdpServer {
     startReceive();
   }
 
-  void run() { io_service_.run(); }
-  void setCallback(const MessageHandler& handler) { handler_ = handler; }
+  void start(const MessageHandler& handler) {
+    handler_ = handler;
+    startThread([this]() { io_service_.run(); });
+  }
+
+  void stop() {
+    io_service_.stop();
+    stopThread();
+  }
 
  private:
   void startReceive() {
