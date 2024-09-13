@@ -93,7 +93,7 @@ class ArtnetReceiver {
 
     if (it == dmx_.end()) {
       throw limas::Exception("Invalid universe specified");
-    }
+    };
 
     return it->second;
   }

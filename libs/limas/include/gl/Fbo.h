@@ -149,8 +149,9 @@ class Fbo {
   GLsizei getHeight() const { return data_->height_; }
   glm::vec2 getSize() const { return glm::vec2(data_->width_, data_->height_); }
   const std::vector<Texture2D>& getTextures() const { return textures_; }
-  Texture2D& getTexture(unsigned int i) { return textures_.at(i); }
+  std::vector<Texture2D>& getTextures() { return textures_; }
   const Texture2D& getTexture(unsigned int i) const { return textures_.at(i); }
+  Texture2D& getTexture(unsigned int i) { return textures_.at(i); }
   Rbo& getRenderBuffer() { return rbo_; }
   const Rbo& getRenderBuffer() const { return rbo_; }
 

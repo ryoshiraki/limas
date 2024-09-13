@@ -56,6 +56,16 @@ class Swatch {
     pixels_.allocate(width, height, 4);
     shader_.load(fs::getCommonResourcesPath("shaders/swatch.vert"),
                  fs::getCommonResourcesPath("shaders/swatch.frag"));
+
+    for (int i = 0; i < 3; i++) {
+      float rad = math::twopi() / 3 * i + math::pi();
+      float x = HANDLE_RADIUS * sin(rad);
+      float y = HANDLE_RADIUS * cos(rad);
+      triangle_.addVertex(glm::vec3(x, y, 0));
+      triangle_.addColor(glm::vec4(1, 1, 1, 1));
+      triangle_.addIndex(i);
+    }
+    triangle_.update();
   }
 
   void add(float pos, const FloatColor& col) {
@@ -133,7 +143,10 @@ class Swatch {
   void drawTexture() const { gl::drawTexture(fbo_.getTexture(0), 0, 0); }
   void drawHandle() const {
     for (auto& h : handles_) {
-      gl::drawCircle(h->getPosition().x, h->getPosition().y, h->getRadius());
+      gl::pushMatrix();
+      gl::translate(h->getPosition().x, h->getPosition().y, 0);
+      gl::drawMesh(triangle_, GL_TRIANGLES);
+      gl::popMatrix();
     }
   }
 
@@ -152,6 +165,7 @@ class Swatch {
   gl::Shader shader_;
   gl::PboPacker pbo_;
   gl::VboMesh mesh;
+  gl::VboMesh triangle_;
   Pixels2D pixels_;
   std::vector<ColorHandle::Ptr> handles_;
 };
