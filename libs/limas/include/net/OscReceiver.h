@@ -85,37 +85,35 @@ class OscReceiver {
   }
   uint16_t getPort() const { return port_; }
 
-  // 特殊化版: 関数ポインタ
   template <typename... Args>
   void listen(const std::string& address, void (*func)(Args...)) {
     listenMessage<Args...>(address, func);
-  };
+  }
 
-  // 特殊化版: std::function
   template <typename... Args>
-  inline void listen(const std::string& address,
-                     const std::function<void(Args...)>& func) {
+  void listen(const std::string& address,
+              const std::function<void(Args...)>& func) {
     listenMessage<Args...>(address, func);
-  };
+  }
 
-  // 特殊化版:
-  // メンバ関数ポインタ（メンバ関数ポインタは通常の関数とは異なる型なので別途特殊化が必要）
   template <typename Class, typename... Args>
-  inline void listen(const std::string& address, void (Class::*func)(Args...)) {
-    listenMessage<Args...>(address, func);
-  };
+  void listen(const std::string& address, Class* instance,
+              void (Class::*func)(Args...)) {
+    listenMessage<Args...>(address, [instance, func](Args... args) {
+      (instance->*func)(std::forward<Args>(args)...);
+    });
+  }
 
-  // メンバ関数ポインタのconst版
   template <typename Class, typename... Args>
-  inline void listen(const std::string& address,
-                     void (Class::*func)(Args...) const) {
-    listenMessage<Args...>(address, func);
-  };
+  void listen(const std::string& address, const Class* instance,
+              void (Class::*func)(Args...) const) {
+    listenMessage<Args...>(address, [instance, func](Args... args) {
+      (instance->*func)(std::forward<Args>(args)...);
+    });
+  }
 
-  // ユーザー定義の関数オブジェクト（ラムダ式やfunctor）のための特殊化
-  // operator()を持つクラスに対する特殊化
   template <typename Func>
-  inline void listen(const std::string& address, Func&& func) {
+  void listen(const std::string& address, Func&& func) {
     listenMessage(address, std::function(func));
   }
 
@@ -148,7 +146,7 @@ class OscReceiver {
 
     try {
       auto handler = std::make_unique<OscHandler<Args...>>(func);
-      handlers_.insert(std::make_pair(address, std::move(handler)));
+      handlers_.emplace(address, std::move(handler));
     } catch (const std::exception& e) {
       std::cerr << "Error while adding handler: " << e.what() << std::endl;
     }

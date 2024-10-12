@@ -26,6 +26,7 @@ class Thread : private Noncopyable {
       }
       b_running_ = false;
     });
+    thread_.detach();
   }
 
   void stopThread() {

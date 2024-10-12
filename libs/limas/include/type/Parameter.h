@@ -39,6 +39,15 @@ class AbstractParameter {
   virtual json serialize() const = 0;
   virtual void deserialize(const json& j) = 0;
 
+  bool isBool() const { return getType() == typeid(bool); }
+  bool isChar() const { return getType() == typeid(char); }
+  bool isInt() const { return getType() == typeid(int); }
+  bool isLong() const { return getType() == typeid(long); }
+  bool isFloat() const { return getType() == typeid(float); }
+  bool isDouble() const { return getType() == typeid(double); }
+  bool isVec2() const { return getType() == typeid(glm::vec2); }
+  bool isVec3() const { return getType() == typeid(glm::vec3); }
+
  protected:
   AbstractParameter() {}
 };

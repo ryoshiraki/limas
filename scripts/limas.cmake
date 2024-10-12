@@ -68,7 +68,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17 -mtune=native -march=native)
-target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17)
+target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17 -w)
 
 target_precompile_headers(${PROJECT_NAME}
 PRIVATE
@@ -85,6 +85,7 @@ find_package(Assimp REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(LibXml2 REQUIRED)
 find_package(Snappy REQUIRED)
+find_package(ZLIB REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET libavcodec libavformat libavutil libswscale libswresample libavfilter)
@@ -117,7 +118,9 @@ set(CORE_HEADERS
     ${FRAMEWORK_PATH}/libs/hap/src
     ${FRAMEWORK_PATH}/libs/Syphon/src
     ${FRAMEWORK_PATH}/libs/svgtiny/include
+    ${FRAMEWORK_PATH}/libs/tinyobjloader/include
     ${FRAMEWORK_PATH}/libs/tinygltf/include
+    ${FRAMEWORK_PATH}/libs/tinyexr/include
 
     # ${FRAMEWORK_PATH}/libs/NDISDK/include
     # ${FRAMEWORK_PATH}/libs/opencv/include/opencv4
@@ -179,6 +182,8 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
     ${FRAMEWORK_PATH}/libs/svgtiny/lib/osx/svgtiny.a
     ${FRAMEWORK_PATH}/libs/tinygltf/lib/libtinygltf.a
 
+    ZLIB::ZLIB
+
     # ${FRAMEWORK_PATH}/libs/NDISDK/lib/libndi.dylib //TODO: change to static library
 
     # ${FRAMEWORK_PATH}/libs/openvdb/lib/libopenvdb.a
@@ -203,6 +208,8 @@ set(CORE_DEFINITIONS
     # TINYGLTF_NO_INCLUDE_STB_IMAGE
     # TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE
     # TINYGLTF_IMPLEMENTATION
+    TINYOBJLOADER_IMPLEMENTATION
+
 )
 
 target_sources(${PROJECT_NAME} 

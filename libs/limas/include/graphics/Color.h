@@ -3,7 +3,7 @@
 namespace limas {
 
 struct Hsv {
-  float data_[3];
+  float data_[4];
   float& operator[](int i) { return data_[i]; }
   const float& operator[](int i) const { return data_[i]; }
 };
@@ -144,6 +144,7 @@ class FloatColor : public BaseColor<float> {
     float r = data_[0];
     float g = data_[1];
     float b = data_[2];
+    float a = data_[3];
 
     float max = std::max({r, g, b});
     float min = std::min({r, g, b});
@@ -162,7 +163,7 @@ class FloatColor : public BaseColor<float> {
       }
     }
 
-    return Hsv{h / 360.0f, s, v};
+    return Hsv{h / 360.0f, s, v, a};
   }
 
   Cmyk toCmyk() const {
@@ -211,6 +212,8 @@ class FloatColor : public BaseColor<float> {
     float h = fmod(hsv[0] * 360.0f, 360.0f);
     float s = hsv[1];
     float v = hsv[2];
+    float a = hsv[3];
+
     int hi = static_cast<int>(h / 60) % 6;
     float f = h / 60 - hi;
     float p = v * (1 - s);
@@ -218,23 +221,23 @@ class FloatColor : public BaseColor<float> {
     float t = v * (1 - (1 - f) * s);
     switch (hi) {
       case 0:
-        return FloatColor{v, t, p, 1};
+        return FloatColor{v, t, p, a};
       case 1:
-        return FloatColor{q, v, p, 1};
+        return FloatColor{q, v, p, a};
       case 2:
-        return FloatColor{p, v, t, 1};
+        return FloatColor{p, v, t, a};
       case 3:
-        return FloatColor{p, q, v, 1};
+        return FloatColor{p, q, v, a};
       case 4:
-        return FloatColor{t, p, v, 1};
+        return FloatColor{t, p, v, a};
       case 5:
-        return FloatColor{v, p, q, 1};
+        return FloatColor{v, p, q, a};
       default:
         return FloatColor{0, 0, 0, 0};  // this should never happen
     }
   }
-  static FloatColor fromHsv(float h, float s, float v) {
-    return fromHsv(Hsv{h, s, v});
+  static FloatColor fromHsv(float h, float s, float v, float a = 1) {
+    return fromHsv(Hsv{h, s, v, a});
   }
 
   static FloatColor fromCmyk(const Cmyk& cmyk) {

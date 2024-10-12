@@ -1,5 +1,10 @@
 #define PI 3.141592653589793
 #define TWO_PI PI * 2.
+#define EPS 0.0000000001
+
+float atan2(in float y, in float x) {
+    return x == 0.0 ? sign(y) * PI / 2 : atan(y, x);
+}
 
 vec3 rgb2hsv(vec3 c) {
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
@@ -7,8 +12,7 @@ vec3 rgb2hsv(vec3 c) {
     vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
 
     float d = q.x - min(q.w, q.y);
-    float e = 1.0e-10;
-    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + EPS)), d / (q.x + EPS), q.x);
 }
 
 vec3 hsv2rgb(vec3 c) {

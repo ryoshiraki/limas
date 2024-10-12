@@ -22,6 +22,17 @@ class BasePolyline {
 
   size_t getNumVertices() const { return vertices_.size(); }
 
+  float getArea() const {
+    float area = 0.0f;
+    for (std::size_t i = 1; i < vertices_.size() - 1; ++i) {
+      auto a = vertices_[i] - vertices_[0];
+      auto b = vertices_[i + 1] - vertices_[0];
+      auto c = glm::cross(a, b);
+      area += glm::length(c);
+    }
+    return area * 0.5f;
+  }
+
   float getLength() const {
     float length = 0.0f;
     for (std::size_t i = 1; i < vertices_.size(); ++i) {

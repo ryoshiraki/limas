@@ -24,8 +24,8 @@ class BaseImage {
     return *this;
   }
 
-  void allocate(int width, int height) {
-    pixels_.allocate(width, height);
+  void allocate(size_t width, size_t height, size_t num_channels) {
+    pixels_.allocate(width, height, num_channels);
     tex_.allocate(pixels_.getWidth(), pixels_.getHeight(),
                   gl::getGLInternalFormat<PixelType>(pixels_.getNumChannels()));
     tex_.loadData(&pixels_.getData()[0]);
@@ -34,14 +34,6 @@ class BaseImage {
   void setFromPixels(BasePixels2D<PixelType>& pixels) {
     pixels_ = pixels;
     tex_.allocate(pixels_.getWidth(), pixels_.getHeight(),
-                  gl::getGLInternalFormat<PixelType>(pixels_.getNumChannels()));
-    tex_.loadData(&pixels_.getData()[0]);
-  }
-
-  void setFromPixels(std::vector<PixelType>& pixels, int width, int height,
-                     int channels) {
-    pixels_.allocate(width, height, channels);
-    tex_.allocate(width, height,
                   gl::getGLInternalFormat<PixelType>(pixels_.getNumChannels()));
     tex_.loadData(&pixels_.getData()[0]);
   }

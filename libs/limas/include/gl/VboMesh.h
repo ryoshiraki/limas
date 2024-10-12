@@ -25,6 +25,7 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
   BaseVboMesh(const geom::BaseMesh<V, N, C, T, I>& mesh)
       : BaseVboMesh<V, N, C, T, I>() {
     copyFromMesh(mesh);
+    update();
   }
 
   inline BaseVboMesh<V, N, C, T, I>& operator=(
@@ -32,6 +33,7 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
     if (this != &rhs) {
       copyFromMesh(rhs);
     }
+    update();
     return *this;
   }
 

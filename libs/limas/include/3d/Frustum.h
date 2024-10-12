@@ -99,7 +99,7 @@ class Frustum {
     });
 
     geom::Mesh mesh;
-    mesh.setPositions(vertices_);
+    mesh.setVertices(vertices_);
     mesh.setIndices(indices);
     mesh.fillColor(glm::vec4(1));
 

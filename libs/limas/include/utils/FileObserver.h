@@ -30,12 +30,15 @@ class FileObserver {
 
     void unsetCallback() { conn_.disconnect(); }
 
-    void check() {
+    bool check() {
+      bool updated = false;
       time_t time = fs::getLastWriteTime(path_);
       if (time != last_time_) {
         updated_.notify(path_);
         last_time_ = time;
+        updated = true;
       }
+      return updated;
     }
 
    private:
@@ -49,10 +52,12 @@ class FileObserver {
  public:
   FileObserver() {}
 
-  void check() {
+  bool check() {
+    bool updated = false;
     for (auto& w : watches_) {
-      w.second->check();
+      updated = updated || w.second->check();
     }
+    return updated;
   }
 
   template <class ObserverClass>

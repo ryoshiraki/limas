@@ -8,11 +8,12 @@ namespace net {
 using boost::asio::ip::udp;
 
 class UdpServer : public Thread {
-  static const int MAX_BUFFER_SIZE = 4096;  // Adjust buffer size as needed
+  static const int MAX_BUFFER_SIZE = 8192;  // Adjust buffer size as needed
   using MessageHandler = std::function<void(const std::string&)>;
 
  public:
-  UdpServer(int port) : socket_(io_service_, udp::endpoint(udp::v4(), port)) {
+  UdpServer(int port)
+      : io_context_(), socket_(io_context_, udp::endpoint(udp::v4(), port)) {
     handler_ = [](const std::string& m) {
       log::info("UdpServer") << m << log::end();
     };
@@ -21,11 +22,11 @@ class UdpServer : public Thread {
 
   void start(const MessageHandler& handler) {
     handler_ = handler;
-    startThread([this]() { io_service_.run(); });
+    startThread([this]() { io_context_.run(); });
   }
 
   void stop() {
-    io_service_.stop();
+    io_context_.stop();
     stopThread();
   }
 
@@ -33,28 +34,23 @@ class UdpServer : public Thread {
   void startReceive() {
     socket_.async_receive_from(
         boost::asio::buffer(recv_buffer_), remote_endpoint_,
-        boost::bind(&UdpServer::handleReceive, this,
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
+        [this](boost::system::error_code ec, std::size_t bytes_recvd) {
+          if (!ec && bytes_recvd > 0) {
+            handleReceive(recv_buffer_, bytes_recvd);
+          }
+          startReceive();
+        });
   }
 
-  void handleReceive(const boost::system::error_code& error, std::size_t size) {
-    if (!error || error == boost::asio::error::message_size) {
-      if (size > MAX_BUFFER_SIZE) {
-        log::warn("UdpServer")
-            << "Received message size exceeds MAX_BUFFER_SIZE: " << size
-            << " bytes" << log::end();
-      } else {
-        handler_(std::string(recv_buffer_.data(), size));
-      }
-      startReceive();
-    }
+  void handleReceive(char data[], std::size_t length) {
+    std::string message(data, length);
+    handler_(message);
   }
 
-  boost::asio::io_service io_service_;
+  boost::asio::io_context io_context_;
   udp::socket socket_;
   udp::endpoint remote_endpoint_;
-  boost::array<char, MAX_BUFFER_SIZE> recv_buffer_;
+  char recv_buffer_[MAX_BUFFER_SIZE];
   MessageHandler handler_;
 };
 

@@ -152,8 +152,8 @@ inline bool addParam(limas::Parameter<T> &param, T min, T max) {
   }
 
   T tmp = param.getValue();
-  if (ImGui::SliderScalar(param.getName().c_str(), type, &tmp, &min, &max, NULL,
-                          0)) {
+  std::string name = param.getName() + "##";
+  if (ImGui::SliderScalar(name.c_str(), type, &tmp, &min, &max, NULL, 0)) {
     param.setValue(tmp);
     return true;
   }
@@ -168,7 +168,8 @@ inline bool addParam(limas::Parameter<T> &param) {
 template <>
 inline bool addParam<bool>(limas::Parameter<bool> &param) {
   bool tmp = param.getValue();
-  if (Checkbox(param.getName().c_str(), &tmp)) {
+  std::string name = param.getName() + "##";
+  if (Checkbox(name.c_str(), &tmp)) {
     param.setValue(tmp);
     return true;
   }
@@ -178,7 +179,8 @@ inline bool addParam<bool>(limas::Parameter<bool> &param) {
 template <>
 inline bool addParam<std::string>(limas::Parameter<std::string> &param) {
   std::string tmp = param.getValue();
-  if (InputTextString(param.getName().c_str(), &tmp)) {
+  std::string name = param.getName() + "##";
+  if (InputTextString(name, &tmp)) {
     param.setValue(tmp);
     return true;
   }
@@ -196,7 +198,8 @@ inline bool addParam(limas::Parameter<glm::vec<N, T>> &param,
   }
 
   glm::vec<N, T> tmp = param.getValue();
-  if (SliderVec(param.getName(), &tmp, min, max)) {
+  std::string name = param.getName() + "##";
+  if (SliderVec(name, &tmp, min, max)) {
     param.setValue(tmp);
     return true;
   }

@@ -19,14 +19,13 @@ class BaseTimer {
     using Ptr = std::shared_ptr<Node>;
 
     Node() = delete;
-    Node(Duration start_time, Duration duration, bool b_loop,
-         const std::function<void(void)>& callback = 0)
+    Node(Duration start_time, Duration duration,
+         const std::function<void(void)>& finish_callback = 0)
         : start_time_(start_time),
           elapsed_(Duration(0)),
           duration_(duration),
-          b_loop_(b_loop),
           position_(0),
-          callback_(callback) {}
+          finish_callback_(finish_callback) {}
     virtual ~Node() {}
 
     virtual void update(Duration now) {
@@ -46,15 +45,14 @@ class BaseTimer {
     double getPosition() const { return position_; }
 
     void call() {
-      if (callback_) callback_();
+      if (finish_callback_) finish_callback_();
     }
 
     Duration start_time_;
     Duration duration_;
     Duration elapsed_;
     double position_;
-    bool b_loop_;
-    std::function<void(void)> callback_;
+    std::function<void(void)> finish_callback_;
   };
 
   BaseTimer() {}
@@ -67,16 +65,24 @@ class BaseTimer {
 
   bool isRunning() const { return stopwatch.isRunning(); }
 
-  typename Node::Ptr add(const std::string& key, Duration duration, bool b_loop,
-                         const std::function<void(void)>& callback = nullptr) {
+  typename Node::Ptr add(
+      const std::string& key, Duration duration,
+      const std::function<void(void)>& finish_callback = nullptr) {
     if (this->nodes_.find(key) != this->nodes_.end()) {
-      log::warn("EventTimer") << key << " is ready set." << log::end();
+      log::warn("Timer") << key << " is already set." << log::end();
       return nullptr;
     }
     auto node =
-        std::make_shared<Node>(this->getTime(), duration, b_loop, callback);
+        std::make_shared<Node>(this->getTime(), duration, finish_callback);
     this->nodes_.insert(std::make_pair(key, node));
     return node;
+  }
+
+  typename Node::Ptr add(
+      Duration duration,
+      const std::function<void(void)>& finish_callback = nullptr) {
+    std::string key = "node_" + std::to_string(++counter_);
+    return add(key, duration, finish_callback);
   }
 
   typename Node::Ptr getNode(const std::string& key) const {
@@ -127,12 +133,8 @@ class BaseTimer {
       obj->update(time);
       if (obj->position_ >= 1) {
         obj->call();
-        if (obj->b_loop_) {
-          obj->start_time_ = time;
-        } else {
-          it = nodes_.erase(it);
-          continue;
-        }
+        it = nodes_.erase(it);
+        continue;
       }
       ++it;
     }
@@ -145,6 +147,7 @@ class BaseTimer {
 
   BaseStopwatch<Clock> stopwatch;
   std::map<std::string, typename Node::Ptr> nodes_;
+  uint32_t counter_ = 0;
 };
 
 using Timer = BaseTimer<std::chrono::system_clock>;

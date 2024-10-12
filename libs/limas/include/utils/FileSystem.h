@@ -9,7 +9,7 @@ namespace fs {
 
 using namespace std;
 
-inline string getFilename(const string& filepath) {
+inline string getStem(const string& filepath) {
   return filesystem::path(filepath).stem().string();
 }
 
@@ -180,8 +180,31 @@ inline bool copy(const string& from, const string& to) {
 }
 
 inline void sortPathsByDict(vector<string>& paths) {
-  sort(paths.begin(), paths.end(),
-       [](string& a, string& b) { return getFilename(a) < getFilename(b); });
+  sort(paths.begin(), paths.end(), [](string& a, string& b) {
+    size_t i = 0, j = 0;
+    while (i < a.size() && j < b.size()) {
+      if (std::isdigit(a[i]) && std::isdigit(b[j])) {
+        size_t i_start = i, j_start = j;
+        while (i < a.size() && std::isdigit(a[i])) ++i;
+        while (j < b.size() && std::isdigit(b[j])) ++j;
+
+        int num_a = std::stoi(a.substr(i_start, i - i_start));
+        int num_b = std::stoi(b.substr(j_start, j - j_start));
+
+        if (num_a != num_b) {
+          return num_a < num_b;
+        }
+      } else {
+        if (a[i] != b[j]) {
+          return a[i] < b[j];
+        }
+        ++i;
+        ++j;
+      }
+    }
+
+    return a.size() < b.size();
+  });
 }
 
 inline vector<string> getSortedPathsByDict(vector<string>& files) {
@@ -212,6 +235,7 @@ inline vector<string> readFileLineByLine(const string& path) {
 inline vector<vector<string> > loadCsv(const string& path) {
   vector<vector<string> > rows;
   auto lines = readFileLineByLine(path);
+  rows.reserve(lines.size());
   for (auto& l : lines) {
     auto elems = util::getSplit(l, ",");
     rows.push_back(elems);
@@ -221,8 +245,10 @@ inline vector<vector<string> > loadCsv(const string& path) {
 
 inline void saveCsv(const string& path, const vector<vector<string> >& rows) {
   ofstream ofs(path);
-  for (auto& row : rows)
+  for (auto& row : rows) {
     for (auto& ele : row) ofs << ele << ',';
+    ofs << "\n";
+  }
   ofs << endl;
 }
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+yes | brew install cmake
+yes | brew install ninja
+yes | brew install pkg-config
+
 yes | brew install glfw
 yes | brew install glew
 yes | brew install glm

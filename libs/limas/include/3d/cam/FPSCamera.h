@@ -10,7 +10,7 @@ class FPSCamera : public Camera {
   FPSCamera()
       : Camera(),
         b_pressed_(false),
-        pivot_dist_(100),
+        pivot_dist_(0),
         control_params_({1.0f, 1.0f, 1.2f}) {
     setPosition({0, 0, pivot_dist_});
     lookAt({0, 0, 0}, {0, 1, 0});

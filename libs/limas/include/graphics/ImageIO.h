@@ -3,6 +3,7 @@
 #include "graphics/Image.h"
 #include "system/Exception.h"
 #include "system/Logger.h"
+#include "tinyexr.h"
 #include "utils/FileSystem.h"
 
 namespace limas {
@@ -66,6 +67,31 @@ class ImageIO {
     BaseImage<PixelType> image;
     BasePixels2D<PixelType> pixels = loadPixelsFromMemory(mem, mem_len);
     image.setFromPixels(pixels);
+    return image;
+  }
+
+  static FloatImage loadEXR(const std::string& filepath) {
+    FloatImage image;
+    float* out;  // width * height * RGBA
+    int width;
+    int height;
+    const char* err = nullptr;  // or nullptr in C++11
+
+    int ret = LoadEXR(&out, &width, &height, filepath.c_str(), &err);
+
+    if (ret != TINYEXR_SUCCESS) {
+      if (err) {
+        log::error("loadExr") << err << log::end;
+        FreeEXRErrorMessage(err);  // release memory of error message.
+      }
+    } else {
+      FloatPixels2D pixels;
+      pixels.allocate(width, height, 4);
+      pixels.loadData(out);
+      image.setFromPixels(pixels);
+      free(out);  // release memory of image data
+    }
+
     return image;
   }
 

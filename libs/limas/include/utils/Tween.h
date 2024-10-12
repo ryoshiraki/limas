@@ -19,13 +19,14 @@ class BaseTween : public BaseTimer<Clock> {
 
     Node() = delete;
     Node(const T& start, const T& end, Duration start_time, Duration duration,
-         bool b_loop,
          const std::function<float(float)>& easing = math::easing::none,
-         const std::function<void(void)>& callback = 0)
-        : BaseTimer<Clock>::Node(start_time, duration, b_loop, callback),
+         const std::function<void(const T&)>& update_callback = nullptr,
+         const std::function<void(void)>& finish_callback = nullptr)
+        : BaseTimer<Clock>::Node(start_time, duration, finish_callback),
           value_(start),
           start_(start),
           end_(end),
+          update_callback_(update_callback),
           easing_(easing) {}
 
     T get() const { return value_; }
@@ -34,10 +35,14 @@ class BaseTween : public BaseTimer<Clock> {
     virtual void update(Duration time) override {
       BaseTimer<Clock>::Node::update(time);
       value_ = start_ + (end_ - start_) * easing_(this->position_);
+      if (update_callback_) {
+        update_callback_(value_);
+      }
     }
 
     T value_;
     T start_, end_;
+    std::function<void(const T&)> update_callback_;
     std::function<float(float)> easing_;
   };
 
@@ -47,17 +52,30 @@ class BaseTween : public BaseTimer<Clock> {
   typename Node<T>::Ptr add(
       const std::string& key, const boost::type_identity_t<T>& start,
       const boost::type_identity_t<T>& end, Duration duration,
-      bool b_loop = false,
       const std::function<float(float)>& easing = math::easing::none,
-      const std::function<void(void)>& callback = nullptr) {
+      const std::function<void(const T&)>& update_callback = nullptr,
+      const std::function<void(void)>& finish_callback = nullptr) {
     if (this->nodes_.find(key) != this->nodes_.end()) {
       log::warn("Tween") << key << " is ready set." << log::end();
       return nullptr;
     }
-    auto node = std::make_shared<Node<T>>(start, end, this->getTime(), duration,
-                                          b_loop, easing, callback);
+    auto node =
+        std::make_shared<Node<T>>(start, end, this->getTime(), duration, easing,
+                                  update_callback, finish_callback);
     this->nodes_.insert(std::make_pair(key, node));
     return node;
+  }
+
+  template <class T>
+  typename Node<T>::Ptr add(
+      const boost::type_identity_t<T>& start,
+      const boost::type_identity_t<T>& end, Duration duration,
+      const std::function<float(float)>& easing = math::easing::none,
+      const std::function<void(const T&)>& update_callback = nullptr,
+      const std::function<void(void)>& finish_callback = nullptr) {
+    std::string key = "node_" + std::to_string(count_++);
+    return add<T>(key, start, end, duration, easing, update_callback,
+                  finish_callback);
   }
 
   template <class T>
@@ -68,6 +86,8 @@ class BaseTween : public BaseTimer<Clock> {
     else
       return T();
   }
+
+  uint32_t count_ = 0;
 };
 
 using Tween = BaseTween<std::chrono::system_clock>;

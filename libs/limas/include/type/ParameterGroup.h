@@ -143,6 +143,8 @@ class ParameterGroup {
   json serialize() const {
     json j;
 
+    j["name"] = getName();
+
     for (const auto& param : data_->params_) {
       j["parameters"][param->getName()] = param->serialize();
     }
@@ -155,6 +157,10 @@ class ParameterGroup {
   }
 
   void deserialize(const json& j) {
+    if (j.contains("name")) {
+      auto name = j["name"].get<std::string>();
+      setName(name);
+    }
     if (j.contains("parameters")) {
       for (const auto& [name, data] : j["parameters"].items()) {
         auto type = data["type"].get<std::string>();
