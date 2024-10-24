@@ -167,6 +167,14 @@ class Renderer : private Noncopyable {
     unbindTexture();
   }
 
+size_t getBitmapStringWidth(const std::string& text) const {
+  return font_.getSize(text);
+}
+
+size_t getBitmapStringHeight() const {
+  return font_.getCharacterWidth();
+}
+
   void drawDot(const glm::vec3& p) {
     pushMatrix();
     translate(p);

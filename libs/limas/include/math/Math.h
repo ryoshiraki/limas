@@ -47,6 +47,8 @@ inline float lerp(float x, float x0, float x1, float y0, float y1,
   return b_clamp ? clamp(y, y0, y1) : y;
 }
 
+inline float fract(float x) { return x - std::floor(x); }
+
 template <typename T>
 inline float mix(T a, T b, float t) {
   return a * (1 - t) + b * t;

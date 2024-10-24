@@ -1,5 +1,6 @@
 #pragma once
 #include "geom/Mesh.h"
+#include "math/Math.h"
 
 namespace limas {
 namespace prim {
@@ -10,55 +11,58 @@ class Sphere : public geom::Mesh {
       : radius_(radius) {
     for (int y = 0; y <= res_y; ++y) {
       for (int x = 0; x <= res_x; ++x) {
-        float x_seg = static_cast<float>(x) / static_cast<float>(res_x);
-        float y_seg = static_cast<float>(y) / static_cast<float>(res_y);
+        float s = static_cast<float>(x) / static_cast<float>(res_x);
+        float t = static_cast<float>(y) / static_cast<float>(res_y);
 
-        glm::vec3 pos{radius * cos(glm::pi<float>() * x_seg * 2.0f) *
-                          sin(glm::pi<float>() * y_seg),
-                      radius * cos(glm::pi<float>() * y_seg),
-                      radius * sin(glm::pi<float>() * x_seg * 2.0f) *
-                          sin(glm::pi<float>() * y_seg)};
+        glm::vec3 pos{
+            radius * cos(math::pi() * s * 2.0f) * sin(math::pi() * t),
+            radius * cos(math::pi() * t),
+            radius * sin(math::pi() * s * 2.0f) * sin(math::pi() * t)};
 
         vertices_.push_back(pos);
         normals_.push_back(glm::normalize(pos));
-        texcoords_.push_back({x_seg, y_seg});
+        texcoords_.push_back({s, t});
       }
     }
 
     if (b_wireframe) {
       for (int y = 0; y < res_y; ++y) {
         for (int x = 0; x < res_x; ++x) {
-          int bl = y * (res_x + 1) + x;
-          int br = y * (res_x + 1) + x + 1;
-          int tl = (y + 1) * (res_x + 1) + x;
-          int tr = (y + 1) * (res_x + 1) + x + 1;
+          int i0 = res_x + res_y * res_x;
+          int i1 = res_x + 1 + res_y * res_x;
 
-          indices_.push_back(bl);
-          indices_.push_back(br);
-          indices_.push_back(bl);
-          indices_.push_back(tl);
+          int i2 = res_x + (res_y + 1) * res_x;
+          int i3 = res_x + 1 + (res_y + 1) * res_x;
 
-          if (y != res_y - 1) {
-            indices_.push_back(tl);
-            indices_.push_back(tr);
-          }
+          indices_.push_back(i0);
+          indices_.push_back(i1);
 
-          if (x != res_x - 1) {
-            indices_.push_back(br);
-            indices_.push_back(tr);
-          }
+          indices_.push_back(i1);
+          indices_.push_back(i3);
+
+          indices_.push_back(i3);
+          indices_.push_back(i2);
+
+          indices_.push_back(i2);
+          indices_.push_back(i0);
         }
       }
     } else {
       for (int y = 0; y < res_y; ++y) {
         for (int x = 0; x < res_x; ++x) {
-          indices_.push_back(y * (res_x + 1) + x);
-          indices_.push_back((y + 1) * (res_x + 1) + x);
-          indices_.push_back((y + 1) * (res_x + 1) + x + 1);
+          int i0 = res_x + res_y * res_x;
+          int i1 = res_x + 1 + res_y * res_x;
 
-          indices_.push_back(y * (res_x + 1) + x);
-          indices_.push_back((y + 1) * (res_x + 1) + x + 1);
-          indices_.push_back(y * (res_x + 1) + x + 1);
+          int i2 = res_x + (res_y + 1) * res_x;
+          int i3 = res_x + 1 + (res_y + 1) * res_x;
+
+          indices_.push_back(i0);
+          indices_.push_back(i1);
+          indices_.push_back(i3);
+
+          indices_.push_back(i3);
+          indices_.push_back(i2);
+          indices_.push_back(i0);
         }
       }
     }

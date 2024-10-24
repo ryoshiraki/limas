@@ -16,8 +16,6 @@ class TextureBase {
     const GLenum target_;
     const size_t width_;
     const size_t height_;
-    // size_t width_;
-    // size_t height_;
 
     const size_t depth_;
     const GLenum internal_format_;

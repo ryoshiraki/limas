@@ -54,6 +54,90 @@ class BasePolyline {
     return vertices_.back();
   }
 
+  V getPointAt(size_t index) const {
+    if (index >= vertices_.size()) {
+      log::warn("Polyline")
+          << "getPointAt(): Index out of bounds: " << index << log::end();
+      return vertices_.back();
+    }
+    return vertices_[index];
+  }
+
+  V getPointAtInterpolated(float t) const {
+    if (vertices_.size() < 2) {
+      log::warn("Polyline")
+          << "getPointAtInterpolated(): Not enough vertices to interpolate."
+          << log::end();
+      return V(0);
+    }
+
+    t = std::clamp(t, 0.0f, static_cast<float>(vertices_.size() - 1));
+    size_t index = static_cast<size_t>(t);
+    float fraction = t - index;
+
+    V p0 = getPointAt(index);
+    V p1 = (index < vertices_.size() - 1) ? getPointAt(index + 1) : p0;
+
+    return mix(p0, p1, fraction);
+  }
+
+  V getTangentAt(size_t index) const {
+    if (index == 0) {
+      return glm::normalize(vertices_[1] - vertices_[0]);
+    }
+    if (index >= vertices_.size() - 1) {
+      return glm::normalize(vertices_.back() - vertices_[vertices_.size() - 2]);
+    }
+
+    return glm::normalize(vertices_[index + 1] - vertices_[index]);
+  }
+
+  V getTangentAtInterpolated(float t) const {
+    if (vertices_.size() < 2) {
+      log::warn("Polyline") << "getTangentAtInterpolated(): Not enough "
+                               "vertices to compute tangent."
+                            << log::end();
+      return V(0);
+    }
+
+    t = std::clamp(t, 0.0f, static_cast<float>(vertices_.size() - 1));
+    size_t index = static_cast<size_t>(t);
+    float fraction = t - index;
+
+    V tangent1 = getTangentAt(index);
+    V tangent2 =
+        (index < vertices_.size() - 1) ? getTangentAt(index + 1) : tangent1;
+
+    V interpolated_tangent = mix(tangent1, tangent2, fraction);
+    return glm::normalize(interpolated_tangent);
+  }
+
+  float getCurvatureAt(float t) const {
+    if (vertices_.size() < 3) {
+      log::warn("Polyline")
+          << "getCurvatureAt(): Not enough vertices to compute curvature."
+          << log::end();
+      return 0.0f;
+    }
+
+    t = std::clamp(t, 0.0f, static_cast<float>(vertices_.size() - 1));
+
+    V tangent1 = getTangentAtInterpolated(t - 0.1f);
+    V tangent2 = getTangentAtInterpolated(t + 0.1f);
+
+    float dot_product = glm::dot(tangent1, tangent2);
+    dot_product = std::clamp(dot_product, -1.0f, 1.0f);
+    float angle = std::acos(dot_product);
+
+    float segment_length = glm::length(getPointAtInterpolated(t + 0.1f) -
+                                       getPointAtInterpolated(t - 0.1f));
+    if (segment_length > 0) {
+      return angle / segment_length;
+    } else {
+      return 0.0f;
+    }
+  }
+
   BasePolyline<V> getResampledBySpacing(float space) const {
     if (space == 0 || getNumVertices() == 0) return *this;
     BasePolyline<V> poly;

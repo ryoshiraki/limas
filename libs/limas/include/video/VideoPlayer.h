@@ -16,6 +16,7 @@ extern "C" {
 #include "gl/Texture2D.h"
 #include "graphics/Pixels.h"
 #include "system/Thread.h"
+#include "system/ThreadPool.h"
 #include "utils/Stopwatch.h"
 
 namespace limas {
@@ -61,7 +62,7 @@ class VideoPlayer : public Thread {
   };
   VideoState state_;
 
-  gl::Texture2D::Ptr tex_;
+  gl::Texture2D tex_;
   Pixels2D pixels_;
   PreciseStopwatch stopwatch_;
 
@@ -96,7 +97,7 @@ class VideoPlayer : public Thread {
 
       if (avformat_open_input(&context_.format_context, filename.c_str(),
                               nullptr, nullptr) != 0) {
-        log::error("VideoPlayer") << "Couldn't open video file" << log::end();
+        log::error("VideoPlayer") << "Couldn't open " << filename << log::end();
         break;
       }
 
@@ -174,12 +175,12 @@ class VideoPlayer : public Thread {
           break;
         }
 
-        tex_ = gl::Texture2D::create(context_.width, context_.height, GL_RGB8);
-        tex_->setMinFilter(GL_LINEAR);
-        tex_->setMagFilter(GL_LINEAR);
+        tex_.allocate(context_.width, context_.height, GL_RGB8);
+        tex_.setMinFilter(GL_LINEAR);
+        tex_.setMagFilter(GL_LINEAR);
         std::vector<GLubyte> data(context_.width * context_.height * 3);
         std::fill(data.begin(), data.end(), 0);
-        tex_->loadData(&data[0]);
+        tex_.loadData(&data[0]);
       }
 
       pixels_.allocate(context_.width, context_.height, 3);
@@ -199,7 +200,7 @@ class VideoPlayer : public Thread {
       // }
       state_.b_loaded = true;
 
-      startThread();
+      startThread([this]() { this->threadedFunction(); });
 
       return true;
     } while (false);
@@ -242,7 +243,7 @@ class VideoPlayer : public Thread {
 
       if (sws_scale(context_.sws_context, frame->data, frame->linesize, 0,
                     pixels_.getHeight(), data, size) > 0) {
-        tex_->loadData(&pixels_.getData()[0]);
+        tex_.loadData(&pixels_.getData()[0]);
       }
       last_frame_ = frame;
       state_.b_new_frame = true;
@@ -301,8 +302,8 @@ class VideoPlayer : public Thread {
   }
 
   const Pixels2D &getPixels() const { return pixels_; }
-  const gl::Texture2D::Ptr &getTexture() const { return tex_; }
-  gl::Texture2D::Ptr &getTexture() { return tex_; }
+  const gl::Texture2D &getTexture() const { return tex_; }
+  gl::Texture2D &getTexture() { return tex_; }
   bool isFrameNew() const { return state_.b_new_frame; }
   size_t getWidth() const { return context_.width; }
   size_t getHeight() const { return context_.height; }

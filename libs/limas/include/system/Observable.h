@@ -6,7 +6,7 @@ namespace limas {
 class Connection {
  public:
   Connection() {}
-  Connection(const boost::signals2::connection conn) : conn_(conn) {}
+  Connection(const boost::signals2::connection& conn) : conn_(conn) {}
   bool isConnected() const { return conn_.connected(); }
   void disconnect() {
     if (isConnected()) conn_.disconnect();
@@ -39,7 +39,8 @@ class Observable : private Noncopyable {
   Signal signal_;
 };
 
-class ObservableNoArgs : private Noncopyable {
+template <>
+class Observable<void> : private Noncopyable {
  public:
   using ObserverFunction = void();
   using Signal = boost::signals2::signal<ObserverFunction>;

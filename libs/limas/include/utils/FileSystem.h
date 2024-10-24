@@ -232,12 +232,12 @@ inline vector<string> readFileLineByLine(const string& path) {
   return lines;
 }
 
-inline vector<vector<string> > loadCsv(const string& path) {
+inline vector<vector<string> > loadCsv(const string& path, int skip = 0) {
   vector<vector<string> > rows;
   auto lines = readFileLineByLine(path);
-  rows.reserve(lines.size());
-  for (auto& l : lines) {
-    auto elems = util::getSplit(l, ",");
+  rows.reserve(lines.size() - skip);
+  for (int i = skip; i < lines.size(); i++) {
+    auto elems = util::getSplit(lines[i], ",");
     rows.push_back(elems);
   }
   return rows;

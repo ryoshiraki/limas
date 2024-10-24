@@ -68,7 +68,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17 -mtune=native -march=native)
-target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17 -w)
+target_compile_options(${PROJECT_NAME} PRIVATE -std=c++20 -w)
 
 target_precompile_headers(${PROJECT_NAME}
 PRIVATE

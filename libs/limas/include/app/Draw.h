@@ -267,6 +267,14 @@ inline void drawBitmapString(const std::string& text, float x, float y) {
   app::getRenderer()->drawBitmapString(text, glm::vec3(x, y, 0));
 }
 
+inline size_t getBitmapStringWidth(const std::string& text) {
+  return app::getRenderer()->getBitmapStringWidth(text);
+}
+
+inline size_t getBitmapStringHeight() {
+  return app::getRenderer()->getBitmapStringHeight();
+}
+
 #pragma mark LEGACY STYLE
 namespace legacy {
 inline void begin(GLenum mode) { app::getRenderer()->begin(mode); }

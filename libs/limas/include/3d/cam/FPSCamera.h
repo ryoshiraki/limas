@@ -1,34 +1,42 @@
 #pragma once
-#include "3d/cam/Camera.h"
+#include "3d/cam/BaseCamera.h"
+#include "3d/cam/OrthoCamera.h"
+#include "3d/cam/PerspectiveCamera"
 #include "app/Window.h"
 #include "system/Observable.h"
 
 namespace limas {
 
-class FPSCamera : public Camera {
+template <class T>
+class BaseFPSCamera : public T {
+  static_assert(std::is_base_of<BaseCamera, T>::value,
+                "T must be a descendant of BaseCamera");
+
  public:
-  FPSCamera()
-      : Camera(),
+  BaseFPSCamera()
+      : T(),
         b_pressed_(false),
         pivot_dist_(0),
         control_params_({1.0f, 1.0f, 1.2f}) {
-    setPosition({0, 0, pivot_dist_});
-    lookAt({0, 0, 0}, {0, 1, 0});
+    this->setPosition({0, 0, pivot_dist_});
+    this->lookAt({0, 0, 0}, {0, 1, 0});
   }
 
   void setDistanceToPivot(float dist) { pivot_dist_ = dist; }
   float getDistanceToPivot() const { return pivot_dist_; }
 
   void enableKeyInput(Window::Ptr& win) {
-    key_pressed_ = win->setOnKeyPressed(this, &FPSCamera::keyPressed);
-    key_released_ = win->setOnKeyReleased(this, &FPSCamera::keyReleased);
+    key_pressed_ = win->setOnKeyPressed(this, &BaseFPSCamera::keyPressed);
+    key_released_ = win->setOnKeyReleased(this, &BaseFPSCamera::keyReleased);
   }
 
   void enableMouseInput(Window::Ptr& win) {
-    mouse_pressed_ = win->setOnMousePressed(this, &FPSCamera::mousePressed);
-    mouse_moved_ = win->setOnMouseMoved(this, &FPSCamera::mouseMoved);
-    mouse_released_ = win->setOnMouseReleased(this, &FPSCamera::mouseReleased);
-    mouse_scrolled_ = win->setOnMouseScrolled(this, &FPSCamera::mouseScrolled);
+    mouse_pressed_ = win->setOnMousePressed(this, &BaseFPSCamera::mousePressed);
+    mouse_moved_ = win->setOnMouseMoved(this, &BaseFPSCamera::mouseMoved);
+    mouse_released_ =
+        win->setOnMouseReleased(this, &BaseFPSCamera::mouseReleased);
+    mouse_scrolled_ =
+        win->setOnMouseScrolled(this, &BaseFPSCamera::mouseScrolled);
   }
 
   void disableKeyInput() {
@@ -47,22 +55,22 @@ class FPSCamera : public Camera {
     float move_amt = 10.0 * control_params_.translate_sensitivity;
     switch (e.key) {
       case 'w':
-        dolly(-move_amt);
+        this->dolly(-move_amt);
         break;
       case 'a':
-        truck(-move_amt);
+        this->truck(-move_amt);
         break;
       case 's':
-        dolly(move_amt);
+        this->dolly(move_amt);
         break;
       case 'd':
-        truck(move_amt);
+        this->truck(move_amt);
         break;
       case 'q':
-        boom(move_amt);
+        this->boom(move_amt);
         break;
       case 'e':
-        boom(-move_amt);
+        this->boom(-move_amt);
         break;
       default:
         break;
@@ -75,11 +83,11 @@ class FPSCamera : public Camera {
     if (e.button == 0) {
       b_pressed_ = true;
       last_mouse_ = glm::vec2(e.x, e.y);
-      last_axis_[0] = getSideDir();
-      last_axis_[1] = getUpDir();
-      last_axis_[2] = getLookAtDir();
-      last_pos_ = getPosition();
-      last_ori_ = getOrientation();
+      last_axis_[0] = this->getSideDir();
+      last_axis_[1] = this->getUpDir();
+      last_axis_[2] = this->getLookAtDir();
+      last_pos_ = this->getPosition();
+      last_ori_ = this->getOrientation();
     }
   }
 
@@ -103,10 +111,10 @@ class FPSCamera : public Camera {
           glm::angleAxis(dy, U) * (-last_axis_[2] * getDistanceToPivot());
       rotate_axis = glm::angleAxis(dx, last_axis_[1]) * rotate_axis;
 
-      setPosition(last_pos_ + last_axis_[2] * getDistanceToPivot() +
-                  rotate_axis);
-      setOrientation(glm::angleAxis(dx, last_axis_[1]) * glm::angleAxis(dy, U) *
-                     last_ori_);
+      this->setPosition(last_pos_ + last_axis_[2] * getDistanceToPivot() +
+                        rotate_axis);
+      this->setOrientation(glm::angleAxis(dx, last_axis_[1]) *
+                           glm::angleAxis(dy, U) * last_ori_);
     }
   }
 
@@ -114,9 +122,10 @@ class FPSCamera : public Camera {
 
   void mouseScrolled(const ScrollEventArgs& e) {
     float multiplier = powf(control_params_.zoom_sensitivity + 0.1f, e.y);
-    glm::vec3 new_pos = getPosition() + getLookAtDir() * (getDistanceToPivot() *
-                                                          (1 - multiplier));
-    setPosition(new_pos);
+    glm::vec3 new_pos =
+        this->getPosition() +
+        this->getLookAtDir() * (this->getDistanceToPivot() * (1 - multiplier));
+    this->setPosition(new_pos);
     setDistanceToPivot(std::max<float>(getDistanceToPivot() * multiplier, 1.0));
   }
 
@@ -157,5 +166,8 @@ class FPSCamera : public Camera {
   Connection mouse_released_;
   Connection mouse_scrolled_;
 };
+
+using FPSCamera = BaseFPSCamera<PerspectiveCamera>;
+using FPSOrthoCamera = BaseFPSCamera<OrthoCamera>;
 
 }  // namespace limas

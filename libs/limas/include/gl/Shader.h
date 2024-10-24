@@ -8,11 +8,18 @@ class Shader : public ShaderBase {
  public:
   Shader() {}
 
-  bool load(const std::string& vertex, const std::string& fragment) {
-    if (loadVertex(vertex) && loadFragment(fragment)) {
-      return link();
-    }
-    return false;
+  bool load(const std::string& vertex, const std::string& fragment,
+            const std::string& geometry = "",
+            const std::string& tess_control = "",
+            const std::string& tess_evaluation = "") {
+    bool success = true;
+    success &= loadVertex(vertex);
+    success &= loadFragment(fragment);
+    if (!geometry.empty()) success &= loadGeometry(geometry);
+    if (!tess_control.empty()) success &= loadTessControl(tess_control);
+    if (!tess_evaluation.empty())
+      success &= loadTessEvaluation(tess_evaluation);
+    return success && link();
   }
 
   bool loadVertex(const std::string& filepath) {
