@@ -6,19 +6,21 @@ namespace prim {
 
 class Cylinder : public geom::Mesh {
  public:
-  Cylinder(float radius, int height, int num_segments_radius,
-           int num_segments_height, bool b_capped = true)
+  Cylinder(float radius, float height, int num_segments_radius,
+           int num_segments_height, bool b_capped = false,
+           bool b_wireframe = false)
       : radius_(radius), height_(height) {
     for (int y = 0; y <= num_segments_height; ++y) {
       for (int x = 0; x <= num_segments_radius; ++x) {
-        float theta = x * 2.0f * M_PI / num_segments_radius;
+        float theta = ((float)x / (float)num_segments_radius) * 2.0f * M_PI;
 
-        glm::vec3 v = glm::vec3(radius * cos(theta),
-                                height * y / (float)num_segments_height,
-                                radius * sin(theta));
+        glm::vec3 v = glm::vec3(
+            radius * cos(theta),
+            -height * 0.5 + height * ((float)y / (float)num_segments_height),
+            radius * sin(theta));
         glm::vec3 n = glm::normalize(glm::vec3(v.x, 0.0f, v.z));
-        glm::vec2 t = glm::vec2((float)x / num_segments_radius,
-                                (float)y / num_segments_height);
+        glm::vec2 t = glm::vec2((float)x / (float)num_segments_radius,
+                                (float)y / (float)num_segments_height);
 
         vertices_.push_back(v);
         normals_.push_back(n);
@@ -26,22 +28,32 @@ class Cylinder : public geom::Mesh {
       }
     }
 
-    // Calculate indices here
-    // Again, this is just a concept, you need to calculate indices according to
-    // the cylinder you want to build
-    for (int y = 0; y < num_segments_height; ++y) {
-      for (int x = 0; x < num_segments_radius; ++x) {
-        int start = y * (num_segments_radius + 1) + x;
-        indices_.push_back(start);
-        indices_.push_back(start + 1);
-        indices_.push_back(start + num_segments_radius + 2);
+    if (b_wireframe) {
+      for (int y = 0; y < num_segments_height; ++y) {
+        for (int x = 0; x < num_segments_radius; ++x) {
+          int start = y * (num_segments_radius + 1) + x;
+          indices_.push_back(start);
+          indices_.push_back(start + 1);
 
-        indices_.push_back(start);
-        indices_.push_back(start + num_segments_radius + 2);
-        indices_.push_back(start + num_segments_radius + 1);
+          indices_.push_back(start);
+          indices_.push_back(start + num_segments_radius + 1);
+        }
+      }
+
+    } else {
+      for (int y = 0; y < num_segments_height; ++y) {
+        for (int x = 0; x < num_segments_radius; ++x) {
+          int start = y * (num_segments_radius + 1) + x;
+          indices_.push_back(start);
+          indices_.push_back(start + 1);
+          indices_.push_back(start + num_segments_radius + 2);
+
+          indices_.push_back(start);
+          indices_.push_back(start + num_segments_radius + 2);
+          indices_.push_back(start + num_segments_radius + 1);
+        }
       }
     }
-
     if (b_capped) {
       // Compute positions and indices for the bottom cap
       for (int i = 0; i <= num_segments_radius; ++i) {

@@ -22,7 +22,7 @@ class BaseCamera : public Node {
   glm::vec3 getWorldToScreen(const glm::vec3& p, int x, int y, int w,
                              int h) const {
     glm::vec4 viewport(x, y, w, h);
-    auto proj = getProjectionMatrix(x, y, w, h);
+    auto proj = getProjectionMatrix(x, x + w, y, y + h);
     auto view = getModelViewMatrix();
     auto sp = glm::project(p, view, proj, viewport);
     sp[1] = h - sp[1];

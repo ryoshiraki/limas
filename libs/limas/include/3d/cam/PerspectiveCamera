@@ -14,7 +14,8 @@ class PerspectiveCamera : public BaseCamera {
   glm::mat4 getProjectionMatrix(float left, float right, float bottom,
                                 float top) const override {
     float aspect = (right - left) / (top - bottom);
-    glm::mat4 projection = glm::perspective(glm::radians(fov_), aspect, near_, far_);
+    glm::mat4 projection =
+        glm::perspective(glm::radians(fov_), aspect, near_, far_);
     projection = glm::translate(glm::mat4(1.0f),
                                 {-lens_offset_.x, -lens_offset_.y, 0.0f}) *
                  projection;

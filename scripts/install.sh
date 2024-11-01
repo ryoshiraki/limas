@@ -13,6 +13,8 @@ yes | brew install assimp
 yes | brew install freetype
 yes | brew install ffmpeg
 
+yes | brew install cgal
+
 # for tinysvg
 yes | brew install libxml2
 

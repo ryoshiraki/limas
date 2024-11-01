@@ -79,13 +79,15 @@ find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
-find_package(Boost 1.85.0 REQUIRED COMPONENTS system iostreams filesystem python312 numpy312)
+# find_package(Boost 1.85.0 REQUIRED COMPONENTS system iostreams filesystem python312 numpy312)
+find_package(Boost 1.85.0 REQUIRED COMPONENTS system iostreams filesystem)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(Assimp REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(LibXml2 REQUIRED)
 find_package(Snappy REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(CGAL REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET libavcodec libavformat libavutil libswscale libswresample libavfilter)
@@ -122,6 +124,8 @@ set(CORE_HEADERS
     ${FRAMEWORK_PATH}/libs/tinygltf/include
     ${FRAMEWORK_PATH}/libs/tinyexr/include
 
+
+
     # ${FRAMEWORK_PATH}/libs/NDISDK/include
     # ${FRAMEWORK_PATH}/libs/opencv/include/opencv4
     # ${FRAMEWORK_PATH}/libs/openvdb/include
@@ -151,6 +155,8 @@ set(CORE_SOURCES
     ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonServerDirectory.mm
     ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonObject.mm
 
+  
+
     # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformMove.cpp
     # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformRender.cpp
     # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformRotate.cpp
@@ -168,8 +174,8 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
     Boost::system
     Boost::iostreams
     Boost::filesystem
-    Boost::python
-    Boost::numpy
+    # Boost::python
+    # Boost::numpy
     ${Python3_LIBRARIES}
     ${ASSIMP_LIBRARIES}
     ${FREETYPE_LIBRARIES}
@@ -184,6 +190,8 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
 
     ZLIB::ZLIB
 
+    CGAL::CGAL
+    
     # ${FRAMEWORK_PATH}/libs/NDISDK/lib/libndi.dylib //TODO: change to static library
 
     # ${FRAMEWORK_PATH}/libs/openvdb/lib/libopenvdb.a
