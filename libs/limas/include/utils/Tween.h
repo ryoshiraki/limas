@@ -56,7 +56,7 @@ class BaseTween : public BaseTimer<Clock> {
       const std::function<void(const T&)>& update_callback = nullptr,
       const std::function<void(void)>& finish_callback = nullptr) {
     if (this->nodes_.find(key) != this->nodes_.end()) {
-      log::warn("Tween") << key << " is ready set." << log::end();
+      logger::warn("Tween") << key << " is ready set." << logger::end();
       return nullptr;
     }
     auto node =

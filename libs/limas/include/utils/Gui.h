@@ -236,9 +236,9 @@ inline void addParams(limas::ParameterGroup &params) {
       } else if (type == typeid(std::string)) {
         addParam(param->as<std::string>());
       } else {
-        limas::log::error("GUI")
+        limas::logger::error("GUI")
             << type.name() << " of " << param->getName()
-            << " is not supported now" << limas::log::end();
+            << " is not supported now" << limas::logger::end();
       }
     }
   }

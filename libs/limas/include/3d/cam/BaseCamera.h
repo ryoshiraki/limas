@@ -6,8 +6,8 @@ namespace limas {
 
 class BaseCamera : public Node {
  public:
-  virtual glm::mat4 getProjectionMatrix(float left, float right, float bottom,
-                                        float top) const = 0;
+  virtual glm::mat4 getProjectionMatrix(float x, float y, float width,
+                                        float height) const = 0;
 
   void setNearClip(float near) { near_ = near; }
   float getNearClip() const { return near_; }

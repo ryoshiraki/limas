@@ -124,10 +124,10 @@ class BaseImage {
                             pixels.getHeight(), pixels.getNumChannels(),
                             &pixels.getData()[0], 0);
     else if (ext.empty()) {
-      log::warn() << "filepath have no extension." << log::end();
+      logger::warn() << "filepath have no extension." << logger::end();
       return false;
     }
-    log::warn() << ext << " is not supported." << log::end();
+    logger::warn() << ext << " is not supported." << logger::end();
     return false;
   }
 

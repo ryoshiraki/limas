@@ -4,6 +4,8 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#include "geom/Mesh.h"
+
 namespace limas {
 namespace geom {
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -12,8 +14,9 @@ using Point3D = Kernel::Point_3;
 using Delaunay2D = CGAL::Delaunay_triangulation_2<Kernel>;
 using Delaunay3D = CGAL::Delaunay_triangulation_3<Kernel>;
 
+template <typename T>
 inline std::vector<std::tuple<int, int, int>> delaunayTriangulation2D(
-    const std::vector<glm::vec2>& vertices) {
+    const std::vector<T>& vertices) {
   Delaunay2D dt;
   std::unordered_map<Point2D, int> point_index_map;
 
@@ -36,8 +39,9 @@ inline std::vector<std::tuple<int, int, int>> delaunayTriangulation2D(
   return triangles;
 }
 
+template <typename T>
 inline std::vector<std::tuple<int, int, int, int>> delaunayTriangulation3D(
-    const std::vector<glm::vec3>& vertices) {
+    const std::vector<T>& vertices) {
   Delaunay3D dt;
   std::unordered_map<Point3D, int> point_index_map;
 
@@ -59,6 +63,23 @@ inline std::vector<std::tuple<int, int, int, int>> delaunayTriangulation3D(
   }
 
   return tetrahedrons;
+}
+
+template <typename T>
+inline geom::Mesh delaunayTriangulation2DToMesh(
+    const std::vector<T>& vertices) {
+  auto triangles = delaunayTriangulation2D(vertices);
+  geom::Mesh mesh;
+
+  for (auto& v : vertices) {
+    mesh.addVertex(glm::vec3(v.x, v.y, 0));
+  }
+  for (auto& t : triangles) {
+    mesh.addIndex(std::get<0>(t));
+    mesh.addIndex(std::get<1>(t));
+    mesh.addIndex(std::get<2>(t));
+  }
+  return mesh;
 }
 
 }  // namespace geom

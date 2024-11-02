@@ -437,7 +437,7 @@ class BitmapFont {
     try {
       image_ = ImageIO::loadFromMemory(font_data_.data(), font_data_.size());
     } catch (Exception& e) {
-      log::error("BitmapFont") << e.what() << log::end();
+      logger::error("BitmapFont") << e.what() << logger::end();
     }
 
     geom::Mesh m = prim::Rectangle(0, 0, CHAR_WIDTH + CHAR_SPACE, CHAR_HEIGHT);
@@ -488,7 +488,7 @@ class BitmapFont {
   float getPosition(char c) {
     auto it = word_map_.find(c);
     if (it != word_map_.end()) return it->second / (float)NUM_CHARS;
-    log::warn("BitmapFont") << c << " is not supported" << log::end();
+    logger::warn("BitmapFont") << c << " is not supported" << logger::end();
     return 0;
   }
 };

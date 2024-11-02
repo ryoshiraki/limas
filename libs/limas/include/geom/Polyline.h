@@ -56,8 +56,8 @@ class BasePolyline {
 
   V getPointAt(size_t index) const {
     if (index >= vertices_.size()) {
-      log::warn("Polyline")
-          << "getPointAt(): Index out of bounds: " << index << log::end();
+      logger::warn("Polyline")
+          << "getPointAt(): Index out of bounds: " << index << logger::end();
       return vertices_.back();
     }
     return vertices_[index];
@@ -65,9 +65,9 @@ class BasePolyline {
 
   V getPointAtInterpolated(float t) const {
     if (vertices_.size() < 2) {
-      log::warn("Polyline")
+      logger::warn("Polyline")
           << "getPointAtInterpolated(): Not enough vertices to interpolate."
-          << log::end();
+          << logger::end();
       return V(0);
     }
 
@@ -94,9 +94,9 @@ class BasePolyline {
 
   V getTangentAtInterpolated(float t) const {
     if (vertices_.size() < 2) {
-      log::warn("Polyline") << "getTangentAtInterpolated(): Not enough "
+      logger::warn("Polyline") << "getTangentAtInterpolated(): Not enough "
                                "vertices to compute tangent."
-                            << log::end();
+                            << logger::end();
       return V(0);
     }
 
@@ -114,9 +114,9 @@ class BasePolyline {
 
   float getCurvatureAt(float t) const {
     if (vertices_.size() < 3) {
-      log::warn("Polyline")
+      logger::warn("Polyline")
           << "getCurvatureAt(): Not enough vertices to compute curvature."
-          << log::end();
+          << logger::end();
       return 0.0f;
     }
 
@@ -153,9 +153,9 @@ class BasePolyline {
   BasePolyline<V> getResampledByCount(int count) const {
     float total_length = getLength();
     if (count < 2) {
-      log::warn("Polyline")
+      logger::warn("Polyline")
           << "getResampledByCount(): requested " << count
-          << " points, using minimum count of 2 " << log::end();
+          << " points, using minimum count of 2 " << logger::end();
       count = 2;
     }
 

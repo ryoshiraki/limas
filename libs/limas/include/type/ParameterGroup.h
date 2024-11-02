@@ -42,9 +42,9 @@ class ParameterGroup {
 
   ParameterGroup addChild(const ParameterGroup& child) {
     if (hasChild(child.getName())) {
-      log::warn("ParameterGroup")
+      logger::warn("ParameterGroup")
           << "Adding another child with same name '" << child.getName()
-          << "' to group '" << getName() << "'" << log::end();
+          << "' to group '" << getName() << "'" << logger::end();
     }
 
     data_->children_.push_back(child.data_);
@@ -75,9 +75,9 @@ class ParameterGroup {
   template <typename T>
   Parameter<T>& addParam(const Parameter<T>& param) {
     if (hasParam(param.getName())) {
-      log::warn("ParameterGroup")
+      logger::warn("ParameterGroup")
           << "Adding another parameter with same name '" << param.getName()
-          << "' to group '" << getName() << "'" << log::end();
+          << "' to group '" << getName() << "'" << logger::end();
     }
 
     auto shared_param = std::make_shared<Parameter<T>>(param);
@@ -190,9 +190,9 @@ class ParameterGroup {
           auto& param = addParam<glm::vec4>(name);
           param.deserialize(data);
         } else {
-          log::warn("ParameterGroup")
+          logger::warn("ParameterGroup")
               << "Type '" << type << "' is not supported to deserialize"
-              << log::end();
+              << logger::end();
         }
       }
     }

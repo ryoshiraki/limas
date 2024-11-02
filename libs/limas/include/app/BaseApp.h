@@ -15,13 +15,13 @@ class BaseApp {
   BaseApp(const Window::Settings& settings) {
     glfwSetErrorCallback(BaseApp::errorCallback);
     if (!glfwInit()) {
-      log::error("BaseApp") << "failed to initialize GLFW" << log::end();
+      logger::error("BaseApp") << "failed to initialize GLFW" << logger::end();
       glfwTerminate();
     }
 
     main_window_ = Window::createWindow(settings, nullptr);
     if (main_window_ == nullptr) {
-      log::error("BaseApp") << "failed to create window" << log::end();
+      logger::error("BaseApp") << "failed to create window" << logger::end();
       glfwTerminate();
     }
     windows_.push_back(main_window_);
@@ -42,7 +42,7 @@ class BaseApp {
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-      log::error("BaseApp") << "failed to initialize GLEW" << log::end();
+      logger::error("BaseApp") << "failed to initialize GLEW" << logger::end();
       glfwTerminate();
     }
   }
@@ -54,10 +54,10 @@ class BaseApp {
   }
 
   void run() {
-    log::info("BaseApp") << "start running" << log::end();
+    logger::info("BaseApp") << "start running" << logger::end();
 
     if (windows_.empty()) {
-      log::error("BaseApp") << "no window found" << log::end();
+      logger::error("BaseApp") << "no window found" << logger::end();
       glfwTerminate();
       return;
     }
@@ -103,7 +103,7 @@ class BaseApp {
     }
 
     glfwTerminate();
-    log::info("App") << "stop running" << log::end();
+    logger::info("App") << "stop running" << logger::end();
   }
 
   std::vector<Window::Ptr>& getWindows() { return windows_; }
@@ -178,7 +178,7 @@ class BaseApp {
   uint32_t frame_number = 0;
 
   static void errorCallback(int code, const char* description) {
-    log::error("BaseApp") << code << ": " << description << log::end();
+    logger::error("BaseApp") << code << ": " << description << logger::end();
   }
 };
 

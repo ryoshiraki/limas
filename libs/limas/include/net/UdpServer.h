@@ -15,7 +15,7 @@ class UdpServer : public Thread {
   UdpServer(int port)
       : io_context_(), socket_(io_context_, udp::endpoint(udp::v4(), port)) {
     handler_ = [](const std::string& m) {
-      log::info("UdpServer") << m << log::end();
+      logger::info("UdpServer") << m << logger::end();
     };
     startReceive();
   }

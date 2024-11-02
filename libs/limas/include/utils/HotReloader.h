@@ -29,8 +29,8 @@ class HotReloader : public FileObserver {
 
   void watchVertexShader(gl::Shader& shader, const std::string& filepath) {
     watch(filepath, [&](const std::string& e) {
-      log::info("HotReloader")
-          << "Vertex shader: " << e << " is reloaded." << log::end();
+      logger::info("HotReloader")
+          << "Vertex shader: " << e << " is reloaded." << logger::end();
       shader.loadVertex(e);
       shader.link();
     });
@@ -38,16 +38,16 @@ class HotReloader : public FileObserver {
 
   void watchFragmentShader(gl::Shader& shader, const std::string& filepath) {
     watch(filepath, [&](const std::string& e) {
-      log::info("HotReloader")
-          << "Fragment shader: " << e << " is reloaded." << log::end();
+      logger::info("HotReloader")
+          << "Fragment shader: " << e << " is reloaded." << logger::end();
       shader.loadFragment(e);
       shader.link();
     });
   }
   void watchGeometryShader(gl::Shader& shader, const std::string& filepath) {
     watch(filepath, [&](const std::string& e) {
-      log::info("HotReloader")
-          << "Geometry shader: " << e << " is reloaded." << log::end();
+      logger::info("HotReloader")
+          << "Geometry shader: " << e << " is reloaded." << logger::end();
       shader.loadGeometry(e);
       shader.link();
     });

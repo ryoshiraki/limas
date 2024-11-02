@@ -62,7 +62,7 @@ class Window {
     GLFWwindow* window =
         glfwCreateWindow(settings.width, settings.height, "", NULL, share_with);
     if (window == NULL) {
-      log::error("Window") << "cannot create window" << log::end();
+      logger::error("Window") << "cannot create window" << logger::end();
       return nullptr;
     }
 

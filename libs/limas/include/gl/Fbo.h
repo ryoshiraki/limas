@@ -120,21 +120,22 @@ class Fbo {
     bool is_completed = status == GL_FRAMEBUFFER_COMPLETE;
     switch (status) {
       case GL_FRAMEBUFFER_COMPLETE:
-        log::error("gl::Fbo") << "COMPLETE" << log::end();
+        logger::error("gl::Fbo") << "COMPLETE" << logger::end();
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-        log::error("gl::Fbo") << "INCOMPLETE_ATTACHMENT" << log::end();
+        logger::error("gl::Fbo") << "INCOMPLETE_ATTACHMENT" << logger::end();
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-        log::error("gl::Fbo") << "INCOMPLETE_MISSING_ATTACHMENT" << log::end();
+        logger::error("gl::Fbo")
+            << "INCOMPLETE_MISSING_ATTACHMENT" << logger::end();
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-        log::error("gl::Fbo") << "INCOMPLETE_DRAW_BUFFER" << log::end();
+        logger::error("gl::Fbo") << "INCOMPLETE_DRAW_BUFFER" << logger::end();
         break;
       case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-        log::error("gl::Fbo") << "INCOMPLETE_READ_BUFFER" << log::end();
+        logger::error("gl::Fbo") << "INCOMPLETE_READ_BUFFER" << logger::end();
         break;
-        log::error("gl::Fbo") << "UNKNOWN STATUS" << log::end();
+        logger::error("gl::Fbo") << "UNKNOWN STATUS" << logger::end();
       default:
         break;
     }

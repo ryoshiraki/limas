@@ -241,7 +241,7 @@ class ShaderBase {
     if (block_index != GL_INVALID_INDEX) {
       glUniformBlockBinding(getProgram(), block_index, index);
     } else {
-      log::warn("Shader") << "bindUniformBlock: GL_INVALID_INDEX" << log::end();
+      logger::warn("Shader") << "bindUniformBlock: GL_INVALID_INDEX" << logger::end();
     }
   }
 
@@ -260,8 +260,8 @@ class ShaderBase {
   std::string read(const std::string& filepath) const {
     std::ifstream ifs(filepath);
     if (!ifs)
-      log::error("Shader") << "cannot read shader file from " << filepath
-                           << log::end();
+      logger::error("Shader") << "cannot read shader file from " << filepath
+                           << logger::end();
 
     std::ostringstream source;
 
@@ -296,8 +296,8 @@ class ShaderBase {
     std::vector<GLchar> error_log(size);
     glGetShaderInfoLog(shader, size, &size, &error_log[0]);
     std::string error_log_str(error_log.begin(), error_log.end());
-    log::error("Shader") << "ERROR::SHADER_COMPILATION_ERROR\n"
-                         << error_log_str << log::end();
+    logger::error("Shader") << "ERROR::SHADER_COMPILATION_ERROR\n"
+                         << error_log_str << logger::end();
   }
 
   void printLinkErrors() const {
@@ -306,8 +306,8 @@ class ShaderBase {
     std::vector<GLchar> error_log(size);
     glGetProgramInfoLog(getProgram(), size, &size, &error_log[0]);
     std::string error_log_str(error_log.begin(), error_log.end());
-    log::error("Shader") << "ERROR::PROGRAM_LINKING_ERROR\n"
-                         << error_log_str << log::end();
+    logger::error("Shader") << "ERROR::PROGRAM_LINKING_ERROR\n"
+                         << error_log_str << logger::end();
   }
 };
 

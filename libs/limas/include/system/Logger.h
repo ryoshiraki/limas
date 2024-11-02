@@ -6,7 +6,7 @@
 #include "utils/Utils.h"
 
 namespace limas {
-namespace log {
+namespace logger {
 
 static struct endlog_t {
 } endl;
@@ -209,5 +209,5 @@ inline Logger& errorToFile(const std::string& name = "") {
   return Singleton<FileLogger>::getInstance().error(name);
 }
 
-}  // namespace log
+}  // namespace logger
 }  // namespace limas

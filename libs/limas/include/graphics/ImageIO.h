@@ -81,7 +81,7 @@ class ImageIO {
 
     if (ret != TINYEXR_SUCCESS) {
       if (err) {
-        log::error("loadExr") << err << log::end;
+        logger::error("loadExr") << err << logger::end;
         FreeEXRErrorMessage(err);  // release memory of error message.
       }
     } else {

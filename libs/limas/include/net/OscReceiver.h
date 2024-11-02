@@ -77,9 +77,9 @@ class OscReceiver {
       try {
         handlePacket(packet);
       } catch (const OSCPP::ParseError& e) {
-        log::error("OSC Receiver") << e.what() << log::end();
+        logger::error("OSC Receiver") << e.what() << logger::end();
       } catch (const std::exception& e) {
-        log::error("OSC Receiver") << e.what() << log::end();
+        logger::error("OSC Receiver") << e.what() << logger::end();
       }
     });
   }
@@ -131,7 +131,7 @@ class OscReceiver {
       auto it = handlers_.find(msg.address());
       if (it != handlers_.end()) {
         if (!it->second->handle(args)) {
-          log::error("OSC Receiver") << "failed to handle packet" << log::end();
+          logger::error("OSC Receiver") << "failed to handle packet" << logger::end();
         }
       }
     }

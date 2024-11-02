@@ -7,8 +7,13 @@ class OrthoCamera : public BaseCamera {
  public:
   OrthoCamera() : BaseCamera(), zoom_x_(1), zoom_y_(1) {}
 
-  glm::mat4 getProjectionMatrix(float left, float right, float bottom,
-                                float top) const override {
+  glm::mat4 getProjectionMatrix(float x, float y, float width,
+                                float height) const override {
+    float left = x;
+    float right = x + width;
+    float bottom = y;
+    float top = y + height;
+
     float zx = 1 / zoom_x_;
     float zy = 1 / zoom_y_;
     auto projection =

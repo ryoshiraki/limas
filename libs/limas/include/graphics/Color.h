@@ -54,7 +54,7 @@ class BaseColor {
     return BaseColor(gray, gray, gray, 1);
   }
 
-  glm::vec4 toGlm() const {
+  glm::vec4 toVec() const {
     return glm::vec4(data_[0], data_[1], data_[2], data_[3]);
   }
 

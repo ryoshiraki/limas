@@ -69,7 +69,7 @@ class BaseTimer {
       const std::string& key, Duration duration,
       const std::function<void(void)>& finish_callback = nullptr) {
     if (this->nodes_.find(key) != this->nodes_.end()) {
-      log::warn("Timer") << key << " is already set." << log::end();
+      logger::warn("Timer") << key << " is already set." << logger::end();
       return nullptr;
     }
     auto node =

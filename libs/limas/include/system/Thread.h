@@ -24,12 +24,12 @@ class Thread : private Noncopyable {
         try {
           func();
         } catch (Exception& e) {
-          log::error("Thread") << e.what() << log::end();
+          logger::error("Thread") << e.what() << logger::end();
         }
         b_running_.store(false, std::memory_order_release);
       });
     } catch (const std::system_error& e) {
-      log::error("Thread creation failed") << e.what() << log::end();
+      logger::error("Thread creation failed") << e.what() << logger::end();
       b_running_.store(false, std::memory_order_release);
       throw;
     }

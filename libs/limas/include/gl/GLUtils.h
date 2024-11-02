@@ -31,7 +31,7 @@ inline void checkError(const std::string& name = "GL") {
         message = "UNKNOWN ERROR";
         break;
     }
-    log::error(name) << message << log::end();
+    logger::error(name) << message << logger::end();
     error = glGetError();
   }
 }
@@ -249,7 +249,7 @@ static GLenum getGLInternalFormat(size_t channels) {
     }
   }
 
-  log::warn("getGLInternalFormat()") << "unsupported format " << log::end();
+  logger::warn("getGLInternalFormat()") << "unsupported format " << logger::end();
   return 0;  // Error case: unsupported number of channels
 }
 
@@ -326,9 +326,9 @@ static GLenum getGLFormatFromInternal(GLenum internal_format) {
       return GL_STENCIL_INDEX;
 
     default:
-      log::warn("GetGLFormatFromInternal()")
+      logger::warn("GetGLFormatFromInternal()")
           << "unknown internal format " << internal_format
-          << ", returning GL_RGBA" << log::end();
+          << ", returning GL_RGBA" << logger::end();
       return GL_RGBA8;
   }
 }
@@ -400,9 +400,9 @@ static GLenum getGLTypeFromInternal(GLenum internal_format) {
       return GL_UNSIGNED_BYTE;
 
     default:
-      log::warn("GetGlTypeFromInternal()")
+      logger::warn("GetGlTypeFromInternal()")
           << "unknown internal format " << internal_format
-          << ", returning GL_UNSIGNED_BYTE" << log::end();
+          << ", returning GL_UNSIGNED_BYTE" << logger::end();
       return GL_UNSIGNED_BYTE;
   }
 }
@@ -431,8 +431,8 @@ static uint getNumChannelsFromFormat(GLenum format) {
       num_channels = 4;
       break;
     default:
-      log::warn("getNumChannelsFromInternal()")
-          << "format " << format << " is unsupported." << log::end();
+      logger::warn("getNumChannelsFromInternal()")
+          << "format " << format << " is unsupported." << logger::end();
   }
   return num_channels;
 }
@@ -474,8 +474,8 @@ static size_t getByteOfType(GLenum internal_format) {
       byte = sizeof(GL_DOUBLE);
       break;
     default:
-      log::warn("getByteOfType()")
-          << "type " << type << " is unsupported." << log::end();
+      logger::warn("getByteOfType()")
+          << "type " << type << " is unsupported." << logger::end();
   }
   return byte;
 }
