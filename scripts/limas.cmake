@@ -1,3 +1,5 @@
+cmake_policy(SET CMP0069 NEW)
+
 set(CMAKE_GENERATOR "Ninja")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -66,6 +68,7 @@ endif()
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(BUILD_SHARED_LIBS OFF)
 
 # target_compile_options(${PROJECT_NAME} PRIVATE -std=c++17 -mtune=native -march=native)
 target_compile_options(${PROJECT_NAME} PRIVATE -std=c++20 -w)
@@ -75,29 +78,47 @@ PRIVATE
  ${FRAMEWORK_PATH}/libs/limas/include/pch.h
 )
 
+
+
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
+
+# set(GLEW_STATIC ON)
 find_package(GLEW REQUIRED)
+
+#
 find_package(glm REQUIRED)
-# find_package(Boost 1.85.0 REQUIRED COMPONENTS system iostreams filesystem python312 numpy312)
+
+# set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.85.0 REQUIRED COMPONENTS system iostreams filesystem)
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+
+# set(ASSIMP_BUILD_STATIC_LIB ON)
 find_package(Assimp REQUIRED)
+
+# set(FREETYPE_STATIC ON)
 find_package(Freetype REQUIRED)
+
+#
 find_package(LibXml2 REQUIRED)
+
+# set(SNAPPY_USE_STATIC_LIBS ON)
 find_package(Snappy REQUIRED)
+
+#
 find_package(ZLIB REQUIRED)
+
+# set(CGAL_USE_STATIC_LIBS ON)
 find_package(CGAL REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET libavcodec libavformat libavutil libswscale libswresample libavfilter)
+# pkg_check_modules(LIBXML2 REQUIRED IMPORTED_TARGET libxml-2.0)
 
 set(CORE_HEADERS
     ${OPENGL_INCLUDE_DIRS} 
     ${GLFW_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS} 
-    ${Python3_INCLUDE_DIRS} 
     ${ASSIMP_INCLUDE_DIRS}
     ${FFMPEG_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
@@ -109,7 +130,10 @@ set(CORE_HEADERS
     ${FRAMEWORK_PATH}/libs/limas/include 
     ${FRAMEWORK_PATH}/libs/json/include
     ${FRAMEWORK_PATH}/libs/stb/include
-    ${FRAMEWORK_PATH}/libs/oscpp/include
+    ${FRAMEWORK_PATH}/libs/oscpp/include #unstable
+    ${FRAMEWORK_PATH}/libs/oscpack/include
+    # ${FRAMEWORK_PATH}/libs/oscpack/include/osc
+    # ${FRAMEWORK_PATH}/libs/oscpack/include/ip
 
     ${FRAMEWORK_PATH}/libs/imgui/include
     ${FRAMEWORK_PATH}/libs/FastNoiseLite/include
@@ -120,11 +144,9 @@ set(CORE_HEADERS
     ${FRAMEWORK_PATH}/libs/hap/src
     ${FRAMEWORK_PATH}/libs/Syphon/src
     ${FRAMEWORK_PATH}/libs/svgtiny/include
-    ${FRAMEWORK_PATH}/libs/tinyobjloader/include
     ${FRAMEWORK_PATH}/libs/tinygltf/include
     ${FRAMEWORK_PATH}/libs/tinyexr/include
-
-
+    ${FRAMEWORK_PATH}/libs/box2d/include
 
     # ${FRAMEWORK_PATH}/libs/NDISDK/include
     # ${FRAMEWORK_PATH}/libs/opencv/include/opencv4
@@ -155,7 +177,11 @@ set(CORE_SOURCES
     ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonServerDirectory.mm
     ${FRAMEWORK_PATH}/libs/limas/include/syphon/RSSyphonObject.mm
 
-  
+    # ${FRAMEWORK_PATH}/libs/oscpack/src/IpEndpointName.cpp
+    # ${FRAMEWORK_PATH}/libs/oscpack/src/OscTypes.cpp
+    # ${FRAMEWORK_PATH}/libs/oscpack/src/OscReceivedElements.cpp
+    # ${FRAMEWORK_PATH}/libs/oscpack/src/OscPrintReceivedElements.cpp
+    # ${FRAMEWORK_PATH}/libs/oscpack/src/OscOutboundPacketStream.cpp
 
     # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformMove.cpp
     # ${FRAMEWORK_PATH}/libs/libgizmo/include/GizmoTransformRender.cpp
@@ -174,9 +200,6 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
     Boost::system
     Boost::iostreams
     Boost::filesystem
-    # Boost::python
-    # Boost::numpy
-    ${Python3_LIBRARIES}
     ${ASSIMP_LIBRARIES}
     ${FREETYPE_LIBRARIES}
     ${LIBXML2_LIBRARIES}
@@ -187,6 +210,8 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
     ${FRAMEWORK_PATH}/libs/Syphon/lib/osx/Syphon.framework
     ${FRAMEWORK_PATH}/libs/svgtiny/lib/osx/svgtiny.a
     ${FRAMEWORK_PATH}/libs/tinygltf/lib/libtinygltf.a
+    ${FRAMEWORK_PATH}/libs/oscpack/lib/liboscpack.a
+    ${FRAMEWORK_PATH}/libs/box2d/lib/libbox2d.a
 
     ZLIB::ZLIB
 
@@ -204,7 +229,6 @@ set(CORE_LIBRARIES ${OPENGL_LIBRARIES} GLEW::GLEW glfw
 
 set(CORE_DEFINITIONS 
     GLM_ENABLE_EXPERIMENTAL
-    # BOOST_PYTHON_STATIC_LIB
     BOOST_COMPUTE_USE_CPP11
     STB_IMAGE_STATIC
     STB_IMAGE_RESIZE_STATIC
@@ -216,8 +240,6 @@ set(CORE_DEFINITIONS
     # TINYGLTF_NO_INCLUDE_STB_IMAGE
     # TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE
     # TINYGLTF_IMPLEMENTATION
-    TINYOBJLOADER_IMPLEMENTATION
-
 )
 
 target_sources(${PROJECT_NAME} 
@@ -250,8 +272,6 @@ message(STATUS "Using ccache: ${CCACHE_PROGRAM}")
 message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
 message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
 message(STATUS "GLM include dirs: ${GLM_INCLUDE_DIRS}")
-message(STATUS "Python3 include dirs: ${Python3_INCLUDE_DIRS}")
-message(STATUS "Python3 libraries: ${Python3_LIBRARIES}")
 message(STATUS "FFmpeg include dirs: ${FFMPEG_INCLUDE_DIRS}")
 message(STATUS "FFmpeg libraries: ${FFMPEG_LIBRARIES}")
 message(STATUS "Assimp include dirs: ${ASSIMP_INCLUDE_DIRS}")

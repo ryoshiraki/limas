@@ -37,6 +37,26 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
     return *this;
   }
 
+  void allocateIndices(size_t size) {
+    this->indices_.resize(size);
+    updateIndices();
+  }
+
+  void allocateVertices(size_t size) {
+    this->vertices_.resize(size);
+    updateVertices();
+  }
+
+  void allocateTexCoords(size_t size) {
+    this->texcoords_.resize(size);
+    updateTexCoords();
+  }
+
+  void allocateColors(size_t size) {
+    this->colors_.resize(size);
+    updateColors();
+  }
+
   void enableVertices() { vao_.bindVbo(V_vbo_, POSITION_ATTRIBUTE, 3); }
   void enableNormals() { vao_.bindVbo(N_vbo_, NORMAL_ATTRIBUTE, 3); }
   void enableColors() { vao_.bindVbo(C_vbo_, COLOR_ATTRIBUTE, 4); }
@@ -112,6 +132,14 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
       vao_.drawElements(mode, count);
     } else {
       vao_.drawArrays(mode, start, count);
+    }
+  }
+
+  void drawInstanced(GLenum mode, int instance_count) const {
+    if (this->getNumIndices()) {
+      vao_.drawElementsInstanced(mode, this->getNumIndices(), instance_count);
+    } else {
+      vao_.drawArraysInstanced(mode, 0, this->getNumVertices(), instance_count);
     }
   }
 

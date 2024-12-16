@@ -35,6 +35,9 @@ inline void setColor(const Color& c) { app::getRenderer()->setColor(c); }
 inline void setColor(float r, float g, float b, float a) {
   setColor(Color{r, g, b, a});
 }
+inline void setColorHsv(float h, float s, float v, float a) {
+  setColor(Color::fromHsv(h, s, v, a));
+}
 
 inline void bindTexture(const TextureBase& tex) {
   app::getRenderer()->bindTexture(tex.getID());
@@ -68,11 +71,11 @@ inline MatrixStack& flip(bool x, bool y) {
 inline MatrixStack& rotate(const glm::mat3& rotation) {
   return app::getRenderer()->rotate(rotation);
 }
-inline MatrixStack& rotateRadian(float theta, const glm::vec3& axis) {
-  return app::getRenderer()->rotateRadian(theta, axis);
+inline MatrixStack& rotateRadians(float theta, const glm::vec3& axis) {
+  return app::getRenderer()->rotateRadians(theta, axis);
 }
-inline MatrixStack& rotateRadian(float theta, float x, float y, float z) {
-  return rotateRadian(theta, glm::vec3(x, y, z));
+inline MatrixStack& rotateRadians(float theta, float x, float y, float z) {
+  return rotateRadians(theta, glm::vec3(x, y, z));
 }
 inline MatrixStack& rotateDegree(float angle, const glm::vec3& axis) {
   return app::getRenderer()->rotateDegree(angle, axis);
@@ -136,6 +139,10 @@ inline void drawSegment(float x0, float y0, float z0, float x1, float y1,
   drawSegment(glm::vec3(x0, y0, z0), glm::vec3(x1, y1, z1));
 }
 
+inline void drawSegment(const glm::vec2& p0, const glm::vec2& p1) {
+  drawSegment(glm::vec3(p0.x, p0.y, 0), glm::vec3(p1.x, p1.y, 0));
+}
+
 inline void drawCross(const glm::vec3& p, float size) {
   drawSegment(p.x - size, p.y, 0, p.x + size, p.y, 0);
   drawSegment(p.x, p.y - size, 0, p.x, p.y + size, 0);
@@ -143,6 +150,10 @@ inline void drawCross(const glm::vec3& p, float size) {
 
 inline void drawCross(float x, float y, float size) {
   drawCross(glm::vec3(x, y, 0), size);
+}
+
+inline void drawRectangle(const glm::vec2& p, float w, float h) {
+  app::getRenderer()->drawRectangle(glm::vec3(p, 0), w, h);
 }
 
 inline void drawRectangle(const glm::vec3& p, float w, float h) {
@@ -161,12 +172,46 @@ inline void drawWireRectangle(float x, float y, float w, float h) {
   drawWireRectangle(glm::vec3(x, y, 0), w, h);
 }
 
+#pragma mark DRAW ELLIPSE
+inline void drawEllipse(const glm::vec2& p, float a, float b) {
+  app::getRenderer()->drawEllipse(glm::vec3(p, 0), a, b);
+}
+
+inline void drawEllipse(const glm::vec3& p, float a, float b) {
+  app::getRenderer()->drawEllipse(p, a, b);
+}
+
+inline void drawEllipse(float x, float y, float a, float b) {
+  drawEllipse(glm::vec3(x, y, 0), a, b);
+}
+
+inline void drawWireEllipse(const glm::vec2& p, float a, float b) {
+  app::getRenderer()->drawWireEllipse(glm::vec3(p, 0), a, b);
+}
+
+inline void drawWireCircle(const glm::vec3& p, float a, float b) {
+  app::getRenderer()->drawWireEllipse(p, a, b);
+}
+
+inline void drawWireEllipse(float x, float y, float a, float b) {
+  drawWireEllipse(glm::vec3(x, y, 0), a, b);
+}
+
+#pragma mark DRAW CIRCLE
+inline void drawCircle(const glm::vec2& p, float r) {
+  app::getRenderer()->drawCircle(glm::vec3(p, 0), r);
+}
+
 inline void drawCircle(const glm::vec3& p, float r) {
   app::getRenderer()->drawCircle(p, r);
 }
 
 inline void drawCircle(float x, float y, float r) {
   drawCircle(glm::vec3(x, y, 0), r);
+}
+
+inline void drawWireCircle(const glm::vec2& p, float r) {
+  app::getRenderer()->drawWireCircle(glm::vec3(p, 0), r);
 }
 
 inline void drawWireCircle(const glm::vec3& p, float r) {
@@ -265,6 +310,10 @@ inline void drawTextureArb(const TextureBase& tex, float x, float y,
 
 inline void drawBitmapString(const std::string& text, float x, float y) {
   app::getRenderer()->drawBitmapString(text, glm::vec3(x, y, 0));
+}
+
+inline void drawLargeBitmapString(const std::string& text, float x, float y) {
+  app::getRenderer()->drawLargeBitmapString(text, glm::vec3(x, y, 0));
 }
 
 inline size_t getBitmapStringWidth(const std::string& text) {

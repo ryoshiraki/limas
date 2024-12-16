@@ -83,10 +83,27 @@ class BaseInstancedVboMesh : public gl::BaseVboMesh<V, N, C, T, I> {
     return instance_colors_;
   }
 
+  void setTranslations(const std::vector<glm::vec3>& translations) {
+    translations_ = translations;
+    translation_vbo_.allocate(translations_);
+    this->vao_.bindVbo(translation_vbo_, TRANSLATION_ATTRIBUTE, 3);
+    this->vao_.setVertexAttribDivisor(TRANSLATION_ATTRIBUTE, 1);
+  }
+
+  void setRotations(const std::vector<glm::quat>& rotations) {
+    rotations_ = rotations;
+  }
+  void setScales(const std::vector<glm::vec3>& scales) { scales_ = scales; }
+  void setInstanceColors(const std::vector<glm::vec4>& instance_colors) {
+    instance_colors_ = instance_colors;
+  }
+
   std::vector<glm::vec3>& getTranslations() { return translations_; }
   std::vector<glm::quat>& getRotations() { return rotations_; }
   std::vector<glm::vec3>& getScales() { return scales_; }
   std::vector<glm::vec4>& getInstanceColors() { return instance_colors_; }
+
+  size_t getNumTranslations() const { return translations_.size(); }
 
  protected:
   size_t num_instances_;

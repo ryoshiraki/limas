@@ -30,28 +30,27 @@ struct VoronoiCell2D {
 };
 
 template <typename T>
-inline std::vector<VoronoiCell2D<T>> voronoiDiagram2D(
+inline std::vector<VoronoiCell2D<T>> getVoronoiCells2D(
     const std::vector<T>& vertices) {
   std::vector<VoronoiCell2D<T>> cells;
-  Voronoi2D vd;
-  for (auto v : vertices) {
-    vd.insert(Site2D(v.x, v.y));
+
+  std::vector<Point2D> points(vertices.size());
+  for (size_t i = 0; i < vertices.size(); ++i) {
+    Point2D p(vertices[i].x, vertices[i].y);
+    points[i] = p;
   }
+
+  Voronoi2D vd;
+  vd.insert(points.begin(), points.end());
 
   if (!vd.is_valid()) {
     logger::error("Voronoi diagram is not valid");
     return cells;
   }
 
-  for (int i = 0; i < vertices.size(); i++) {
-    Point2D p(vertices[i].x, vertices[i].y);
-
+  for (int i = 0; i < points.size(); i++) {
+    const auto& p = points[i];
     VD::Locate_result lr = vd.locate(p);
-    // if (VD::Vertex_handle* v = std::get_if<VD::Vertex_handle>(&lr)) {
-    // } else if (VD::Halfedge_handle* e =
-    // std::get_if<VD::Halfedge_handle>(&lr)) { } else if (VD::Face_handle* f =
-    // std::get_if<VD::Face_handle>(&lr)) {
-    // }
 
     if (VD::Face_handle* f = std::get_if<VD::Face_handle>(&lr)) {
       VoronoiCell2D<T> cell;
@@ -72,29 +71,37 @@ inline std::vector<VoronoiCell2D<T>> voronoiDiagram2D(
 }
 
 template <typename T>
-inline geom::Mesh voronoiDiagram2DToEdgeMesh(const std::vector<T>& vertices) {
-  geom::Mesh mesh;
+inline std::vector<std::tuple<glm::vec2, glm::vec2>> getVoronoiEdges2D(
+    const std::vector<T>& vertices) {
+  std::vector<std::tuple<glm::vec2, glm::vec2>> edges;
+
+  std::vector<Point2D> points(vertices.size());
+
+  for (size_t i = 0; i < vertices.size(); ++i) {
+    Point2D p(vertices[i].x, vertices[i].y);
+    points[i] = p;
+  }
 
   Voronoi2D vd;
-  for (auto v : vertices) {
-    vd.insert(Site2D(v.x, v.y));
-  }
+  vd.insert(points.begin(), points.end());
 
   if (!vd.is_valid()) {
     logger::error("Voronoi diagram is not valid");
-    return mesh;
+    return edges;
   }
 
   for (auto it = vd.edges_begin(); it != vd.edges_end(); ++it) {
     if (it->has_source() && it->has_target()) {
       auto source = it->source();
       auto target = it->target();
-      mesh.addVertex(glm::vec3(source->point().x(), source->point().y(), 0));
-      mesh.addVertex(glm::vec3(target->point().x(), target->point().y(), 0));
+
+      auto source_pt = glm::vec2(source->point().x(), source->point().y());
+      auto target_pt = glm::vec2(target->point().x(), target->point().y());
+      edges.emplace_back(source_pt, target_pt);
     }
   }
 
-  return mesh;
+  return edges;
 }
 
 }  // namespace geom

@@ -1,6 +1,7 @@
 #pragma once
 #include "gl/GL.h"
 #include "graphics/BitmapFont.h"
+#include "graphics/BitmapFontLarge.h"
 #include "graphics/Color.h"
 #include "math/MatrixStack.h"
 #include "primitives/Primitives.h"
@@ -40,6 +41,8 @@ class Renderer : private Noncopyable {
   VboMesh cone_;
 
   BitmapFont font_;
+  BitmapFontLarge font_large_;
+
   Stack<DefaultUniforms> uniforms_stack_;
 
   MatrixStack matrix_stack_;
@@ -66,11 +69,12 @@ class Renderer : private Noncopyable {
 
     // box_wire
     font_.load();
-    def_shader_.load(fs::getCommonResourcesPath("shaders/default.vert"),
-                     fs::getCommonResourcesPath("shaders/default.frag"));
-    def_arb_shader_.load(
-        fs::getCommonResourcesPath("shaders/default.vert"),
-        fs::getCommonResourcesPath("shaders/default_arb.frag"));
+    font_large_.load();
+
+    def_shader_.load(fs::getCommonResourcePath("shaders/default.vert"),
+                     fs::getCommonResourcePath("shaders/default.frag"));
+    def_arb_shader_.load(fs::getCommonResourcePath("shaders/default.vert"),
+                         fs::getCommonResourcePath("shaders/default_arb.frag"));
     current_shader_ = &def_shader_;
     b_should_unbind_ = true;
 
@@ -167,13 +171,23 @@ class Renderer : private Noncopyable {
     unbindTexture();
   }
 
-size_t getBitmapStringWidth(const std::string& text) const {
-  return font_.getSize(text);
-}
+  void drawLargeBitmapString(const std::string& text, const glm::vec3& p) {
+    auto meshes = font_large_.getMeshes(text);
+    bindTexture(font_large_.getTexture().getID());
+    for (int i = 0; i < meshes.size(); i++) {
+      pushMatrix();
+      translate(p + glm::vec3(i * font_large_.getCharacterWidth(), 0, 0));
+      drawMesh(*meshes[i], GL_TRIANGLE_FAN);
+      popMatrix();
+    }
+    unbindTexture();
+  }
 
-size_t getBitmapStringHeight() const {
-  return font_.getCharacterWidth();
-}
+  size_t getBitmapStringWidth(const std::string& text) const {
+    return font_.getSize(text);
+  }
+
+  size_t getBitmapStringHeight() const { return font_.getCharacterWidth(); }
 
   void drawDot(const glm::vec3& p) {
     pushMatrix();
@@ -192,7 +206,7 @@ size_t getBitmapStringHeight() const {
 
     pushMatrix();
     translate(p0);
-    rotateRadian(radian, axis);
+    rotateRadians(radian, axis);
     scale(glm::vec3(scale_factor));
     drawMesh(segment_, GL_LINES);
     popMatrix();
@@ -211,6 +225,22 @@ size_t getBitmapStringHeight() const {
     translate(p);
     scale(glm::vec3(w, h, 1));
     drawMesh(rectangle_, GL_LINE_LOOP);
+    popMatrix();
+  }
+
+  void drawEllipse(const glm::vec3& p, float a, float b) {
+    pushMatrix();
+    translate(p);
+    scale(glm::vec3(a, b, 1));
+    drawMesh(circle_, GL_TRIANGLE_FAN);
+    popMatrix();
+  }
+
+  void drawWireEllipse(const glm::vec3& p, float a, float b) {
+    pushMatrix();
+    translate(p);
+    scale(glm::vec3(a, b, 1));
+    drawMesh(circle_, GL_LINE_LOOP);
     popMatrix();
   }
 
@@ -311,8 +341,8 @@ size_t getBitmapStringHeight() const {
   MatrixStack& rotate(const glm::mat3& rotation) {
     return matrix_stack_.rotate(rotation);
   }
-  MatrixStack& rotateRadian(float theta, const glm::vec3& axis) {
-    return matrix_stack_.rotateRadian(theta, axis);
+  MatrixStack& rotateRadians(float theta, const glm::vec3& axis) {
+    return matrix_stack_.rotateRadians(theta, axis);
   }
   MatrixStack& rotateDegree(float angle, const glm::vec3& axis) {
     return matrix_stack_.rotateDegree(angle, axis);

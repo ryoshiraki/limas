@@ -118,6 +118,25 @@ class ImageIO {
   }
 
   template <typename PixelType>
+  static void savePixels(std::vector<PixelType>& pixels, size_t width,
+                         size_t height, size_t channels,
+                         const std::string& filepath) {
+    auto ext = fs::getExtension(filepath);
+    if (ext.empty())
+      throw Exception("filepath have no extension");
+    else if (ext == ".png")
+      stbi_write_png(filepath.c_str(), width, height, channels, &pixels[0], 0);
+    else if (ext == ".bmp")
+      stbi_write_bmp(filepath.c_str(), width, height, channels, &pixels[0]);
+    else if (ext == ".tga")
+      stbi_write_tga(filepath.c_str(), width, height, channels, &pixels[0]);
+    else if (ext == ".jpg")
+      stbi_write_jpg(filepath.c_str(), width, height, channels, &pixels[0], 0);
+    else
+      throw Exception(ext + " is not supported");
+  }
+
+  template <typename PixelType>
   static void save(BaseImage<PixelType>& image, const std::string& filepath) {
     savePixels(image.getPixels(), filepath);
   }

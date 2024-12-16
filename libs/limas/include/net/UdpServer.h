@@ -8,12 +8,12 @@ namespace net {
 using boost::asio::ip::udp;
 
 class UdpServer : public Thread {
-  static const int MAX_BUFFER_SIZE = 8192;  // Adjust buffer size as needed
+  static const int MAX_BUFFER_SIZE = 1024;  // Adjust buffer size as needed
   using MessageHandler = std::function<void(const std::string&)>;
 
  public:
   UdpServer(int port)
-      : io_context_(), socket_(io_context_, udp::endpoint(udp::v4(), port)) {
+      : io_service_(), socket_(io_service_, udp::endpoint(udp::v4(), port)) {
     handler_ = [](const std::string& m) {
       logger::info("UdpServer") << m << logger::end();
     };
@@ -22,11 +22,11 @@ class UdpServer : public Thread {
 
   void start(const MessageHandler& handler) {
     handler_ = handler;
-    startThread([this]() { io_context_.run(); });
+    startThread([this]() { io_service_.run(); });
   }
 
   void stop() {
-    io_context_.stop();
+    io_service_.stop();
     stopThread();
   }
 
@@ -47,7 +47,7 @@ class UdpServer : public Thread {
     handler_(message);
   }
 
-  boost::asio::io_context io_context_;
+  boost::asio::io_service io_service_;
   udp::socket socket_;
   udp::endpoint remote_endpoint_;
   char recv_buffer_[MAX_BUFFER_SIZE];

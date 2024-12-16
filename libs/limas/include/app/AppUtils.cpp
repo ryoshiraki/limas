@@ -19,7 +19,7 @@ std::shared_ptr<gl::Renderer>& getRenderer() { return getPtr()->getRenderer(); }
 gl::Context* getContext() { return getPtr()->getContext(); }
 
 int getFrameNumber() { return getPtr()->getFrameNumber(); }
-double getElapsedTimeInSeconds() { return getPtr()->getElapsedTimeInSeconds(); }
+double getElapsedSeconds() { return getPtr()->getElapsedSeconds(); }
 
 int getWidth() { return getPtr()->getWidth(); }
 int getHeight() { return getPtr()->getHeight(); }

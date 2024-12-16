@@ -128,11 +128,12 @@ inline std::string getFrameworkPath() {
 #endif
 }
 
-inline std::string getAssetsPath(const std::string& path = "") {
-  return getProjectPath() + "assets/" + path;
+inline std::string getAssetPath(const std::string& path = "") {
+  auto res = getProjectPath() + "assets/" + path;
+  return res;
 }
 
-inline std::string getResourcesPath(const std::string& path = "") {
+inline std::string getResourcePath(const std::string& path = "") {
 #if defined(__APPLE__)
   std::string result;
   CFBundleRef bundle = CFBundleGetMainBundle();
@@ -153,19 +154,20 @@ inline std::string getResourcesPath(const std::string& path = "") {
 #endif
 }
 
-inline std::string getCommonAssetsPath(const std::string& path = "") {
+inline std::string getCommonAssetPath(const std::string& path = "") {
   return getFrameworkPath() + "assets/" + path;
 }
 
-inline std::string getCommonResourcesPath(const std::string& path = "") {
-  return getResourcesPath("common/" + path);
+inline std::string getCommonResourcePath(const std::string& path = "") {
+  return getResourcePath("common/" + path);
 }
 
 inline bool createDirectory(const string& path) {
   return filesystem::create_directory(path);
 }
 
-inline bool removeDirectory(const string& path) {
+    inline bool
+    removeDirectory(const string& path) {
   return isDirectory(path) ? filesystem::remove(path) : false;
 }
 

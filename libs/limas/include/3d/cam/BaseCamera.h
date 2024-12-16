@@ -19,13 +19,14 @@ class BaseCamera : public Node {
   }
   glm::vec3 getLensOffset() const { return lens_offset_; }
 
-  glm::vec3 getWorldToScreen(const glm::vec3& p, int x, int y, int w,
-                             int h) const {
+  glm::vec3 getWorldToScreen(const glm::vec3& p, float x, float y, float w,
+                             float h) const {
     glm::vec4 viewport(x, y, w, h);
-    auto proj = getProjectionMatrix(x, x + w, y, y + h);
+    auto proj = getProjectionMatrix(x, y, w, h);
     auto view = getModelViewMatrix();
     auto sp = glm::project(p, view, proj, viewport);
-    sp[1] = h - sp[1];
+    // sp[1] = h - sp[1];
+    sp[1] = -sp[1];
     return sp;
   }
 
@@ -33,7 +34,8 @@ class BaseCamera : public Node {
     return glm::inverse(getTransformMatrix());
   }
 
-  glm::mat4 getModelViewProjectionMatrix(int x, int y, int w, int h) const {
+  glm::mat4 getModelViewProjectionMatrix(float x, float y, float w,
+                                         float h) const {
     return getProjectionMatrix(x, y, w, h) * getModelViewMatrix();
   }
 

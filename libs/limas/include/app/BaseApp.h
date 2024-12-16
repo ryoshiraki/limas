@@ -76,14 +76,18 @@ class BaseApp {
 
     elapsed_seconds_ = 0;
     frame_number = 0;
+    base_time_ = glfwGetTime();
+
     double last_frame_time = 0;
     while (std::all_of(begin(windows_), end(windows_), [](Window::Ptr& w) {
       return !glfwWindowShouldClose(w->getHandle());
     })) {
       double now = glfwGetTime();
-      glfwPollEvents();
+      // glfwPollEvents();
 
       if ((now - last_frame_time) >= (1.0 / target_fps_)) {
+        glfwPollEvents();
+
         stats_.begin();
         for_each(begin(windows_), end(windows_), [&](Window::Ptr& w) {
           current_window_ = w;
@@ -99,7 +103,7 @@ class BaseApp {
       }
 
       current_window_ = main_window_;
-      elapsed_seconds_ = now;
+      elapsed_seconds_ = now - base_time_;
     }
 
     glfwTerminate();
@@ -121,7 +125,8 @@ class BaseApp {
   double getMemoryUsage() const { return stats_.getMemoryUsageInMb(); }
   double getCpuUsage() const { return stats_.getCpuUsageInPerc(); }
 
-  double getElapsedTimeInSeconds() const { return elapsed_seconds_; }
+  void resetElapsedTime() { base_time_ = glfwGetTime(); }
+  double getElapsedSeconds() const { return elapsed_seconds_; }
   uint32_t getFrameNumber() const { return frame_number; }
 
   void setWindowTitle(const std::string& title) {
@@ -175,6 +180,7 @@ class BaseApp {
   double target_fps_ = 60;
   float current_fps_ = 60;
   double elapsed_seconds_ = 0;
+  double base_time_ = 0.0;
   uint32_t frame_number = 0;
 
   static void errorCallback(int code, const char* description) {

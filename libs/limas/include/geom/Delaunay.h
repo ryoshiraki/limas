@@ -15,18 +15,25 @@ using Delaunay2D = CGAL::Delaunay_triangulation_2<Kernel>;
 using Delaunay3D = CGAL::Delaunay_triangulation_3<Kernel>;
 
 template <typename T>
-inline std::vector<std::tuple<int, int, int>> delaunayTriangulation2D(
+inline std::vector<std::tuple<int, int, int>> getDelaunayTriangles2D(
     const std::vector<T>& vertices) {
-  Delaunay2D dt;
-  std::unordered_map<Point2D, int> point_index_map;
+  std::vector<std::tuple<int, int, int>> triangles;
 
+  std::vector<Point2D> points(vertices.size());
+  std::unordered_map<Point2D, int> point_index_map;
   for (size_t i = 0; i < vertices.size(); ++i) {
     Point2D p(vertices[i].x, vertices[i].y);
-    dt.insert(p);
+    points[i] = p;
     point_index_map[p] = i;
   }
 
-  std::vector<std::tuple<int, int, int>> triangles;
+  Delaunay2D dt;
+  dt.insert(points.begin(), points.end());
+
+  if (!dt.is_valid()) {
+    logger::error("Delaunay triangulation is not valid");
+    return triangles;
+  }
 
   for (auto face = dt.finite_faces_begin(); face != dt.finite_faces_end();
        ++face) {
@@ -40,18 +47,60 @@ inline std::vector<std::tuple<int, int, int>> delaunayTriangulation2D(
 }
 
 template <typename T>
-inline std::vector<std::tuple<int, int, int, int>> delaunayTriangulation3D(
+inline std::vector<std::tuple<int, int>> getDelaunayEdges2D(
     const std::vector<T>& vertices) {
-  Delaunay3D dt;
-  std::unordered_map<Point3D, int> point_index_map;
+  std::vector<std::tuple<int, int>> edges;
 
+  std::vector<Point2D> points(vertices.size());
+  std::unordered_map<Point2D, int> point_index_map;
   for (size_t i = 0; i < vertices.size(); ++i) {
-    Point3D p(vertices[i].x, vertices[i].y, vertices[i].z);
-    dt.insert(p);
+    Point2D p(vertices[i].x, vertices[i].y);
+    // dt.insert(p);
+    points[i] = p;
     point_index_map[p] = i;
   }
 
+  Delaunay2D dt;
+  dt.insert(points.begin(), points.end());
+
+  if (!dt.is_valid()) {
+    logger::error("Delaunay triangulation is not valid");
+    return edges;
+  }
+
+  for (auto edge = dt.finite_edges_begin(); edge != dt.finite_edges_end();
+       ++edge) {
+    auto segment = dt.segment(*edge);
+
+    int i1 = point_index_map[segment.source()];
+    int i2 = point_index_map[segment.target()];
+    edges.emplace_back(i1, i2);
+  }
+
+  return edges;
+}
+
+template <typename T>
+inline std::vector<std::tuple<int, int, int, int>> getDelaunayTriangles3D(
+    const std::vector<T>& vertices) {
   std::vector<std::tuple<int, int, int, int>> tetrahedrons;
+
+  std::vector<Point3D> points(vertices.size());
+  std::unordered_map<Point3D, int> point_index_map;
+  for (size_t i = 0; i < vertices.size(); ++i) {
+    Point3D p(vertices[i].x, vertices[i].y, vertices[i].z);
+    // dt.insert(p);
+    points[i] = p;
+    point_index_map[p] = i;
+  }
+
+  Delaunay3D dt;
+  dt.insert(points.begin(), points.end());
+
+  if (!dt.is_valid()) {
+    logger::error("Delaunay triangulation is not valid");
+    return tetrahedrons;
+  }
 
   for (auto cell = dt.finite_cells_begin(); cell != dt.finite_cells_end();
        ++cell) {
@@ -66,20 +115,33 @@ inline std::vector<std::tuple<int, int, int, int>> delaunayTriangulation3D(
 }
 
 template <typename T>
-inline geom::Mesh delaunayTriangulation2DToMesh(
+inline std::vector<std::tuple<int, int>> getDelaunayEdges3D(
     const std::vector<T>& vertices) {
-  auto triangles = delaunayTriangulation2D(vertices);
-  geom::Mesh mesh;
+  std::vector<std::tuple<int, int>> edges;
 
-  for (auto& v : vertices) {
-    mesh.addVertex(glm::vec3(v.x, v.y, 0));
+  std::vector<Point3D> points(vertices.size());
+  std::unordered_map<Point3D, int> point_index_map;
+  for (size_t i = 0; i < vertices.size(); ++i) {
+    Point3D p(vertices[i].x, vertices[i].y, vertices[i].z);
+    points[i] = p;
+    point_index_map[p] = i;
   }
-  for (auto& t : triangles) {
-    mesh.addIndex(std::get<0>(t));
-    mesh.addIndex(std::get<1>(t));
-    mesh.addIndex(std::get<2>(t));
+
+  Delaunay3D dt;
+  dt.insert(points.begin(), points.end());
+  if (!dt.is_valid()) {
+    logger::error("Delaunay triangulation is not valid");
+    return edges;
   }
-  return mesh;
+
+  for (auto cell = dt.finite_edges_begin(); cell != dt.finite_edges_end();
+       ++cell) {
+    int i1 = point_index_map[cell->first->vertex(cell->second)->point()];
+    int i2 = point_index_map[cell->first->vertex(cell->third)->point()];
+    edges.emplace_back(i1, i2);
+  }
+
+  return edges;
 }
 
 }  // namespace geom

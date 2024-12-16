@@ -46,6 +46,8 @@ class Window {
     if (settings.major >= 3) {
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_FALSE);
+
     glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
     glfwWindowHint(GLFW_VISIBLE, settings.visible);
     glfwWindowHint(GLFW_DECORATED, settings.decorated);

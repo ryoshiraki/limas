@@ -271,7 +271,7 @@ class ShaderBase {
         std::string included_file = line.substr(10);  // "filename"
         included_file =
             included_file.substr(1, included_file.size() - 2);  // filename
-        source << read(fs::getCommonResourcesPath() + "shaders/" +
+        source << read(fs::getCommonResourcePath() + "shaders/" +
                        included_file)
                << "\n";
       } else if (line.substr(0, 8) == "#include") {

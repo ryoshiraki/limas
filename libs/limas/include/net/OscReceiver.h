@@ -131,7 +131,8 @@ class OscReceiver {
       auto it = handlers_.find(msg.address());
       if (it != handlers_.end()) {
         if (!it->second->handle(args)) {
-          logger::error("OSC Receiver") << "failed to handle packet" << logger::end();
+          logger::error("OSC Receiver")
+              << "failed to handle packet" << logger::end();
         }
       }
     }

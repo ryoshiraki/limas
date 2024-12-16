@@ -12,12 +12,12 @@ class App : public BaseApp {
   void setup() {
     setVerticalSync(true);
 
-    log::info() << std::left << std::setw(12)
-                << "Project:" << fs::getProjectPath() << log::endl;
-    log::info() << std::left << std::setw(12)
-                << "Assets:" << fs::getAssetsPath() << log::endl;
-    log::info() << std::left << std::setw(12)
-                << "Resources:" << fs::getResourcesPath() << log::endl;
+    logger::info() << std::left << std::setw(12)
+                   << "Project:" << fs::getProjectPath() << logger::end();
+    logger::info() << std::left << std::setw(12)
+                   << "Assets:" << fs::getAssetPath() << logger::end();
+    logger::info() << std::left << std::setw(12)
+                   << "Resources:" << fs::getResourcePath() << logger::end();
   }
 
   void draw() {

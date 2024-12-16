@@ -36,6 +36,8 @@ class AbstractParameter {
   virtual void setName(const std::string& name) = 0;
   virtual const std::string& getName() const = 0;
   virtual std::type_index getType() const = 0;
+  virtual std::string getTypeName() const { return getType().name(); }
+
   virtual json serialize() const = 0;
   virtual void deserialize(const json& j) = 0;
 
@@ -79,9 +81,7 @@ class Parameter : public AbstractParameter {
   void setName(const std::string& name) override { data_->name_ = name; };
   const std::string& getName() const override {
     if (data_->name_.empty()) {
-      static std::string name =
-          "##unnamed_" + std::to_string(reinterpret_cast<uintptr_t>(this));
-      return name;
+      return "##unnamed_" + std::to_string(reinterpret_cast<uintptr_t>(this));
     }
     return data_->name_;
   }
@@ -99,8 +99,9 @@ class Parameter : public AbstractParameter {
   void deserialize(const json& j) override {
     if (j.contains("type")) {
       if (j["type"].get<std::string>() != typeid(T).name()) {
-        throw limas::Exception("Type mismatch during deserialization " +
-                               getName());
+        throw limas::Exception("Type mismatch during casting from " +
+                               getTypeName() + " to " + typeid(T).name() +
+                               " in " + getName());
       }
     } else {
       throw limas::Exception("Serialized data missing 'type' field.");
@@ -129,9 +130,9 @@ class Parameter : public AbstractParameter {
     return *this;
   }
 
-  const T& getValue() const { return data_->value_.getValue(); }
-  const T& getMin() const { return data_->value_.getMin(); }
-  const T& getMax() const { return data_->value_.getMax(); }
+  inline const T& getValue() const { return data_->value_.getValue(); }
+  inline const T& getMin() const { return data_->value_.getMin(); }
+  inline const T& getMax() const { return data_->value_.getMax(); }
 
   bool hasMin() const { return data_->value_.hasMin(); }
   bool hasMax() const { return data_->value_.hasMax(); }

@@ -42,7 +42,7 @@ class MatrixStack : public std::stack<glm::mat4> {
     return mult(glm::rotate(glm::mat4(1), theta, axis));
   }
 
-  MatrixStack& rotateRadian(float theta, const glm::vec3& axis) {
+  MatrixStack& rotateRadians(float theta, const glm::vec3& axis) {
     return rotate(theta, axis);
   }
 

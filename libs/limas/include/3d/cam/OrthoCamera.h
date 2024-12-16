@@ -14,6 +14,10 @@ class OrthoCamera : public BaseCamera {
     float bottom = y;
     float top = y + height;
 
+    if (this->v_flip_) {
+      std::swap(bottom, top);
+    }
+
     float zx = 1 / zoom_x_;
     float zy = 1 / zoom_y_;
     auto projection =
@@ -29,8 +33,11 @@ class OrthoCamera : public BaseCamera {
   void setZoomY(float z) { zoom_y_ = z; }
   float getZoomX() const { return zoom_x_; }
   float getZoomY() const { return zoom_y_; }
+  void setVFlip(bool flip) { v_flip_ = flip; }
+  bool getVFlip() const { return v_flip_; }
 
  protected:
+  bool v_flip_ = false;
   float zoom_x_, zoom_y_;
 };
 

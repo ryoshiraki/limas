@@ -1,7 +1,7 @@
 #pragma once
 #include "3d/cam/BaseCamera.h"
 #include "3d/cam/OrthoCamera.h"
-#include "3d/cam/PerspectiveCamera"
+#include "3d/cam/PerspectiveCamera.h"
 #include "app/Window.h"
 #include "system/Observable.h"
 

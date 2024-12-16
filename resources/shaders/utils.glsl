@@ -1,5 +1,5 @@
 #define PI 3.141592653589793
-#define TWO_PI PI * 2.
+#define TWO_PI 6.28318530718
 #define EPS 0.0000000001
 
 float atan2(in float y, in float x) {
@@ -23,12 +23,13 @@ vec3 hsv2rgb(vec3 c) {
 
 float map(float value, float min1, float max1, float min2, float max2) {
     float perc = (value - min1) / (max1 - min1);
-    perc = clamp(perc, 0, 1);
+    // perc = clamp(perc, 0, 1);
     return perc * (max2 - min2) + min2;
 }
 
 float cmap(float value, float min1, float max1, float min2, float max2) {
     float perc = (value - min1) / (max1 - min1);
+    perc = clamp(perc, 0, 1);
     return perc * (max2 - min2) + min2;
 }
 

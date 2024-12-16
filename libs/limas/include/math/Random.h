@@ -127,8 +127,8 @@ inline glm::vec3 randInSphere() {
 }
 
 template <typename T>
-inline float shuffle(std::vector<T>& input) {
-  return Singleton<Random>::getInstance().shuffle<T>(input);
+inline void shuffle(std::vector<T>& input) {
+  Singleton<Random>::getInstance().shuffle<T>(input);
 }
 
 }  // namespace math

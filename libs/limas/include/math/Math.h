@@ -41,6 +41,13 @@ T clamp(T x, L lower, H upper) {
   return std::max(lower_casted, std::min(x, upper_casted));
 }
 
+inline float map(float x, float x0, float x1, float y0, float y1,
+                 bool b_clamp = false) {
+  float y = y0 + (x - x0) * ((y1 - y0) / (x1 - x0));
+  return b_clamp ? clamp(y, y0, y1) : y;
+}
+
+// deprecated
 inline float lerp(float x, float x0, float x1, float y0, float y1,
                   bool b_clamp = false) {
   float y = y0 + (x - x0) * ((y1 - y0) / (x1 - x0));
@@ -68,6 +75,17 @@ inline std::vector<int> getDivisors(int num) {
     }
   }
   return divisors;
+}
+
+inline glm::vec3 getWorldToScreen(const glm::vec3& p,
+                                  const glm::mat4& modelview,
+                                  const glm::mat4& proj, float x, float y,
+                                  float w, float h) {
+  glm::vec4 viewport(x, y, w, h);
+  auto sp = glm::project(p, modelview, proj, viewport);
+  // sp[1] = h - sp[1];
+  sp[1] = h - sp[1];
+  return sp;
 }
 
 inline std::vector<int> getCommonDivisors(const std::vector<int>& nums) {
