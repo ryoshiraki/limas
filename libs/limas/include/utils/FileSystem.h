@@ -166,8 +166,7 @@ inline bool createDirectory(const string& path) {
   return filesystem::create_directory(path);
 }
 
-    inline bool
-    removeDirectory(const string& path) {
+inline bool removeDirectory(const string& path) {
   return isDirectory(path) ? filesystem::remove(path) : false;
 }
 
@@ -213,45 +212,6 @@ inline vector<string> getSortedPathsByDict(vector<string>& files) {
   vector<string> res = files;
   sortPathsByDict(res);
   return res;
-}
-
-inline string readFile(const string& path) {
-  std::ifstream ifs(path);
-  std::stringstream buffer;
-  buffer << ifs.rdbuf();
-  return buffer.str();
-}
-
-inline vector<string> readFileLineByLine(const string& path) {
-  vector<string> lines;
-  ifstream file(path);
-  if (file.is_open()) {
-    string line;
-    while (getline(file, line)) {
-      lines.push_back(line);
-    }
-  }
-  return lines;
-}
-
-inline vector<vector<string> > loadCsv(const string& path, int skip = 0) {
-  vector<vector<string> > rows;
-  auto lines = readFileLineByLine(path);
-  rows.reserve(lines.size() - skip);
-  for (int i = skip; i < lines.size(); i++) {
-    auto elems = util::getSplit(lines[i], ",");
-    rows.push_back(elems);
-  }
-  return rows;
-}
-
-inline void saveCsv(const string& path, const vector<vector<string> >& rows) {
-  ofstream ofs(path);
-  for (auto& row : rows) {
-    for (auto& ele : row) ofs << ele << ',';
-    ofs << "\n";
-  }
-  ofs << endl;
 }
 
 }  // namespace fs

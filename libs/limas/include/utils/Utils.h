@@ -49,8 +49,9 @@ T to(const std::string& str) {
   std::istringstream cur(str);
   cur >> x;
 
-  if (cur.fail() || !cur.eof()) {
-    throw Exception("Failed to convert string to the requested type: " + str);
+  if (cur.fail()) {
+    string type = typeid(T).name();
+    throw Exception("Failed to convert string to the " + type + ": " + str);
   }
 
   return x;
@@ -74,6 +75,13 @@ inline string toLower(const string& src) {
   dst.resize(src.size());
   transform(src.cbegin(), src.cend(), dst.begin(), ::tolower);
   return dst;
+}
+
+inline string removeChar(std::string& str, char ch) {
+  std::string clean_str = str;
+  clean_str.erase(std::remove(clean_str.begin(), clean_str.end(), ch),
+                  clean_str.end());
+  return clean_str;
 }
 
 inline string replace(const string& s, const string& from, const string& to) {
@@ -105,6 +113,68 @@ inline vector<string> getSplit(const string& src, const string& delim) {
   vector<string> elems;
   boost::split(elems, src, boost::is_any_of(delim));
   return elems;
+}
+
+inline string readFile(const string& path) {
+  std::ifstream ifs(path);
+  std::stringstream buffer;
+  buffer << ifs.rdbuf();
+  return buffer.str();
+}
+
+inline vector<string> readFileLineByLine(const string& path) {
+  vector<string> lines;
+  ifstream file(path);
+  if (file.is_open()) {
+    string line;
+    while (getline(file, line)) {
+      lines.push_back(line);
+    }
+  }
+  return lines;
+}
+
+inline vector<vector<string>> loadDelimitedFile(const string& path,
+                                                const string& delimiter,
+                                                int skip = 0) {
+  vector<vector<string>> rows;
+  auto lines = readFileLineByLine(path);
+  rows.reserve(lines.size() - skip);
+  for (int i = skip; i < lines.size(); i++) {
+    auto elems = util::getSplit(lines[i], delimiter);
+    rows.push_back(elems);
+  }
+  return rows;
+}
+
+inline vector<vector<string>> loadCsv(const string& path, int skip = 0) {
+  return loadDelimitedFile(path, ",", skip);
+}
+
+inline vector<vector<string>> loadTsv(const string& path, int skip = 0) {
+  return loadDelimitedFile(path, "\t", skip);
+}
+
+inline void saveDelimitedFile(const string& path,
+                              const vector<vector<string>>& rows,
+                              const string& delimiter) {
+  ofstream ofs(path);
+  for (const auto& row : rows) {
+    for (size_t i = 0; i < row.size(); ++i) {
+      ofs << row[i];
+      if (i < row.size() - 1) ofs << delimiter;
+    }
+    ofs << "\n";
+  }
+  ofs.flush();
+}
+
+inline void saveCsv(const string& path, const vector<vector<string>>& rows) {
+  saveDelimitedFile(path, rows, ",");
+}
+
+inline void saveTsv(const string& path, const vector<vector<string>>& rows) {
+  saveDelimitedFile(path, rows, "\t");
 }
 
 }  // namespace util
