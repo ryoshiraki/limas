@@ -1,4 +1,5 @@
 #pragma once
+#include "system/Exception.h"
 
 namespace limas {
 namespace util {
@@ -41,6 +42,25 @@ inline string toString(const T& value, int precision, int width, char fill) {
       << value;
   return oss.str();
 }
+
+template <typename T>
+T to(const std::string& str) {
+  T x;
+  std::istringstream cur(str);
+  cur >> x;
+
+  if (cur.fail() || !cur.eof()) {
+    throw Exception("Failed to convert string to the requested type: " + str);
+  }
+
+  return x;
+}
+
+inline float toFloat(const std::string& str) { return to<float>(str); }
+inline double toDouble(const std::string& str) { return to<double>(str); }
+inline int toInt(const std::string& str) { return to<int>(str); }
+inline int64_t toInt64(const std::string& str) { return to<int64_t>(str); }
+inline char toChar(const std::string& str) { return to<char>(str); }
 
 inline string toUpper(const string& src) {
   string dst;
