@@ -4,7 +4,7 @@
 namespace limas {
 namespace gl {
 
-inline void checkError(const std::string& name = "GL") {
+inline void getError(const std::string& name = "GL") {
   GLenum error = glGetError();
   while (error != GL_NO_ERROR) {
     std::string message;
@@ -249,7 +249,8 @@ static GLenum getGLInternalFormat(size_t channels) {
     }
   }
 
-  logger::warn("getGLInternalFormat()") << "unsupported format " << logger::end();
+  logger::warn("getGLInternalFormat()")
+      << "unsupported format " << logger::end();
   return 0;  // Error case: unsupported number of channels
 }
 

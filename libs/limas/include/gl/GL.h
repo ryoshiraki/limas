@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gl/Context.h"
+#include "gl/Drawable.h"
 #include "gl/Fbo.h"
 #include "gl/FillScreen.h"
 #include "gl/GLUtils.h"

@@ -21,30 +21,25 @@ class Vao {
   void bind() const { glBindVertexArray(data_->id_); }
   void unbind() const { glBindVertexArray(0); }
 
-  template <typename T>
-  void bindVbo(Vbo<T>& buf, GLuint location, GLint dim, GLenum type = GL_FLOAT,
-               const void* offset = 0) {
+  void bindVbo(GLuint id, GLuint location, GLint dim, GLenum type,
+               GLboolean normalized, GLsizei stride, const void* offset = 0) {
     bind();
-    buf.bind();
+    glBindBuffer(GL_ARRAY_BUFFER, id);
     glEnableVertexAttribArray(location);
-    glVertexAttribPointer(location, dim, type, GL_FALSE, buf.getStride(),
-                          offset);
-    buf.unbind();
+    glVertexAttribPointer(location, dim, type, GL_FALSE, stride, offset);
     unbind();
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     enabled_attributes_.insert(location);
   }
 
   template <typename T>
-  void bindVbo(Vbo<T>& buf, GLuint location, GLint dim, GLenum type,
-               GLboolean normalized, GLsizei stride, const void* offset = 0) {
-    bind();
-    buf.bind();
-    glEnableVertexAttribArray(location);
-    glVertexAttribPointer(location, dim, type, normalized, stride, offset);
-    buf.unbind();
-    unbind();
-    enabled_attributes_.insert(location);
+  void bindVbo(Vbo<T>& buf, GLuint location, GLint dim, GLenum type = GL_FLOAT,
+               const void* offset = 0) {
+    bindVbo(buf.getID(), location, dim, type, GL_FALSE, buf.getStride(),
+            offset);
   }
+
   void unbindVbo(GLuint location) {
     bind();
     glDisableVertexAttribArray(location);
@@ -52,13 +47,17 @@ class Vao {
     enabled_attributes_.erase(location);
   }
 
+  void bindIbo(GLuint id) {
+    bind();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+    unbind();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    b_ibo_enabled_ = true;
+  }
+
   template <typename T>
   void bindIbo(Ibo<T>& buf) {
-    bind();
-    buf.bind();
-    unbind();
-    buf.unbind();
-    b_ibo_enabled_ = true;
+    bindIbo(buf.getID());
   }
 
   void unbindIbo() {

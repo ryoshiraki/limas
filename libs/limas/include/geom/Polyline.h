@@ -33,8 +33,8 @@ class BasePolyline {
     return area * 0.5f;
   }
 
-  float getLength() const {
-    float length = 0.0f;
+  double getLength() const {
+    double length = 0.0f;
     for (std::size_t i = 1; i < vertices_.size(); ++i) {
       length += distance(vertices_[i - 1], vertices_[i]);
     }
@@ -42,16 +42,27 @@ class BasePolyline {
   }
 
   V getPointAtLength(float dist) const {
+    float interpolatedIndex = getIndexAtLength(dist);
+    std::size_t index = static_cast<std::size_t>(std::floor(interpolatedIndex));
+    float t = interpolatedIndex - index;
+
+    if (index >= vertices_.size() - 1) return vertices_.back();
+    return mix(vertices_[index], vertices_[index + 1], t);
+  }
+
+  float getIndexAtLength(float dist) const {
+    if (dist <= 0) return 0;
+
     float length = 0.0f;
     for (std::size_t i = 1; i < vertices_.size(); ++i) {
       float seg_length = distance(vertices_[i - 1], vertices_[i]);
       if (length + seg_length >= dist) {
         float t = (dist - length) / seg_length;
-        return mix(vertices_[i - 1], vertices_[i], t);
+        return i - 1 + t;
       }
       length += seg_length;
     }
-    return vertices_.back();
+    return vertices_.size() - 1;
   }
 
   V getPointAt(size_t index) const {
@@ -95,8 +106,8 @@ class BasePolyline {
   V getTangentAtInterpolated(float t) const {
     if (vertices_.size() < 2) {
       logger::warn("Polyline") << "getTangentAtInterpolated(): Not enough "
-                               "vertices to compute tangent."
-                            << logger::end();
+                                  "vertices to compute tangent."
+                               << logger::end();
       return V(0);
     }
 
@@ -163,6 +174,84 @@ class BasePolyline {
     return BasePolyline<V>::getResampledBySpacing(space);
   }
 
+  BasePolyline<V> getSmoothedWithMovingAverage(int window_size) const {
+    if (vertices_.empty()) return *this;
+
+    BasePolyline<V> smoothed;
+    int half_window = window_size / 2;
+
+    for (size_t i = 0; i < vertices_.size(); ++i) {
+      V sum(0);
+      int count = 0;
+
+      for (int j = -half_window; j <= half_window; ++j) {
+        size_t idx = i + j;
+        if (idx >= 0 && idx < vertices_.size()) {
+          sum += vertices_[idx];
+          ++count;
+        }
+      }
+
+      smoothed.addVertex(sum / static_cast<float>(count));
+    }
+
+    return smoothed;
+  }
+
+  BasePolyline<V> getSmoothedWithGaussian(int window_size, float sigma) const {
+    if (vertices_.empty()) return *this;
+
+    BasePolyline<V> smoothed;
+    std::vector<float> kernel = createGaussianKernel(window_size, sigma);
+    int half_window = window_size / 2;
+
+    for (size_t i = 0; i < vertices_.size(); ++i) {
+      V sum(0);
+      float weight_sum = 0.0f;
+
+      for (int j = -half_window; j <= half_window; ++j) {
+        size_t idx = i + j;
+        if (idx >= 0 && idx < vertices_.size()) {
+          sum += vertices_[idx] * kernel[j + half_window];
+          weight_sum += kernel[j + half_window];
+        }
+      }
+
+      smoothed.addVertex(sum / weight_sum);
+    }
+
+    return smoothed;
+  }
+
+  BasePolyline<V> getSmoothed(int iterations) {
+    auto vertices = getVertices();
+
+    for (int iter = 0; iter < iterations; ++iter) {
+      std::vector<V> new_vertices;
+
+      new_vertices.push_back(vertices[0]);
+
+      for (size_t i = 0; i < vertices.size() - 1; ++i) {
+        const V& p0 = vertices[i];
+        const V& p1 = vertices[i + 1];
+
+        V q = 0.75f * p0 + 0.25f * p1;
+        V r = 0.25f * p0 + 0.75f * p1;
+
+        new_vertices.push_back(q);
+        new_vertices.push_back(r);
+      }
+
+      new_vertices.push_back(vertices.back());
+
+      vertices = std::move(new_vertices);
+    }
+
+    BasePolyline<V> new_polyline;
+    new_polyline.addVertices(vertices);
+    return new_polyline;
+  }
+
   const V& operator[](int i) const { return vertices_[i]; }
   V& operator[](int i) { return vertices_[i]; }
 
@@ -173,7 +262,8 @@ class BasePolyline {
   }
 
   float length(V& a) const {
-    return std::sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+    float len2 = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
+    return (len2 > 0.0f) ? std::sqrt(len2) : 0.0f;
   }
 
   float distance(const V& a, const V& b) const {
@@ -191,6 +281,25 @@ class BasePolyline {
   }
 
   V mix(const V& a, const V& b, float t) const { return a + (b - a) * t; }
+
+  std::vector<float> createGaussianKernel(int window_size, float sigma) const {
+    std::vector<float> kernel(window_size);
+    int halfWindow = window_size / 2;
+    float sum = 0.0f;
+
+    for (int i = 0; i < window_size; ++i) {
+      float x = float(i - halfWindow);
+      kernel[i] = std::exp(-0.5f * (x * x) / (sigma * sigma));
+      sum += kernel[i];
+    }
+
+    // 正規化
+    for (float& k : kernel) {
+      k /= sum;
+    }
+
+    return kernel;
+  }
 
   std::vector<V> vertices_;
 };

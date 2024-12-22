@@ -139,6 +139,10 @@ inline void drawSegment(float x0, float y0, float z0, float x1, float y1,
   drawSegment(glm::vec3(x0, y0, z0), glm::vec3(x1, y1, z1));
 }
 
+inline void drawSegment(float x0, float y0, float x1, float y1) {
+  drawSegment(glm::vec3(x0, y0, 0), glm::vec3(x1, y1, 0));
+}
+
 inline void drawSegment(const glm::vec2& p0, const glm::vec2& p1) {
   drawSegment(glm::vec3(p0.x, p0.y, 0), glm::vec3(p1.x, p1.y, 0));
 }
@@ -299,13 +303,6 @@ inline void drawTexture(const TextureBase& tex, float x, float y, float w = 0,
   if (w == 0) w = tex.getWidth();
   if (h == 0) h = tex.getHeight();
   drawTextureSubsection(tex, x, y, w, h, 0, 0, tex.getWidth(), tex.getHeight());
-}
-
-inline void drawTextureArb(const TextureBase& tex, float x, float y,
-                           float w = 0, float h = 0) {
-  if (w == 0) w = tex.getWidth();
-  if (h == 0) h = tex.getHeight();
-  app::getRenderer()->drawTextureArb(tex.getID(), glm::vec3(x, y, 0), w, h);
 }
 
 inline void drawBitmapString(const std::string& text, float x, float y) {

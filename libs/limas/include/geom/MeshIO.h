@@ -4,9 +4,9 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 #include "geom/Mesh.h"
+#include "geom/Polyline.h"
 #include "system/Exception.h"
 #include "system/Logger.h"
-#include "tiny_obj_loader.h"
 #include "utils/FileSystem.h"
 
 namespace limas {
@@ -94,7 +94,8 @@ class MeshIO {
   static bool saveObj(const std::string& path, const geom::Mesh& mesh) {
     std::ofstream file(path);
     if (!file.is_open()) {
-      log::error() << "Could not open file for writing: " << path << log::end();
+      logger::error() << "Could not open file for writing: " << path
+                      << logger::end();
       return false;
     }
 
@@ -103,27 +104,26 @@ class MeshIO {
       file << "v " << v.x << " " << v.y << " " << v.z << "\n";
     }
 
-    // // テクスチャ座標を書き出し
-    // for (size_t i = 0; i < mesh.getTexCoords().size(); ++i) {
-    //   const glm::vec2& uv = mesh.getTexCoords()[i];
-    //   file << "vt " << uv.x << " " << uv.y << "\n";
-    // }
+    // テクスチャ座標を書き出し
+    for (size_t i = 0; i < mesh.getTexCoords().size(); ++i) {
+      const glm::vec2& uv = mesh.getTexCoords()[i];
+      file << "vt " << uv.x << " " << uv.y << "\n";
+    }
 
-    // // 法線を書き出し
-    // for (size_t i = 0; i < mesh.getNormals().size(); ++i) {
-    //   const glm::vec3& normal = mesh.getNormals()[i];
-    //   file << "vn " << normal.x << " " << normal.y << " " << normal.z <<
-    //   "\n";
-    // }
+    // 法線を書き出し
+    for (size_t i = 0; i < mesh.getNormals().size(); ++i) {
+      const glm::vec3& normal = mesh.getNormals()[i];
+      file << "vn " << normal.x << " " << normal.y << " " << normal.z << "\n";
+    }
 
-    // // カラー情報を書き出し
-    // for (size_t i = 0; i < mesh.getColors().size(); ++i) {
-    //   const glm::vec4& color = mesh.getColors()[i];
-    //   file << "vc " << color.x << " " << color.y << " " << color.z << " "
-    //        << color.w << "\n";
-    // }
+    // カラー情報を書き出し
+    for (size_t i = 0; i < mesh.getColors().size(); ++i) {
+      const glm::vec4& color = mesh.getColors()[i];
+      file << "vc " << color.x << " " << color.y << " " << color.z << " "
+           << color.w << "\n";
+    }
 
-    // // 面情報を書き出し (頂点インデックス)
+    // 面情報を書き出し (頂点インデックス)
     const auto& indices = mesh.getIndices();
     for (size_t i = 0; i < indices.size(); i += 3) {
       file << "f " << (indices[i] + 1) << " " << (indices[i + 1] + 1) << " "
@@ -134,10 +134,27 @@ class MeshIO {
     return true;
   }
 
+  static bool saveObj(const std::string& path, const geom::Polyline& polyline) {
+    std::ofstream file(path);
+    if (!file.is_open()) {
+      logger::error() << "Could not open file for writing: " << path
+                      << logger::end();
+      return false;
+    }
+
+    // 頂点を書き出し
+    for (const auto& v : polyline.getVertices()) {
+      file << "v " << v.x << " " << v.y << " " << v.z << "\n";
+    }
+
+    file.close();
+    return true;
+  }
+
   static bool loadObj(const std::string& path, geom::Mesh* mesh) {
     FILE* file = fopen(path.c_str(), "r");
     if (file == NULL) {
-      log::error() << path << " is impossible to open" << log::end();
+      logger::error() << path << " is impossible to open" << logger::end();
       return false;
     }
 

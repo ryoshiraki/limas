@@ -19,12 +19,10 @@ struct DefaultUniforms {
   bool has_normal = false;
   bool has_texcoord = false;
   bool b_instanced = false;
-  bool b_arb_tex = false;
 };
 
 class Renderer : private Noncopyable {
   Shader def_shader_;
-  Shader def_arb_shader_;
   ShaderBase* current_shader_;
   bool b_should_unbind_;
 
@@ -73,8 +71,6 @@ class Renderer : private Noncopyable {
 
     def_shader_.load(fs::getCommonResourcePath("shaders/default.vert"),
                      fs::getCommonResourcePath("shaders/default.frag"));
-    def_arb_shader_.load(fs::getCommonResourcePath("shaders/default.vert"),
-                         fs::getCommonResourcePath("shaders/default_arb.frag"));
     current_shader_ = &def_shader_;
     b_should_unbind_ = true;
 
@@ -318,19 +314,6 @@ class Renderer : private Noncopyable {
     popMatrix();
   }
 
-  void drawTextureArb(GLuint tex, const glm::vec3& p, float w, float h) {
-    auto tmp_shader = current_shader_;
-    current_shader_ = &def_arb_shader_;
-    pushMatrix();
-    translate(p);
-    scale(glm::vec3(w, h, 1));
-    bindTexture(tex);
-    drawMesh(rectangle_, GL_TRIANGLE_FAN);
-    unbindTexture();
-    popMatrix();
-    current_shader_ = tmp_shader;
-  }
-
   MatrixStack& pushMatrix() { return matrix_stack_.push(); }
   MatrixStack& popMatrix() { return matrix_stack_.pop(); }
   MatrixStack& multMatrix(const glm::mat4& m) { return matrix_stack_.mult(m); }
@@ -393,14 +376,12 @@ class Renderer : private Noncopyable {
 
     if (uniforms.tex_id > 0) {
       current_shader_->setUniform1i("USE_TEX", true);
-      current_shader_->setUniformTexture("TEX",
-                                         current_shader_ == &def_arb_shader_
-                                             ? GL_TEXTURE_RECTANGLE_ARB
-                                             : GL_TEXTURE_2D,
-                                         uniforms.tex_id, 0);
+      current_shader_->setUniformTexture("TEX", GL_TEXTURE_2D, uniforms.tex_id,
+                                         0);
 
     } else {
       current_shader_->setUniform1i("USE_TEX", false);
+      current_shader_->setUniformTexture("TEX", GL_TEXTURE_2D, 0, 0);
     }
 
     current_shader_->setUniformMatrix4f("TEX_MAT", uniforms.tex_mat);

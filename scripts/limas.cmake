@@ -12,9 +12,13 @@ if (CCACHE_PROGRAM)
     set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
 endif()
 
+file(GLOB_RECURSE SRC_FILES 
+${PROJECT_SOURCE_DIR}/src/*.cpp
+${PROJECT_SOURCE_DIR}/src/*.c
+${PROJECT_SOURCE_DIR}/src/*.cxx)
 
 if (APPLE)
-    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${PROJECT_SOURCE_DIR}/src/main.cpp)
+    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SRC_FILES})
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE True
@@ -48,7 +52,7 @@ if (APPLE)
         "-framework VideoToolbox"
     )
 else()
-    add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/src/main.cpp)
+    add_executable(${PROJECT_NAME} ${SRC_FILES})
 endif()
 
 # set(CMAKE_CXX_STANDARD 17)

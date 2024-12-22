@@ -139,16 +139,18 @@ using json = nlohmann::json;
 namespace limas {
 namespace utils {
 
-inline json loadJson(const std::string& path) {
+template <typename BasicJsonType = json>
+inline BasicJsonType loadJson(const std::string& path) {
   std::ifstream ifs(path);
   if (!ifs) throw Exception("failed to load json from " + path);
-  return json::parse(ifs);
+  return BasicJsonType::parse(ifs);
 }
 
-inline void saveJson(const std::string& path, json& j) {
+template <typename BasicJsonType>
+inline void saveJson(const BasicJsonType& j, const std::string& path) {
   std::ofstream ofs(path);
   if (!ofs) throw Exception("failed to write json to " + path);
-  ofs << j;
+  ofs << j.dump(4);
 }
 
 }  // namespace utils
