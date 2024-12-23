@@ -125,8 +125,10 @@ class Renderer : private Noncopyable {
     uniforms_stack_.pop();
   }
 
-  template <class V, class N, class C, class T, class I>
-  void drawMesh(const BaseVboMesh<V, N, C, T, I>& mesh, GLenum mode) {
+  void draw(const Drawable& drawable, GLenum mode) { drawable.draw(mode); }
+
+  template <class V, class N, class C, class T>
+  void drawMesh(const BaseVboMesh<V, N, C, T>& mesh, GLenum mode) {
     auto& vao = mesh.getVao();
     if (vao.isIboEnabled()) {
       drawElements(vao, mode, mesh.getNumIndices());
@@ -136,7 +138,7 @@ class Renderer : private Noncopyable {
   }
 
   template <class V, class N, class C, class T, class I>
-  void drawMeshInstanced(const BaseInstancedVboMesh<V, N, C, T, I>& mesh,
+  void drawMeshInstanced(const BaseInstancedVboMesh<V, N, C, T>& mesh,
                          GLenum mode, size_t instance_count) {
     auto& vao = mesh.getVao();
     if (vao.isIboEnabled()) {
@@ -411,7 +413,7 @@ class Renderer : private Noncopyable {
     std::vector<glm::vec4> colors;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> texcoords;
-    std::vector<int> indices;
+    std::vector<GLuint> indices;
   };
   LegacyParams legacy_params_;
 

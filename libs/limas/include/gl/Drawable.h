@@ -20,10 +20,12 @@ class AttributeBase {
   GLuint getDim() const { return dim_; }
   GLenum getType() const { return type_; }
 
+  virtual void allocate(const void *data, size_t size) = 0;
   virtual void update(const void *data, size_t size) = 0;
   virtual void bind() const = 0;
   virtual void unbind() const = 0;
   virtual GLuint getID() const = 0;
+  virtual GLsizei getSize() const = 0;
   virtual GLsizei getStride() const = 0;
 
  protected:
@@ -37,19 +39,30 @@ class Attribute : public AttributeBase {
  public:
   Attribute(GLuint index, const vector<T> &data, GLuint size, GLenum type)
       : AttributeBase(index, size, type) {
-    vbo_.allocate(data);
+    allocate(data);
   }
 
-  void update(const vector<T> &data) { vbo_.update(data); }
-  void update(const T *data, size_t size) override { vbo_.update(data, size); }
+  void allocate(const std::vector<T> &data) {
+    allocate(data.data(), data.size());
+  }
+
+  void allocate(const void *data, size_t size) override {
+    vbo_.allocate(data, size);
+  }
+
+  void update(const std::vector<T> &data) { update(data.data(), data.size()); }
+  void update(const void *data, size_t size) override {
+    vbo_.update(data, size);
+  }
 
   void bind() const override { vbo_.bind(); }
   void unbind() const override { vbo_.unbind(); }
+  GLsizei getSize() const override { return vbo_.getSize(); }
   GLuint getID() const override { return vbo_.getID(); }
   GLsizei getStride() const { return vbo_.getStride(); }
 
  protected:
-  Vbo<T> vbo_;
+  gl::Vbo<T> vbo_;
 };
 
 class Drawable {
@@ -80,8 +93,7 @@ class Drawable {
     }
   }
 
-  template <typename I>
-  void updateIndices(const std::vector<I> &data) {
+  void updateIndices(const std::vector<GLuint> &data) {
     if (ibo_.getSize() == 0) {
       ibo_.allocate(data);
     } else {
@@ -116,7 +128,10 @@ class Drawable {
     if (ibo_.getSize()) {
       vao_.drawElements(mode, count < 0 ? ibo_.getSize() : count);
     } else {
-      vao_.drawArrays(mode, 0, count);
+      auto it = attributes_.begin();
+      // cout << "drawArrays" << endl;
+      // cout << it->second->getSize() << endl;
+      vao_.drawArrays(mode, 0, count < 0 ? it->second->getSize() : count);
     }
   }
 

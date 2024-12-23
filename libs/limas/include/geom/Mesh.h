@@ -3,7 +3,7 @@
 namespace limas {
 namespace geom {
 
-template <class V, class N, class C, class T, class I>
+template <class V, class N, class C, class T>
 class BaseMesh {
  public:
   BaseMesh() {}
@@ -20,7 +20,7 @@ class BaseMesh {
   void addNormal(const N& n) { normals_.push_back(n); }
   void addColor(const C& c) { colors_.push_back(c); }
   void addTexCoord(const T& t) { texcoords_.push_back(t); }
-  void addIndex(const I& i) { indices_.push_back(i); }
+  void addIndex(const GLuint& i) { indices_.push_back(i); }
 
   void addVertices(const std::vector<V>& v) {
     copy(v.begin(), v.end(), std::back_inserter(vertices_));
@@ -34,7 +34,7 @@ class BaseMesh {
   void addTexCoords(const std::vector<T>& v) {
     copy(v.begin(), v.end(), std::back_inserter(texcoords_));
   }
-  void addIndices(const std::vector<I>& v) {
+  void addIndices(const std::vector<GLuint>& v) {
     copy(v.begin(), v.end(), std::back_inserter(indices_));
   }
 
@@ -42,18 +42,18 @@ class BaseMesh {
   void setNormals(const std::vector<N>& normals) { normals_ = normals; }
   void setColors(const std::vector<C>& colors) { colors_ = colors; }
   void setTexCoords(const std::vector<T>& texcoords) { texcoords_ = texcoords; }
-  void setIndices(const std::vector<I>& indices) { indices_ = indices; }
+  void setIndices(const std::vector<GLuint>& indices) { indices_ = indices; }
 
   const std::vector<V>& getVertices() const { return vertices_; }
   const std::vector<N>& getNormals() const { return normals_; }
   const std::vector<C>& getColors() const { return colors_; }
   const std::vector<T>& getTexCoords() const { return texcoords_; }
-  const std::vector<I>& getIndices() const { return indices_; }
+  const std::vector<GLuint>& getIndices() const { return indices_; }
   std::vector<V>& getVertices() { return vertices_; }
   std::vector<N>& getNormals() { return normals_; }
   std::vector<C>& getColors() { return colors_; }
   std::vector<T>& getTexCoords() { return texcoords_; }
-  std::vector<I>& getIndices() { return indices_; }
+  std::vector<GLuint>& getIndices() { return indices_; }
 
   V& getIndexedVertex(int i) { return vertices_[indices_[i]]; }
   N& getIndexedNormal(int i) { return normals_[indices_[i]]; }
@@ -108,7 +108,7 @@ class BaseMesh {
   std::vector<N> normals_;
   std::vector<C> colors_;
   std::vector<T> texcoords_;
-  std::vector<I> indices_;
+  std::vector<GLuint> indices_;
 
   template <typename Type>
   Type cross(const Type& a, const Type& b) {
@@ -130,9 +130,9 @@ class BaseMesh {
   }
 };
 
-template <class V, class N, class C, class T, class I>
+template <class V, class N, class C, class T>
 inline std::ostream& operator<<(std::ostream& os,
-                                const BaseMesh<V, N, C, T, I>& mesh) {
+                                const BaseMesh<V, N, C, T>& mesh) {
   os << "V:";
   os << mesh.getNumVertices();
   os << " N:";
@@ -146,7 +146,7 @@ inline std::ostream& operator<<(std::ostream& os,
   return os;
 }
 
-using Mesh = BaseMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2, int>;
+using Mesh = BaseMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2>;
 
 }  // namespace geom
 }  // namespace limas

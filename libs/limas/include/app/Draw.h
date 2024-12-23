@@ -16,13 +16,13 @@ class Vao;
 class Shader;
 class TextureBase;
 
-template <class V, class N, class C, class T, class I>
+template <class V, class N, class C, class T>
 class BaseVboMesh;
 
 template <class V>
 class BaseVboPolyline;
 
-template <class V, class N, class C, class T, class I>
+template <class V, class N, class C, class T>
 class BaseInstancedVboMesh;
 
 inline void setShaderDefault() { app::getRenderer()->setShaderDefault(); }
@@ -111,13 +111,17 @@ inline void drawElements(const Vao& vao, GLenum mode, GLint count) {
   app::getRenderer()->drawElements(vao, mode, count);
 }
 
-template <class V, class N, class C, class T, class I>
-inline void drawMesh(const BaseVboMesh<V, N, C, T, I>& mesh, GLenum mode) {
+inline void draw(const Drawable& drawable, GLenum mode) {
+  app::getRenderer()->draw(drawable, mode);
+}
+
+template <class V, class N, class C, class T>
+inline void drawMesh(const BaseVboMesh<V, N, C, T>& mesh, GLenum mode) {
   app::getRenderer()->drawMesh(mesh, mode);
 }
 
 template <class V, class N, class C, class T, class I>
-inline void drawMeshInstanced(const BaseInstancedVboMesh<V, N, C, T, I>& mesh,
+inline void drawMeshInstanced(const BaseInstancedVboMesh<V, N, C, T>& mesh,
                               GLenum mode, size_t count) {
   app::getRenderer()->drawMeshInstanced(mesh, mode, count);
 }

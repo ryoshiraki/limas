@@ -4,19 +4,18 @@
 namespace limas {
 namespace gl {
 
-template <class V, class N, class C, class T, class I>
-class BaseInstancedVboMesh : public gl::BaseVboMesh<V, N, C, T, I> {
+template <class V, class N, class C, class T>
+class BaseInstancedVboMesh : public gl::BaseVboMesh<V, N, C, T> {
  public:
-  BaseInstancedVboMesh()
-      : num_instances_(0), gl::BaseVboMesh<V, N, C, T, I>() {}
+  BaseInstancedVboMesh() : num_instances_(0), gl::BaseVboMesh<V, N, C, T>() {}
 
-  BaseInstancedVboMesh(const geom::BaseMesh<V, N, C, T, I>& mesh)
-      : BaseVboMesh<V, N, C, T, I>(mesh) {}
+  BaseInstancedVboMesh(const geom::BaseMesh<V, N, C, T>& mesh)
+      : BaseVboMesh<V, N, C, T>(mesh) {}
 
-  inline BaseInstancedVboMesh<V, N, C, T, I>& operator=(
-      const geom::BaseMesh<V, N, C, T, I>& rhs) {
+  inline BaseInstancedVboMesh<V, N, C, T>& operator=(
+      const geom::BaseMesh<V, N, C, T>& rhs) {
     if (this != &rhs) {
-      gl::BaseVboMesh<V, N, C, T, I>::copyFromMesh(rhs);
+      gl::BaseVboMesh<V, N, C, T>::copyFromMesh(rhs);
     }
     return *this;
   }
@@ -120,7 +119,7 @@ class BaseInstancedVboMesh : public gl::BaseVboMesh<V, N, C, T, I> {
 };
 
 using InstancedVboMesh =
-    BaseInstancedVboMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2, int>;
+    BaseInstancedVboMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2>;
 
 }  // namespace gl
 }  // namespace limas

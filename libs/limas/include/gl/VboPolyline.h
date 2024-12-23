@@ -29,7 +29,7 @@ class BaseVboPolyline : public geom::BasePolyline<V> {
     return *this;
   }
 
-  void enableVertices() { vao_.bindVbo(vbo_, POSITION_ATTRIBUTE, 3); }
+  void enableVertices() { vao_.bindVbo(vbo_, POSITION_ATTRIBUTE, 3, GL_FLOAT); }
   void disableVertices() { vao_.unbindVbo(POSITION_ATTRIBUTE); }
 
   void update() {

@@ -18,14 +18,14 @@ class BufferObject {
     }
     ~BufferData() { glDeleteBuffers(1, &id_); }
 
-    void allocate(const T* data, GLsizei count, GLenum usage) {
+    void allocate(const void* data, GLsizei count, GLenum usage) {
       count_ = count;
       glBindBuffer(target_, id_);
       glBufferData(target_, stride_ * count, data, usage);
       glBindBuffer(target_, 0);
     }
 
-    void update(const T* data, GLsizei offset, GLsizei count) const {
+    void update(const void* data, GLsizei count, GLsizei offset) const {
       glBindBuffer(target_, id_);
       glBufferSubData(target_, offset, stride_ * count, data);
       glBindBuffer(target_, 0);
@@ -37,7 +37,8 @@ class BufferObject {
   BufferObject() = delete;
   virtual ~BufferObject() {}
 
-  void allocate(const T* data, GLsizei count, GLenum usage = GL_DYNAMIC_DRAW) {
+  void allocate(const void* data, GLsizei count,
+                GLenum usage = GL_DYNAMIC_DRAW) {
     data_->allocate(data, count, GL_DYNAMIC_DRAW);
   }
 
@@ -45,12 +46,12 @@ class BufferObject {
     allocate(data.data(), data.size(), usage);
   }
 
-  void update(const T* data, GLsizei offset, GLsizei count) const {
-    data_->update(data, offset, count);
+  void update(const void* data, GLsizei count, GLsizei offset = 0) const {
+    data_->update(data, count, offset);
   }
 
-  void update(const std::vector<T>& data, GLsizei offset) const {
-    update(data.data(), offset, data.size());
+  void update(const std::vector<T>& data, GLsizei offset = 0) const {
+    update(data.data(), data.size(), offset);
   }
 
   void bind() const { glBindBuffer(getTarget(), getID()); }

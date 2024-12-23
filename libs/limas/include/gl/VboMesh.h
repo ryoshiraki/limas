@@ -1,4 +1,157 @@
+// #pragma once
+// #include "geom/Mesh.h"
+// #include "gl/Drawable.h"
+// #include "gl/Ibo.h"
+// #include "gl/Shader.h"
+// #include "gl/Vao.h"
+
+// namespace limas {
+// namespace gl {
+
+// template <class V, class N, class C, class T>
+// class BaseVboMesh : public Drawable, public geom::BaseMesh<V, N, C, T> {
+//  protected:
+//   void copyFromMesh(const geom::BaseMesh<V, N, C, T>& mesh) {
+//     this->setVertices(mesh.getVertices());
+//     this->setNormals(mesh.getNormals());
+//     this->setColors(mesh.getColors());
+//     this->setTexCoords(mesh.getTexCoords());
+//     this->setIndices(mesh.getIndices());
+//     this->update();
+//   }
+
+//  public:
+//   BaseVboMesh() : geom::Mesh() {}
+
+//   BaseVboMesh(const geom::BaseMesh<V, N, C, T>& mesh) : BaseVboMesh() {
+//     copyFromMesh(mesh);
+//     update();
+//   }
+
+//   inline BaseVboMesh& operator=(const geom::BaseMesh<V, N, C, T>& rhs) {
+//     if (this != &rhs) {
+//       copyFromMesh(rhs);
+//     }
+//     update();
+//     return *this;
+//   }
+
+//   void allocateIndices(size_t size) {
+//     this->indices_.resize(size);
+//     updateIndices();
+//   }
+
+//   void allocateVertices(size_t size) {
+//     this->vertices_.resize(size);
+//     updateVertices();
+//   }
+
+//   void allocateTexCoords(size_t size) {
+//     this->texcoords_.resize(size);
+//     updateTexCoords();
+//   }
+
+//   void allocateColors(size_t size) {
+//     this->colors_.resize(size);
+//     updateColors();
+//   }
+
+//   void enableVertices() { enableAttribute(POSITION_ATTRIBUTE); }
+//   void enableNormals() { enableAttribute(NORMAL_ATTRIBUTE); }
+//   void enableColors() { enableAttribute(COLOR_ATTRIBUTE); }
+//   void enableTexCoords() { enableAttribute(TEXCOORD_ATTRIBUTE); }
+//   void enableIndices() { vao_.bindIbo(ibo_); }
+
+//   void disableVertices() { disableAttribute(POSITION_ATTRIBUTE); }
+//   void disableNormals() { disableAttribute(NORMAL_ATTRIBUTE); }
+//   void disableColors() { disableAttribute(COLOR_ATTRIBUTE); }
+//   void disableTexCoords() { disableAttribute(TEXCOORD_ATTRIBUTE); }
+//   void disableIndices() { vao_.unbindIbo(); }
+
+//   void updateVertices() {
+//     auto it = attributes_.find(POSITION_ATTRIBUTE);
+//     if (it != attributes_.end()) {
+//       auto& attr = it->second;
+//       if (this->vertices_.size() == attr->getSize()) {
+//         attr->update(this->vertices_.data(), this->vertices_.size());
+//       } else {
+//         attr->allocate(this->vertices_.data(), this->vertices_.size());
+//       }
+//     } else {
+//       addAttribute(POSITION_ATTRIBUTE, this->vertices_, 3, GL_FLOAT);
+//     }
+//   }
+
+//   void updateNormals() {
+//     auto it = attributes_.find(NORMAL_ATTRIBUTE);
+//     if (it != attributes_.end()) {
+//       auto& attr = it->second;
+//       if (this->normals_.size() == attr->getSize()) {
+//         attr->update(this->normals_.data(), this->normals_.size());
+//       } else {
+//         attr->allocate(this->normals_.data(), this->normals_.size());
+//       }
+//     } else {
+//       addAttribute(NORMAL_ATTRIBUTE, this->normals_, 3, GL_FLOAT);
+//     }
+//   }
+
+//   void updateColors() {
+//     auto it = attributes_.find(COLOR_ATTRIBUTE);
+//     if (it != attributes_.end()) {
+//       auto& attr = it->second;
+//       if (this->colors_.size() == attr->getSize()) {
+//         attr->update(this->colors_.data(), this->colors_.size());
+//       } else {
+//         attr->allocate(this->colors_.data(), this->colors_.size());
+//       }
+//     } else {
+//       addAttribute(COLOR_ATTRIBUTE, this->colors_, 4, GL_FLOAT);
+//     }
+//   }
+
+//   void updateTexCoords() {
+//     auto it = attributes_.find(TEXCOORD_ATTRIBUTE);
+//     if (it != attributes_.end()) {
+//       auto& attr = it->second;
+//       if (this->texcoords_.size() == attr->getSize()) {
+//         attr->update(this->texcoords_.data(), this->texcoords_.size());
+//       } else {
+//         attr->allocate(this->texcoords_.data(), this->texcoords_.size());
+//       }
+//     } else {
+//       addAttribute(TEXCOORD_ATTRIBUTE, this->texcoords_, 2, GL_FLOAT);
+//     }
+//   }
+
+//   void updateIndices() { this->Drawable::updateIndices(this->indices_); }
+
+//   void update() {
+//     updateVertices();
+//     updateNormals();
+//     updateColors();
+//     updateTexCoords();
+//     updateIndices();
+//   }
+
+//   bool isVertexEnabled() const {
+//     return isAttributeEnabled(POSITION_ATTRIBUTE);
+//   }
+//   bool isNormalEnabled() const { return isAttributeEnabled(NORMAL_ATTRIBUTE);
+//   } bool isColorEnabled() const { return isAttributeEnabled(COLOR_ATTRIBUTE);
+//   } bool isTexCoordEnabled() const {
+//     return isAttributeEnabled(TEXCOORD_ATTRIBUTE);
+//   }
+//   bool isIndexEnabled() const { return vao_.isIboEnabled(); }
+// };
+
+// using VboMesh = BaseVboMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2>;
+
+// }  // namespace gl
+// }  // namespace limas
+
 #pragma once
+
 #include "geom/Mesh.h"
 #include "gl/Ibo.h"
 #include "gl/Shader.h"
@@ -7,10 +160,10 @@
 namespace limas {
 namespace gl {
 
-template <class V, class N, class C, class T, class I>
-class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
+template <class V, class N, class C, class T>
+class BaseVboMesh : public geom::BaseMesh<V, N, C, T> {
  protected:
-  void copyFromMesh(const geom::BaseMesh<V, N, C, T, I>& mesh) {
+  void copyFromMesh(const geom::BaseMesh<V, N, C, T>& mesh) {
     this->setVertices(mesh.getVertices());
     this->setNormals(mesh.getNormals());
     this->setColors(mesh.getColors());
@@ -20,16 +173,16 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
   }
 
  public:
-  BaseVboMesh() : geom::BaseMesh<V, N, C, T, I>() {}
+  BaseVboMesh() : geom::BaseMesh<V, N, C, T>() {}
 
-  BaseVboMesh(const geom::BaseMesh<V, N, C, T, I>& mesh)
-      : BaseVboMesh<V, N, C, T, I>() {
+  BaseVboMesh(const geom::BaseMesh<V, N, C, T>& mesh)
+      : BaseVboMesh<V, N, C, T>() {
     copyFromMesh(mesh);
     update();
   }
 
-  inline BaseVboMesh<V, N, C, T, I>& operator=(
-      const geom::BaseMesh<V, N, C, T, I>& rhs) {
+  inline BaseVboMesh<V, N, C, T>& operator=(
+      const geom::BaseMesh<V, N, C, T>& rhs) {
     if (this != &rhs) {
       copyFromMesh(rhs);
     }
@@ -57,10 +210,14 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
     updateColors();
   }
 
-  void enableVertices() { vao_.bindVbo(V_vbo_, POSITION_ATTRIBUTE, 3); }
-  void enableNormals() { vao_.bindVbo(N_vbo_, NORMAL_ATTRIBUTE, 3); }
-  void enableColors() { vao_.bindVbo(C_vbo_, COLOR_ATTRIBUTE, 4); }
-  void enableTexCoords() { vao_.bindVbo(T_vbo_, TEXCOORD_ATTRIBUTE, 2); }
+  void enableVertices() {
+    vao_.bindVbo(V_vbo_, POSITION_ATTRIBUTE, 3, GL_FLOAT);
+  }
+  void enableNormals() { vao_.bindVbo(N_vbo_, NORMAL_ATTRIBUTE, 3, GL_FLOAT); }
+  void enableColors() { vao_.bindVbo(C_vbo_, COLOR_ATTRIBUTE, 4, GL_FLOAT); }
+  void enableTexCoords() {
+    vao_.bindVbo(T_vbo_, TEXCOORD_ATTRIBUTE, 2, GL_FLOAT);
+  }
   void enableIndices() { vao_.bindIbo(ibo_); }
 
   void disableVertices() { vao_.unbindVbo(POSITION_ATTRIBUTE); }
@@ -74,7 +231,7 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
       V_vbo_.allocate(this->vertices_);
       if (!isVertexEnabled()) enableVertices();
     } else {
-      V_vbo_.update(this->vertices_, 0);
+      V_vbo_.update(this->vertices_);
     }
   }
 
@@ -83,7 +240,7 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
       N_vbo_.allocate(this->normals_);
       if (!isNormalEnabled()) enableNormals();
     } else {
-      N_vbo_.update(this->normals_, 0);
+      N_vbo_.update(this->normals_);
     }
   }
   void updateColors() {
@@ -91,7 +248,7 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
       C_vbo_.allocate(this->colors_);
       if (!isColorEnabled()) enableColors();
     } else {
-      C_vbo_.update(this->colors_, 0);
+      C_vbo_.update(this->colors_);
     }
   }
   void updateTexCoords() {
@@ -99,7 +256,7 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
       T_vbo_.allocate(this->texcoords_);
       if (!isTexCoordEnabled()) enableTexCoords();
     } else {
-      T_vbo_.update(this->texcoords_, 0);
+      T_vbo_.update(this->texcoords_);
     }
   }
   void updateIndices() {
@@ -107,7 +264,7 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
       ibo_.allocate(this->indices_);
       if (!isIndexEnabled()) enableIndices();
     } else {
-      ibo_.update(this->indices_, 0);
+      ibo_.update(this->indices_);
     }
   }
 
@@ -165,10 +322,10 @@ class BaseVboMesh : public geom::BaseMesh<V, N, C, T, I> {
   Vbo<N> N_vbo_;
   Vbo<C> C_vbo_;
   Vbo<T> T_vbo_;
-  Ibo<I> ibo_;
+  Ibo<GLuint> ibo_;
 };
 
-using VboMesh = BaseVboMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2, int>;
+using VboMesh = BaseVboMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2>;
 
 }  // namespace gl
 }  // namespace limas

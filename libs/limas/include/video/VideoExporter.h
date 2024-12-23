@@ -43,7 +43,7 @@ class VideoExporter {
   VideoExporter() : is_setup_(false), is_exporting_(false) {}
   ~VideoExporter() { close(); }
 
-  bool open(size_t width, size_t height, int fps, const std::string &filepath) {
+  bool open(size_t width, size_t height, int fps) {
     close();
 
     do {
@@ -59,31 +59,33 @@ class VideoExporter {
 
       pixel_data_.resize(width * height * 4);
 
-      avformat_alloc_output_context2(&context_.format_context, nullptr, nullptr,
-                                     filepath.c_str());
+      avformat_alloc_output_context2(&context_.format_context, nullptr, "mov",
+                                     nullptr);  // filepath.c_str());
       if (!context_.format_context) {
-        log::error("VideoExporter")
-            << "Couldn't allocate format context" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't allocate format context" << logger::end();
         break;
       }
 
       const AVCodec *codec = avcodec_find_encoder(AV_CODEC_ID_PRORES);
       if (!codec) {
-        log::error("VideoExporter") << "Couldn't find condec" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't find condec" << logger::end();
         break;
       }
 
       if (!(context_.stream =
                 avformat_new_stream(context_.format_context, nullptr))) {
-        log::error("VideoExporter") << "Couldn't create strean" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't create strean" << logger::end();
         return false;
       }
       context_.stream->id = (int)(context_.format_context->nb_streams - 1);
       context_.stream->time_base = av_d2q(1.0 / fps, 120);
 
       if (!(context_.codec_context = avcodec_alloc_context3(codec))) {
-        log::error("VideoExporter")
-            << "Couldn't allocate condec context" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't allocate condec context" << logger::end();
         break;
       }
       context_.codec_context->width = width;
@@ -92,18 +94,6 @@ class VideoExporter {
       context_.codec_context->pix_fmt = AV_PIX_FMT_YUV444P10;
       context_.codec_context->codec_id = AV_CODEC_ID_PRORES;
       context_.codec_context->profile = FF_PROFILE_PRORES_4444;
-
-      // context_.codec_context->bit_rate = your_desired_bit_rate;
-      // context_.codec_context->qmin = your_desired_min_quantizer;
-      // context_.codec_context->qmax = your_desired_max_quantizer;
-
-      // av_opt_set(context_.codec_context->priv_data, "color_primaries",
-      // "bt709",
-      //            0);
-      // av_opt_set(context_.codec_context->priv_data, "color_trc", "bt709", 0);
-      // av_opt_set(context_.codec_context->priv_data, "colorspace",
-      // "smpte170m",
-      //            0);
 
       // generate global header when the format requires it
       if (context_.format_context->oformat->flags & AVFMT_GLOBALHEADER) {
@@ -114,12 +104,14 @@ class VideoExporter {
       //   av_dict_set(&codec_options, "codec", "prores_ks4", 0);
 
       if (avcodec_open2(context_.codec_context, codec, &codec_options) < 0) {
-        log::error("VideoExporter") << "Couldn't open codec" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't open codec" << logger::end();
         break;
       }
 
       if (!(context_.frame = av_frame_alloc())) {
-        log::error("VideoExporter") << "Couldn't allocate frame" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't allocate frame" << logger::end();
         break;
       }
       context_.frame->format = context_.codec_context->pix_fmt;
@@ -127,15 +119,15 @@ class VideoExporter {
       context_.frame->height = context_.codec_context->height;
 
       if (av_frame_get_buffer(context_.frame, 32) < 0) {
-        log::error("VideoExporter")
-            << "Couldn't allocate frame data" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't allocate frame data" << logger::end();
         break;
       }
 
       if (avcodec_parameters_from_context(context_.stream->codecpar,
                                           context_.codec_context) < 0) {
-        log::error("VideoExporter")
-            << "Couldn't copy the stream parameter" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't copy the stream parameter" << logger::end();
         break;
       }
 
@@ -144,25 +136,27 @@ class VideoExporter {
                 AV_PIX_FMT_RGBA, context_.codec_context->width,
                 context_.codec_context->height, context_.codec_context->pix_fmt,
                 SWS_BILINEAR, nullptr, nullptr, nullptr))) {
-        log::error("VideoExporter") << "Couldn't get sws context" << log::end();
+        logger::error("VideoExporter")
+            << "Couldn't get sws context" << logger::end();
         break;
       }
 
-      if (avio_open(&context_.format_context->pb, filepath.c_str(),
-                    AVIO_FLAG_WRITE) != 0) {
-        log::error("VideoExporter")
-            << "Couldn't open " << filepath << log::end();
-        break;
-      }
+      // if (avio_open(&context_.format_context->pb, filepath.c_str(),
+      //               AVIO_FLAG_WRITE) != 0) {
+      //   logger::error("VideoExporter")
+      //       << "Couldn't open " << filepath << logger::end();
+      //   break;
+      // }
 
-      if (avformat_write_header(context_.format_context, nullptr) < 0) {
-        log::error("VideoExporter") << "Couldn't write" << log::end();
-        if (avio_close(context_.format_context->pb) != 0)
-          log::error("VideoExporter") << "Couldn't close file" << log::end();
-        break;
-      }
+      // if (avformat_write_header(context_.format_context, nullptr) < 0) {
+      //   logger::error("VideoExporter") << "Couldn't write" << logger::end();
+      //   if (avio_close(context_.format_context->pb) != 0)
+      //     logger::error("VideoExporter")
+      //         << "Couldn't close file" << logger::end();
+      //   break;
+      // }
 
-      av_dump_format(context_.format_context, 0, filepath.c_str(), 1);
+      // av_dump_format(context_.format_context, 0, filepath.c_str(), 1);
 
       context_.frame_index = 0;
       is_setup_ = true;
@@ -183,7 +177,8 @@ class VideoExporter {
       av_write_trailer(context_.format_context);
 
       if (avio_close(context_.format_context->pb) != 0)
-        log::error("VideoExporter") << "failed to close file" << log::end();
+        logger::error("VideoExporter")
+            << "failed to close file" << logger::end();
     }
 
     if (context_.sws_context) sws_freeContext(context_.sws_context);
@@ -220,15 +215,34 @@ class VideoExporter {
 
     ret = avcodec_send_frame(context_.codec_context, context_.frame);
     if (ret < 0) {
-      log::error("VideoExporter")
-          << "Error sending a frame for encoding" << log::end();
+      logger::error("VideoExporter")
+          << "Error sending a frame for encoding" << logger::end();
       return;
     }
 
     flush();
   }
 
-  void start() { is_exporting_ = true; }
+  void start(const std::string &filepath) {
+    if (avio_open(&context_.format_context->pb, filepath.c_str(),
+                  AVIO_FLAG_WRITE) != 0) {
+      logger::error("VideoExporter")
+          << "Couldn't open " << filepath << logger::end();
+      return;
+    }
+
+    if (avformat_write_header(context_.format_context, nullptr) < 0) {
+      logger::error("VideoExporter") << "Couldn't write" << logger::end();
+      avio_close(context_.format_context->pb);
+      return;
+    }
+
+    av_dump_format(context_.format_context, 0, filepath.c_str(), 1);
+
+    context_.frame_index = 0;
+    is_exporting_ = true;
+  }
+
   void stop() { is_exporting_ = false; }
   bool isExporting() const { return is_exporting_; }
   size_t getWidth() const { return fbo_.getWidth(); }
@@ -245,7 +259,8 @@ class VideoExporter {
       if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) break;
 
       if (ret < 0) {
-        log::error("VideoExporter") << "Error encoding a frame" << log::end();
+        logger::error("VideoExporter")
+            << "Error encoding a frame" << logger::end();
         return false;
       }
 
@@ -256,8 +271,8 @@ class VideoExporter {
       ret = av_interleaved_write_frame(context_.format_context, &packet);
       av_packet_unref(&packet);
       if (ret < 0) {
-        log::error("VideoExporter")
-            << "Error while writing output packet" << log::end();
+        logger::error("VideoExporter")
+            << "Error while writing output packet" << logger::end();
         return false;
       }
     } while (ret >= 0);

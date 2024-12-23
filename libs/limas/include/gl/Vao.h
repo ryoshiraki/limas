@@ -34,7 +34,7 @@ class Vao {
   }
 
   template <typename T>
-  void bindVbo(Vbo<T>& buf, GLuint location, GLint dim, GLenum type = GL_FLOAT,
+  void bindVbo(Vbo<T>& buf, GLuint location, GLint dim, GLenum type,
                const void* offset = 0) {
     bindVbo(buf.getID(), location, dim, type, GL_FALSE, buf.getStride(),
             offset);
