@@ -369,8 +369,7 @@ class BitmapFontLarge {
       mesh.getTexCoords()[1] = glm::vec2(tex_x + TEX_WIDTH, tex_y);
       mesh.getTexCoords()[2] = glm::vec2(tex_x + TEX_WIDTH, tex_y + TEX_HEIGHT);
       mesh.getTexCoords()[3] = glm::vec2(tex_x, tex_y + TEX_HEIGHT);
-
-      mesh.update();
+      mesh.updateTexCoords();
       mesh_map_[i] = mesh;
     }
   }

@@ -38,10 +38,11 @@ class BaseInstancedVboMesh : public gl::BaseVboMesh<V, N, C, T> {
     rotation_vbo_.allocate(rotations_);
     instance_color_vbo_.allocate(instance_colors_);
 
-    this->vao_.bindVbo(translation_vbo_, TRANSLATION_ATTRIBUTE, 3);
-    this->vao_.bindVbo(rotation_vbo_, ROTATION_ATTRIBUTE, 4);
-    this->vao_.bindVbo(scale_vbo_, SCALE_ATTRIBUTE, 3);
-    this->vao_.bindVbo(instance_color_vbo_, INSTANCE_COLOR_ATTRIBUTE, 4);
+    this->vao_.bindVbo(translation_vbo_, TRANSLATION_ATTRIBUTE, 3, GL_FLOAT);
+    this->vao_.bindVbo(rotation_vbo_, ROTATION_ATTRIBUTE, 4, GL_FLOAT);
+    this->vao_.bindVbo(scale_vbo_, SCALE_ATTRIBUTE, 3, GL_FLOAT);
+    this->vao_.bindVbo(instance_color_vbo_, INSTANCE_COLOR_ATTRIBUTE, 4,
+                       GL_FLOAT);
 
     this->vao_.setVertexAttribDivisor(TRANSLATION_ATTRIBUTE, 1);
     this->vao_.setVertexAttribDivisor(ROTATION_ATTRIBUTE, 1);

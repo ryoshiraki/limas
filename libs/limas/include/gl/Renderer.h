@@ -125,34 +125,43 @@ class Renderer : private Noncopyable {
     uniforms_stack_.pop();
   }
 
-  void draw(const Drawable& drawable, GLenum mode) { drawable.draw(mode); }
+  void draw(const Drawable& drawable, GLenum mode, GLint count) {
+    auto& vao = drawable.getVao();
+    if (vao.isIboEnabled()) {
+      drawElements(vao, mode, count);
+    } else {
+      drawArrays(vao, mode, count);
+    }
+  }
+
+  void drawInstanced(const Drawable& drawable, GLenum mode, GLint count,
+                     GLint instance_count) {
+    auto& vao = drawable.getVao();
+    if (vao.isIboEnabled()) {
+      drawElementsInstanced(vao, mode, count, instance_count);
+    } else {
+      drawArraysInstanced(vao, mode, count, instance_count);
+    }
+  }
 
   template <class V, class N, class C, class T>
   void drawMesh(const BaseVboMesh<V, N, C, T>& mesh, GLenum mode) {
-    auto& vao = mesh.getVao();
-    if (vao.isIboEnabled()) {
-      drawElements(vao, mode, mesh.getNumIndices());
-    } else {
-      drawArrays(vao, mode, mesh.getNumVertices());
-    }
+    GLint count =
+        mesh.isIndexEnabled() ? mesh.getNumIndices() : mesh.getNumVertices();
+    draw(mesh, mode, count);
   }
 
   template <class V, class N, class C, class T, class I>
   void drawMeshInstanced(const BaseInstancedVboMesh<V, N, C, T>& mesh,
                          GLenum mode, size_t instance_count) {
-    auto& vao = mesh.getVao();
-    if (vao.isIboEnabled()) {
-      drawElementsInstanced(mesh.getVao(), mode, mesh.getNumIndices(),
-                            instance_count);
-    } else {
-      drawArraysInstanced(mesh.getVao(), mode, mesh.getNumVertices(),
-                          instance_count);
-    }
+    GLint count =
+        mesh.isIndexEnabled() ? mesh.getNumIndices() : mesh.getNumVertices();
+    drawInstanced(mesh, mode, count, instance_count);
   }
 
   template <class V>
   void drawPolyline(const BaseVboPolyline<V>& poly, GLenum mode) {
-    drawArrays(poly.getVao(), mode, poly.getNumVertices());
+    draw(poly, mode, poly.getNumVertices());
   }
 
   void drawBitmapString(const std::string& text, const glm::vec3& p) {

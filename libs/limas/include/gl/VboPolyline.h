@@ -1,5 +1,6 @@
 #pragma once
 #include "geom/Polyline.h"
+#include "gl/Drawable.h"
 #include "gl/Shader.h"
 #include "gl/Vao.h"
 
@@ -7,63 +8,47 @@ namespace limas {
 namespace gl {
 
 template <class V>
-class BaseVboPolyline : public geom::BasePolyline<V> {
+class BaseVboPolyline : public Drawable, public geom::BasePolyline<V> {
  protected:
-  void copyFromPolyline(const geom::BasePolyline<V>& polyline) {
-    this->setVertices(polyline.getVertices());
+  void copyFromMesh(const geom::BasePolyline<V>& mesh) {
+    this->setVertices(mesh.getVertices());
     this->update();
   }
 
  public:
-  BaseVboPolyline() : geom::BasePolyline<V>() {}
+  BaseVboPolyline() : Drawable(), geom::BasePolyline<V>() {}
 
-  BaseVboPolyline(const geom::BasePolyline<V>& polyline)
-      : BaseVboPolyline<V>() {
-    this->copyFromPolyline(polyline);
+  BaseVboPolyline(const geom::BasePolyline<V>& mesh)
+      : Drawable(), geom::BasePolyline<V>() {
+    copyFromMesh(mesh);
   }
 
   inline BaseVboPolyline<V>& operator=(const geom::BasePolyline<V>& rhs) {
     if (this != &rhs) {
-      this->copyFromPolyline(rhs);
+      copyFromMesh(rhs);
     }
     return *this;
   }
 
-  void enableVertices() { vao_.bindVbo(vbo_, POSITION_ATTRIBUTE, 3, GL_FLOAT); }
-  void disableVertices() { vao_.unbindVbo(POSITION_ATTRIBUTE); }
+  void allocateVertices(size_t size) {
+    this->vertices_.resize(size);
+    updateVertices();
+  }
 
-  void update() {
-    if (this->getNumVertices() == 0) return;
-    if (vbo_.getSize() != this->getNumVertices()) {
-      vbo_.allocate(this->vertices_);
-      if (!isVertexEnabled()) enableVertices();
+  void updateVertices() {
+    if (this->vertices_.empty()) return;
+    if (attributes_.find(POSITION_ATTRIBUTE) == attributes_.end()) {
+      addAttribute(POSITION_ATTRIBUTE, this->vertices_, 3, GL_FLOAT);
     } else {
-      vbo_.update(this->vertices_, 0);
+      updateAttribute(POSITION_ATTRIBUTE, this->vertices_);
     }
   }
 
+  void update() { updateVertices(); }
+
   void draw(GLenum mode) const {
-    vao_.drawArrays(mode, 0, this->getNumVertices());
+    this->Drawable::draw(mode, this->getNumVertices());
   }
-
-  void drawSubsection(GLenum mode, GLsizei count, GLsizei start = 0) const {
-    vao_.drawArrays(mode, start, count);
-  }
-
-  Vao& getVao() { return vao_; };
-  const Vao& getVao() const { return vao_; };
-
-  bool isAttributeEnabled(GLuint index) const {
-    return vao_.isAttributeEnabled(index);
-  }
-
-  bool isVertexEnabled() const {
-    return isAttributeEnabled(POSITION_ATTRIBUTE);
-  }
-
- protected:
-  Vao vao_;
-  Vbo<V> vbo_;
 };
 
 using VboPolyline = BaseVboPolyline<glm::vec3>;

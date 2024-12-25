@@ -450,7 +450,7 @@ class BitmapFont {
         tc *= glm::vec2(tex_width, 1);
         tc += glm::vec2(tex_offset, 0);
       }
-      mesh.update();
+      mesh.updateTexCoords();
       mesh_map_[key] = mesh;
     }
   }

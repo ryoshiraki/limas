@@ -111,8 +111,13 @@ inline void drawElements(const Vao& vao, GLenum mode, GLint count) {
   app::getRenderer()->drawElements(vao, mode, count);
 }
 
-inline void draw(const Drawable& drawable, GLenum mode) {
-  app::getRenderer()->draw(drawable, mode);
+inline void draw(const Drawable& drawable, GLenum mode, GLint count) {
+  app::getRenderer()->draw(drawable, mode, count);
+}
+
+inline void drawInstanced(const Drawable& drawable, GLenum mode, GLint count,
+                          GLint instance_count) {
+  app::getRenderer()->drawInstanced(drawable, mode, count, instance_count);
 }
 
 template <class V, class N, class C, class T>

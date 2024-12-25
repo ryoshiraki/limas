@@ -81,6 +81,17 @@ class Drawable {
                  attr->getStride());
   }
 
+  void removeAttribute(GLuint location) {
+    auto it = attributes_.find(location);
+    if (it != attributes_.end()) {
+      vao_.unbindVbo(location);
+      attributes_.erase(it);
+    } else {
+      logger::warn("removeAttribute()")
+          << "attribute " << location << " not found" << logger::end();
+    }
+  }
+
   template <typename T>
   void updateAttribute(GLuint location, const std::vector<T> &data) {
     auto it = attributes_.find(location);
@@ -94,8 +105,9 @@ class Drawable {
   }
 
   void updateIndices(const std::vector<GLuint> &data) {
-    if (ibo_.getSize() == 0) {
+    if (ibo_.getSize() != data.size()) {
       ibo_.allocate(data);
+      vao_.bindIbo(ibo_);
     } else {
       ibo_.update(data);
     }
@@ -122,28 +134,24 @@ class Drawable {
     }
   }
 
-  void draw(GLenum mode, GLsizei count = -1) const {
+  void draw(GLenum mode, GLsizei count, GLsizei start = 0) const {
     if (attributes_.size() == 0) return;
 
     if (ibo_.getSize()) {
-      vao_.drawElements(mode, count < 0 ? ibo_.getSize() : count);
+      vao_.drawElements(mode, count);
     } else {
-      auto it = attributes_.begin();
-      // cout << "drawArrays" << endl;
-      // cout << it->second->getSize() << endl;
-      vao_.drawArrays(mode, 0, count < 0 ? it->second->getSize() : count);
+      vao_.drawArrays(mode, start, count);
     }
   }
 
-  void drawInstanced(GLenum mode, GLsizei instance_count,
-                     GLsizei count = -1) const {
+  void drawInstanced(GLenum mode, GLsizei instance_count, GLsizei count,
+                     GLsizei start = 0) const {
     if (attributes_.size() == 0) return;
 
     if (ibo_.getSize()) {
-      vao_.drawElementsInstanced(mode, count < 0 ? ibo_.getSize() : count,
-                                 instance_count);
+      vao_.drawElementsInstanced(mode, count, instance_count);
     } else {
-      vao_.drawArraysInstanced(mode, 0, count, instance_count);
+      vao_.drawArraysInstanced(mode, start, count, instance_count);
     }
   }
 
@@ -159,9 +167,9 @@ class Drawable {
   }
 
  protected:
-  Vao vao_;
+  gl::Vao vao_;
   std::map<GLuint, AttributeBase::Ptr> attributes_;
-  Ibo<GLuint> ibo_;
+  gl::Ibo<GLuint> ibo_;
 };
 
 }  // namespace gl
