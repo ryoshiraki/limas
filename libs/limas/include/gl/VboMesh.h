@@ -141,7 +141,6 @@ class BaseVboMesh : public Drawable, public geom::BaseMesh<V, N, C, T> {
   bool isTexCoordEnabled() const {
     return isAttributeEnabled(TEXCOORD_ATTRIBUTE);
   }
-  bool isIndexEnabled() const { return vao_.isIboEnabled(); }
 };
 
 using VboMesh = BaseVboMesh<glm::vec3, glm::vec3, glm::vec4, glm::vec2>;

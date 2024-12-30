@@ -167,6 +167,8 @@ class Drawable {
     return vao_.isAttributeEnabled(index);
   }
 
+  bool isIndexEnabled() const { return vao_.isIboEnabled(); }
+
  protected:
   gl::Vao vao_;
   std::map<GLuint, AttributeBase::Ptr> attributes_;

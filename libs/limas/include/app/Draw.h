@@ -125,7 +125,7 @@ inline void drawMesh(const BaseVboMesh<V, N, C, T>& mesh, GLenum mode) {
   app::getRenderer()->drawMesh(mesh, mode);
 }
 
-template <class V, class N, class C, class T, class I>
+template <class V, class N, class C, class T>
 inline void drawMeshInstanced(const BaseInstancedVboMesh<V, N, C, T>& mesh,
                               GLenum mode, size_t count) {
   app::getRenderer()->drawMeshInstanced(mesh, mode, count);
