@@ -116,7 +116,7 @@ class BaseVboMesh : public Drawable, public geom::BaseMesh<V, N, C, T> {
   }
 
   void draw(GLenum mode) const {
-    if (this->getNumIndices()) {
+    if (isIndexEnabled()) {
       this->Drawable::draw(mode, this->getNumIndices());
     } else {
       this->Drawable::draw(mode, this->getNumVertices());
@@ -124,7 +124,7 @@ class BaseVboMesh : public Drawable, public geom::BaseMesh<V, N, C, T> {
   }
 
   void drawInstanced(GLenum mode, GLsizei instance_count) const {
-    if (this->getNumIndices()) {
+    if (isIndexEnabled()) {
       this->Drawable::drawInstanced(mode, instance_count,
                                     this->getNumIndices());
     } else {

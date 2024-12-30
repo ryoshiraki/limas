@@ -127,7 +127,7 @@ class AABB {
     float min_depth = dim > 2 ? min_[2] : 0;
     float max_depth = dim > 2 ? max_[2] : 0;
 
-    std::vector<int> indices;
+    std::vector<GLuint> indices;
     if (dim == 3) {
       indices = {0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6,
                  6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7};

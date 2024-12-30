@@ -51,14 +51,15 @@ class Attribute : public AttributeBase {
   }
 
   void update(const std::vector<T> &data) { update(data.data(), data.size()); }
+
   void update(const void *data, size_t size) override {
     vbo_.update(data, size);
   }
 
   void bind() const override { vbo_.bind(); }
   void unbind() const override { vbo_.unbind(); }
-  GLsizei getSize() const override { return vbo_.getSize(); }
   GLuint getID() const override { return vbo_.getID(); }
+  GLsizei getSize() const override { return vbo_.getSize(); }
   GLsizei getStride() const { return vbo_.getStride(); }
 
  protected:
