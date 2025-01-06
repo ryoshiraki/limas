@@ -106,7 +106,7 @@ class Fbo {
     glDrawBuffers(attachments_.size(), &attachments_[0]);
 
     viewport.push();
-    viewport.set(0, getHeight(), getWidth(), -getHeight());
+    viewport.set(0, 0, getWidth(), getHeight());
   }
 
   void unbind() {

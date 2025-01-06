@@ -132,7 +132,7 @@ class FileLogger : public Logger {
     if (file_.is_open()) file_.close();
 
     filepath_ = fileroot_ + std::to_string(log_index_++) + "_" +
-                util::getTimestamp() + ".log";
+                utils::getTimestamp() + ".log";
     file_.open(filepath_, std::ios_base::app);
   }
 

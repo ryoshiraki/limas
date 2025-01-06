@@ -4,7 +4,7 @@
 namespace limas {
 namespace gl {
 
-inline void getError(const std::string& name = "GL") {
+inline void getError() {
   GLenum error = glGetError();
   while (error != GL_NO_ERROR) {
     std::string message;
@@ -31,7 +31,7 @@ inline void getError(const std::string& name = "GL") {
         message = "UNKNOWN ERROR";
         break;
     }
-    logger::error(name) << message << logger::end();
+    logger::error("glGetError") << message << logger::end();
     error = glGetError();
   }
 }

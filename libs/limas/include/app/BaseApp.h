@@ -19,7 +19,7 @@ class BaseApp {
       glfwTerminate();
     }
 
-    main_window_ = Window::createWindow(settings, nullptr);
+    main_window_ = Window::createWindow(settings, 0, nullptr);
     if (main_window_ == nullptr) {
       logger::error("BaseApp") << "failed to create window" << logger::end();
       glfwTerminate();
@@ -48,7 +48,9 @@ class BaseApp {
   }
 
   Window::Ptr addWindow(const Window::Settings& settings) {
-    auto window = Window::createWindow(settings, main_window_->getHandle());
+    auto window = Window::createWindow(settings, windows_.size(),
+                                       main_window_->getHandle());
+    window->setDrawCall(this, &BaseApp::draw);
     windows_.push_back(window);
     return window;
   }

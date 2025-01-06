@@ -31,12 +31,15 @@ class Window {
     bool doublebuffering = true;
     bool hide_cursor = true;
   };
-  Window(GLFWwindow* window, bool b_doublebuffering)
-      : window_(window), draw_call_(0), b_doublebuffering_(b_doublebuffering) {
+  Window(GLFWwindow* window, uint32_t index, bool b_doublebuffering)
+      : window_(window),
+        index_(index),
+        draw_call_(0),
+        b_doublebuffering_(b_doublebuffering) {
     state_ = {getPosition(), getSize(), false};
   }
 
-  static Window::Ptr createWindow(const Settings& settings,
+  static Window::Ptr createWindow(const Settings& settings, uint32_t index,
                                   GLFWwindow* share_with = nullptr) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.minor);
@@ -83,7 +86,7 @@ class Window {
     glfwSetWindowCloseCallback(window, Window::windowCloseCallback);
     glfwSetDropCallback(window, Window::fileDropCallback);
 
-    auto w = std::make_shared<Window>(window, settings.doublebuffering);
+    auto w = std::make_shared<Window>(window, index, settings.doublebuffering);
     glfwSetWindowUserPointer(window, w.get());
 
     return w;
@@ -94,6 +97,8 @@ class Window {
   }
   void setPosition(int x, int y) { glfwSetWindowPos(window_, x, y); }
   void setSize(int w, int h) { glfwSetWindowSize(window_, w, h); }
+
+  uint32_t getIndex() const { return index_; }
 
   glm::vec2 getPosition() const {
     int x, y;
@@ -318,6 +323,7 @@ class Window {
   GLFWwindow* getHandle() { return window_; };
 
  protected:
+  uint32_t index_;
   GLFWwindow* window_;
   std::function<void(void)> draw_call_;
   const bool b_doublebuffering_;

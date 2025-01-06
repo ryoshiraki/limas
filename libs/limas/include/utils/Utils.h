@@ -2,7 +2,7 @@
 #include "system/Exception.h"
 
 namespace limas {
-namespace util {
+namespace utils {
 
 using namespace std;
 
@@ -141,7 +141,7 @@ inline vector<vector<string>> loadDelimitedFile(const string& path,
   auto lines = readFileLineByLine(path);
   rows.reserve(lines.size() - skip);
   for (int i = skip; i < lines.size(); i++) {
-    auto elems = util::getSplit(lines[i], delimiter);
+    auto elems = getSplit(lines[i], delimiter);
     rows.push_back(elems);
   }
   return rows;
@@ -177,5 +177,5 @@ inline void saveTsv(const string& path, const vector<vector<string>>& rows) {
   saveDelimitedFile(path, rows, "\t");
 }
 
-}  // namespace util
+}  // namespace utils
 }  // namespace limas

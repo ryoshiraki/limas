@@ -38,13 +38,14 @@ class VideoExporter {
 
   bool is_setup_;
   bool is_exporting_;
+  bool b_vflip_;
 
  public:
-  VideoExporter() : is_setup_(false), is_exporting_(false) {}
-  ~VideoExporter() { close(); }
+  VideoExporter() : is_setup_(false), is_exporting_(false), b_vflip_(true) {}
+  ~VideoExporter() { stop(); }
 
-  bool open(size_t width, size_t height, int fps) {
-    close();
+  bool allocate(size_t width, size_t height, float fps) {
+    stop();
 
     do {
       fbo_.allocate(width, height);
@@ -164,11 +165,11 @@ class VideoExporter {
       return true;
     } while (false);
 
-    close();
+    stop();
     return false;
   }
 
-  void close() {
+  void stop() {
     if (is_setup_) {
       avcodec_send_frame(context_.codec_context, nullptr);
 
@@ -207,12 +208,26 @@ class VideoExporter {
       return;
     }
 
-    const int in_linesize[1] = {context_.codec_context->width * 4};
-    sws_scale(context_.sws_context, &data, in_linesize, 0,
-              context_.codec_context->height, context_.frame->data,
-              context_.frame->linesize);
-    context_.frame->pts = context_.frame_index++;
+    // flip vertically
+    if (b_vflip_) {
+      const int width = context_.codec_context->width;
+      const int height = context_.codec_context->height;
+      const int bytes_per_pixel = 4;
+      const unsigned char *flipped_data =
+          data + (height - 1) * width * bytes_per_pixel;
 
+      const int flipped_linesize[1] = {-width * bytes_per_pixel};
+
+      sws_scale(context_.sws_context, &flipped_data, flipped_linesize, 0,
+                height, context_.frame->data, context_.frame->linesize);
+    } else {
+      const int in_linesize[1] = {context_.codec_context->width * 4};
+      sws_scale(context_.sws_context, &data, in_linesize, 0,
+                context_.codec_context->height, context_.frame->data,
+                context_.frame->linesize);
+    }
+
+    context_.frame->pts = context_.frame_index++;
     ret = avcodec_send_frame(context_.codec_context, context_.frame);
     if (ret < 0) {
       logger::error("VideoExporter")
@@ -243,8 +258,9 @@ class VideoExporter {
     is_exporting_ = true;
   }
 
-  void stop() { is_exporting_ = false; }
+  void setVFlip(bool b_vflip) { b_vflip_ = b_vflip; }
   bool isExporting() const { return is_exporting_; }
+  bool isVFlip() const { return b_vflip_; }
   size_t getWidth() const { return fbo_.getWidth(); }
   size_t getHeight() const { return fbo_.getHeight(); }
   const gl::Texture2D &getTexture() const { return fbo_.getTexture(0); }

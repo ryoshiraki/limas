@@ -308,10 +308,17 @@ inline void drawTextureSubsection(const TextureBase& tex, float x, float y,
 }
 
 inline void drawTexture(const TextureBase& tex, float x, float y, float w = 0,
-                        float h = 0) {
+                        float h = 0, bool b_flip_y = false) {
   if (w == 0) w = tex.getWidth();
   if (h == 0) h = tex.getHeight();
-  drawTextureSubsection(tex, x, y, w, h, 0, 0, tex.getWidth(), tex.getHeight());
+
+  if (b_flip_y) {
+    drawTextureSubsection(tex, x, y + h, w, -h, 0, 0, tex.getWidth(),
+                          tex.getHeight());
+  } else {
+    drawTextureSubsection(tex, x, y, w, h, 0, 0, tex.getWidth(),
+                          tex.getHeight());
+  }
 }
 
 inline void drawBitmapString(const std::string& text, float x, float y) {

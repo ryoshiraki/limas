@@ -17,6 +17,7 @@ class BaseImage {
                   gl::getGLInternalFormat<PixelType>(pixels_.getNumChannels()));
     tex_.loadData(&pixels_.getData()[0]);
   }
+  BaseImage(BasePixels2D<PixelType>& pixels) { setFromPixels(pixels); }
 
   inline BaseImage& operator=(const BaseImage& rhs) {
     BaseImage lhs(rhs);

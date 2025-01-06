@@ -8,7 +8,6 @@ from tkinter import filedialog
 from tkinter import simpledialog
 from tkinter import messagebox
 from tkinter import Tk
-import configparser
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.dirname(script_dir)
@@ -18,18 +17,20 @@ root.title("Project Generator")
 root.geometry("200x200+500+500")
 root.withdraw()
 
+# Select the project directory
 project_parent_dir = filedialog.askdirectory(
-    title = "Choose Project Directory",
-    initialdir = f"{root_dir}/apps",
-    parent = root
+    title="Choose Project Directory",
+    initialdir=f"{root_dir}/apps",
+    parent=root
 )
 if not project_parent_dir:
     sys.exit()
 print(f"Project directory is {project_parent_dir}")
 
+# Enter the project name
 project_name = simpledialog.askstring("",
                                       "Enter Project Name",
-                                      parent = root)
+                                      parent=root)
 if not project_name:
     sys.exit()
 print(f"Project name is {project_name}")
@@ -37,27 +38,26 @@ project_dir = os.path.join(project_parent_dir, project_name)
 
 rel_path_from_project_to_root = os.path.relpath(root_dir, start=project_dir)
 
-#use_pytohn = messagebox.askquestion(title="Python", message="Use Python?") == 'yes'
+# Select the template directory using a dialog
+template_path = filedialog.askdirectory(
+    title="Choose Template Directory",
+    initialdir=os.path.join(script_dir, "templates"),
+    parent=root
+)
+if not template_path or not os.path.isdir(template_path):
+    messagebox.showerror("Error", "No valid template folder selected.")
+    sys.exit()
+print(f"Selected template: {template_path}")
 
-#addon_cmakes = []
-#while True:
-#  use_addon = messagebox.askquestion(title="Addon", message="Use Addon?") == 'yes'
-#  if not use_addon:
-#    break
-#
-#  addon_dir = filedialog.askdirectory(
-#  title = "Choose Addon Directory",
-#  initialdir = f"{root_dir}/addons",
-#  parent = root)
-#  
-#  abs_addon_cmakes = glob.glob(os.path.join(addon_dir, '*' + ".cmake"))
-#  if len(abs_addon_cmakes) > 0:
-#      addon_cmakes += [os.path.relpath(path, start=root_dir) for path in abs_addon_cmakes]
-
-template_path = os.path.join(script_dir, "templates/app_template")
-template_workspace_file_name = [f for f in os.listdir(template_path) if f.endswith(".code-workspace")][0]
+# Get the workspace file from the template
+template_workspace_file_name = [f for f in os.listdir(template_path) if f.endswith(".code-workspace")]
+if not template_workspace_file_name:
+    messagebox.showerror("Error", "No .code-workspace file found in template.")
+    sys.exit()
+template_workspace_file_name = template_workspace_file_name[0]
 workspace_file_name = f"{project_name}.code-workspace"
 
+# Copy template files to the project directory
 def ignore_directories(dir, filenames):
     return ['build']
 
@@ -67,6 +67,7 @@ os.rename(
     os.path.join(project_dir, workspace_file_name)
 )
 
+# Update the workspace file
 with open(os.path.join(project_dir, workspace_file_name), 'r+') as f:
     data = json.load(f)
 
@@ -75,15 +76,12 @@ with open(os.path.join(project_dir, workspace_file_name), 'r+') as f:
             folder['name'] = project_name
         elif folder['name'] == "limas":
             folder['path'] = os.path.join(rel_path_from_project_to_root, "libs/limas")
-        # elif folder['name'] == "addons":
-        #     folder['path'] = os.path.join(rel_path_from_project_to_root, "addons")
-        # elif folder['name'] == "resources":
-        #     folder['path'] = os.path.join(rel_path_from_project_to_root, "resources")
 
     f.seek(0)
     json.dump(data, f, indent=4)
     f.truncate()
 
+# Update c_cpp_properties.json
 with open(os.path.join(project_dir, ".vscode/c_cpp_properties.json"), 'r+') as f:
     data = json.load(f)
 
@@ -95,26 +93,13 @@ with open(os.path.join(project_dir, ".vscode/c_cpp_properties.json"), 'r+') as f
     json.dump(data, f, indent=4)
     f.truncate()
 
+# Create CMakeLists.txt
 with open(os.path.join(project_dir, "CMakeLists.txt"), "w") as f:
     f.write("cmake_minimum_required(VERSION 3.5)\n\n")
     f.write(f"project({project_name} CXX OBJCXX)\n")
     f.write("set(FRAMEWORK_PATH ${PROJECT_SOURCE_DIR}/" + os.path.relpath(root_dir, project_dir) + ")\n")
-    # f.write("set(FRAMEWORK_PATH \"" + root_dir + "\")\n")
     f.write("add_definitions(-DFRAMEWORK_PATH=\"${FRAMEWORK_PATH}\")\n")
     f.write("include(${FRAMEWORK_PATH}/scripts/limas.cmake)\n\n")
     
-#    for addon in addon_cmakes:
-#        f.write("include(${ROOT_DIR}/"+f"{addon})\n")
-    
-#    if use_pytohn:
-#        conf = configparser.ConfigParser()
-#        conf.read("./conf.ini")
-#        python_header = conf.get('Python', 'header')
-#        python_libray = conf.get('Python', 'library')
-#
-#        f.write(f"set(PYTHON_HEADER \"{python_header}\")\n")
-#        f.write(f"set(PYTHON_LIBRARY \"{python_libray}\")\n")
-#        f.write("target_include_directories(${PROJECT_NAME} PRIVATE ${PYTHON_HEADER})\n")
-#        f.write("target_link_libraries(${PROJECT_NAME} PRIVATE ${PYTHON_LIBRARY})\n")
-
+# Open the project in Visual Studio Code
 subprocess.run(["code", f"{project_dir}/{workspace_file_name}"])

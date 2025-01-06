@@ -13,11 +13,8 @@ class BaseCamera : public Node {
   float getNearClip() const { return near_; }
   void setFarClip(float far) { far_ = far; }
   float getFarClip() const { return far_; }
-  void setLensOffset(float x, float y) {
-    lens_offset_[0] = x;
-    lens_offset_[1] = y;
-  }
-  glm::vec3 getLensOffset() const { return lens_offset_; }
+  void setLensOffset(const glm::vec2& offset) { lens_offset_ = offset; }
+  glm::vec2 getLensOffset() const { return lens_offset_; }
 
   glm::vec3 getWorldToScreen(const glm::vec3& p, float x, float y, float w,
                              float h) const {
@@ -41,16 +38,12 @@ class BaseCamera : public Node {
 
  protected:
   BaseCamera()
-      : Node(),
-        fov_(60),
-        near_(1e-2),
-        far_(INT_MAX),
-        lens_offset_(0.f, 0.f, 0.f) {}
+      : Node(), fov_(60), near_(1e-2), far_(INT_MAX), lens_offset_(0.f, 0.f) {}
 
   float fov_;
   float near_;
   float far_;
-  glm::vec3 lens_offset_;
+  glm::vec2 lens_offset_;
 };
 
 }  // namespace limas

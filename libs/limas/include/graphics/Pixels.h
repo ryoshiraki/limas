@@ -137,14 +137,24 @@ class BasePixels3D {
 
  protected:
   std::vector<PixelType> crop(size_t x, size_t y, size_t z, size_t width,
-                              size_t height, size_t depth) {
-    std::vector<PixelType> data(width, height, depth, channels_);
+                              size_t height, size_t depth) const {
+    std::vector<PixelType> data(width * height * depth * channels_);
     for (size_t dz = 0; dz < depth; ++dz) {
       for (int dy = 0; dy < height; ++dy) {
         for (int dx = 0; dx < width; ++dx) {
-          int src_idx = getIndex(x + dx, y + dy, z + dz);
-          int dst_idx = getIndex(dx, dy, dz);
-          for (int c = 0; c < channels_; ++c) {
+          size_t src_x = x + dx;
+          size_t src_y = y + dy;
+          size_t src_z = z + dz;
+
+          if (src_x >= width_ || src_y >= height_ || src_z >= depth_) {
+            throw limas::Exception("Crop region exceeds image bounds.");
+          }
+
+          size_t src_idx = getIndex(src_x, src_y, src_z);
+
+          size_t dst_idx = channels_ * (dx + width * (dy + height * dz));
+
+          for (size_t c = 0; c < channels_; ++c) {
             data[dst_idx + c] = data_[src_idx + c];
           }
         }
@@ -180,6 +190,13 @@ class BasePixels2D : public BasePixels3D<PixelType> {
   BasePixels2D() : BasePixels3D<PixelType>() {}
   BasePixels2D(size_t width, size_t height, size_t channels)
       : BasePixels3D<PixelType>(width, height, 1, channels) {}
+
+  BasePixels2D(const BasePixels3D<PixelType>& pixels3D)
+      : BasePixels3D<PixelType>(pixels3D) {
+    if (pixels3D.getDepth() != 1) {
+      throw limas::Exception("Cannot convert 3D pixels to 2D: depth is not 1.");
+    }
+  }
 
   void allocate(size_t width, size_t height, size_t channels) {
     BasePixels3D<PixelType>::allocate(width, height, 1, channels);
@@ -249,6 +266,14 @@ class BasePixels1D : public BasePixels2D<PixelType> {
   BasePixels1D() : BasePixels2D<PixelType>() {}
   BasePixels1D(size_t width, size_t channels)
       : BasePixels2D<PixelType>(width, 1, channels) {}
+
+  BasePixels1D(const BasePixels2D<PixelType>& pixels2D)
+      : BasePixels2D<PixelType>(pixels2D) {
+    if (pixels2D.getHeight() != 1) {
+      throw limas::Exception(
+          "Cannot convert 2D pixels to 1D: height is not 1.");
+    }
+  }
 
   void allocate(size_t width, size_t channels) {
     BasePixels2D<PixelType>::allocate(width, 1, channels);

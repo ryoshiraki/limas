@@ -456,7 +456,7 @@ class BitmapFont {
   }
 
   std::vector<gl::VboMesh*> getMeshes(const std::string& _text) {
-    std::string text = util::toUpper(_text);
+    std::string text = utils::toUpper(_text);
 
     std::vector<gl::VboMesh*> meshes;
     for (int i = 0; i < text.length(); i++) {
