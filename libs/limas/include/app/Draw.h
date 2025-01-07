@@ -4,6 +4,7 @@
 #include "gl/Context.h"
 #include "gl/GLUtils.h"
 #include "gl/Renderer.h"
+#include "graphics/Font.h"
 
 namespace limas {
 
@@ -319,6 +320,14 @@ inline void drawTexture(const TextureBase& tex, float x, float y, float w = 0,
     drawTextureSubsection(tex, x, y, w, h, 0, 0, tex.getWidth(),
                           tex.getHeight());
   }
+}
+
+inline void drawFont(const Font& font, const std::string& text, float x,
+                     float y) {
+  bindTexture(font.getTexture());
+  gl::VboMesh mesh = font.getMesh(text, x, y);
+  drawMesh(mesh, GL_TRIANGLES);
+  unbindTexture();
 }
 
 inline void drawBitmapString(const std::string& text, float x, float y) {

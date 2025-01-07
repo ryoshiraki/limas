@@ -1,23 +1,28 @@
 #pragma once
+#include <glm/glm.hpp>
+#include <glm/gtx/io.hpp>
+#include <glm/gtx/string_cast.hpp>
+
 #include "math/Drunk.h"
 #include "math/Noise.h"
 #include "math/Random.h"
 
-inline std::ostream& operator<<(std::ostream& os, const glm::vec4& v) {
-  return os << glm::to_string(v);
-}
-inline std::ostream& operator<<(std::ostream& os, const glm::vec3& v) {
-  return os << glm::to_string(v);
-}
-inline std::ostream& operator<<(std::ostream& os, const glm::vec2& v) {
-  return os << glm::to_string(v);
-}
-inline std::ostream& operator<<(std::ostream& os, const glm::mat3& m) {
-  return os << glm::to_string(m);
-}
-inline std::ostream& operator<<(std::ostream& os, const glm::mat4& m) {
-  return os << glm::to_string(m);
-}
+// inline std::ostream& operator<<(std::ostream& os, const glm::vec4& v) {
+//   return os << glm::to_string(v);
+// }
+
+// inline std::ostream& operator<<(std::ostream& os, const glm::vec3& v) {
+//   return os << glm::to_string(v);
+// }
+// inline std::ostream& operator<<(std::ostream& os, const glm::vec2& v) {
+//   return os << glm::to_string(v);
+// }
+// inline std::ostream& operator<<(std::ostream& os, const glm::mat3& m) {
+//   return os << glm::to_string(m);
+// }
+// inline std::ostream& operator<<(std::ostream& os, const glm::mat4& m) {
+//   return os << glm::to_string(m);
+// }
 
 namespace limas {
 namespace math {

@@ -32,9 +32,9 @@ class App : public BaseApp {
     gl::setOrthoView(getWidth(), getHeight());
     gl::drawTexture(exporter_.getTexture(), 0, 0, getWidth(), getHeight(),
                     true);
-    gl::drawBitmapString("FPS:" + util::toString(getFPS(), 2, 6, '0'), 5, 5);
+    gl::drawBitmapString("FPS:" + utils::toString(getFPS(), 2, 6, '0'), 5, 5);
     gl::drawBitmapString(
-        "MEM:" + util::toString(getMemoryUsage(), 2, 6, '0') + " MB", 5, 15);
+        "MEM:" + utils::toString(getMemoryUsage(), 2, 6, '0') + " MB", 5, 15);
     gl::popMatrix();
   }
 
