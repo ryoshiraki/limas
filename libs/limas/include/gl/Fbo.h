@@ -26,6 +26,8 @@ class Fbo {
 
   void allocate(GLsizei width, GLsizei height) {
     data_ = std::make_shared<BufferData>(width, height);
+    textures_.clear();
+    attachments_.clear();
   }
 
   Rbo& attachDepth() {

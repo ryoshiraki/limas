@@ -2,10 +2,7 @@
 
 extern "C" {
 #include "libavcodec/avcodec.h"
-#include "libavdevice/avdevice.h"
-#include "libavfilter/avfilter.h"
 #include "libavformat/avformat.h"
-#include "libavutil/avutil.h"
 #include "libavutil/imgutils.h"
 #include "libavutil/pixdesc.h"
 #include "libswscale/swscale.h"
@@ -16,7 +13,6 @@ extern "C" {
 #include "gl/Texture2D.h"
 #include "graphics/Pixels.h"
 #include "system/Thread.h"
-#include "system/ThreadPool.h"
 #include "utils/Stopwatch.h"
 
 namespace limas {
@@ -25,42 +21,28 @@ class VideoPlayer : public Thread {
     int width;
     int height;
 
-    AVFormatContext *format_context;
-    AVCodecContext *codec_context;
-    SwsContext *sws_context;
+    AVFormatContext *format_context = nullptr;
+    AVCodecContext *codec_context = nullptr;
+    SwsContext *sws_context = nullptr;
 
-    int stream_index;
-    double time_base;
-    double frame_rate;
-    double duration;
-  };
-  Context context_;
+    int stream_index = -1;
+    double time_base = 0.0;
+    double frame_rate = 0.0;
+    double duration = 0.0;
+  } context_;
 
-  // std::vector<AVFrame *> frame_buffers;
   std::deque<AVFrame *> frame_queues_;
-  AVFrame *last_frame_;
-
+  AVFrame *last_frame_ = nullptr;
   struct VideoState {
-    VideoState()
-        : b_new_frame(false),
-          b_loaded(false),
-          b_playing(false),
-          b_loop(true),
-          speed(1),
-          b_request_seek(false),
-          seek_time(0),
-          offset_time(0) {}
-
-    bool b_new_frame;
-    bool b_loaded;
-    bool b_playing;
-    bool b_loop;
-    float speed;
-    bool b_request_seek;
-    double seek_time;    // seconds
-    double offset_time;  // seconds
-  };
-  VideoState state_;
+    bool b_new_frame = false;
+    bool b_loaded = false;
+    bool b_playing = false;
+    bool b_loop = true;
+    float speed = 1.0f;
+    bool b_request_seek = false;
+    double seek_time = 0.0;
+    double offset_time = 0.0;
+  } state_;
 
   gl::Texture2D tex_;
   Pixels2D pixels_;
@@ -73,14 +55,20 @@ class VideoPlayer : public Thread {
   void close() {
     stopThread();
 
-    if (context_.sws_context) sws_freeContext(context_.sws_context);
-    if (context_.codec_context) avcodec_free_context(&context_.codec_context);
-    if (context_.codec_context) avcodec_close(context_.codec_context);
-    if (context_.format_context) avformat_free_context(context_.format_context);
+    if (context_.sws_context) {
+      sws_freeContext(context_.sws_context);
+      context_.sws_context = nullptr;
+    }
+    if (context_.codec_context) {
+      avcodec_free_context(&context_.codec_context);
+      context_.codec_context = nullptr;
+    }
+    if (context_.format_context) {
+      avformat_close_input(&context_.format_context);
+      context_.format_context = nullptr;
+    }
 
     state_ = VideoState();
-    // for (auto &f : frame_buffers) av_frame_free(&f);
-    // frame_buffers.clear();
     frame_queues_.clear();
     stopwatch_.reset();
   }
@@ -88,125 +76,100 @@ class VideoPlayer : public Thread {
   bool load(const std::string &filename, size_t thread_count = 8) {
     close();
 
-    do {
-      if (!(context_.format_context = avformat_alloc_context())) {
-        log::error("VideoPlayer")
-            << "Couldn't create AVFormatContext" << log::end();
-        break;
-      }
+    if (!(context_.format_context = avformat_alloc_context())) {
+      logger::error("VideoPlayer")
+          << "Couldn't create AVFormatContext" << logger::end();
+      return false;
+    }
 
-      if (avformat_open_input(&context_.format_context, filename.c_str(),
-                              nullptr, nullptr) != 0) {
-        log::error("VideoPlayer") << "Couldn't open " << filename << log::end();
-        break;
-      }
+    if (avformat_open_input(&context_.format_context, filename.c_str(), nullptr,
+                            nullptr) != 0) {
+      logger::error("VideoPlayer")
+          << "Couldn't open " << filename << logger::end();
+      return false;
+    }
 
-      if (avformat_find_stream_info(context_.format_context, nullptr) < 0) {
-        log::error("VideoPlayer")
-            << "Couldn't retrieve stream info" << log::end();
-        break;
-      }
+    if (avformat_find_stream_info(context_.format_context, nullptr) < 0) {
+      logger::error("VideoPlayer")
+          << "Couldn't retrieve stream info" << logger::end();
+      return false;
+    }
 
-      av_dump_format(context_.format_context, 0, filename.c_str(), 0);
+    av_dump_format(context_.format_context, 0, filename.c_str(), 0);
 
-      AVCodec *codec;
-      AVCodecParameters *codec_param;
-      context_.stream_index = -1;
-      for (int i = 0; i < context_.format_context->nb_streams; i++) {
-        codec_param = context_.format_context->streams[i]->codecpar;
-        codec =
-            const_cast<AVCodec *>(avcodec_find_decoder(codec_param->codec_id));
-        if (!codec) continue;
+    const AVCodec *codec = nullptr;
+    AVCodecParameters *codec_param = nullptr;
 
-        if (codec_param->codec_type == AVMEDIA_TYPE_VIDEO) {
-          context_.stream_index = i;
-          context_.width = codec_param->width;
-          context_.height = codec_param->height;
-          context_.time_base =
-              av_q2d(context_.format_context->streams[i]->time_base);
-          context_.frame_rate =
-              av_q2d(context_.format_context->streams[i]->r_frame_rate);
-          context_.duration = context_.format_context->duration / AV_TIME_BASE;
-          break;
-        }
-      }
+    for (unsigned int i = 0; i < context_.format_context->nb_streams; i++) {
+      codec_param = context_.format_context->streams[i]->codecpar;
+      codec = avcodec_find_decoder(codec_param->codec_id);
 
-      if (context_.stream_index == -1) {
-        log::error("VideoPlayer") << "Couldn't find video stream" << log::end();
-        break;
-      }
-
-      if (!(context_.codec_context = avcodec_alloc_context3(codec))) {
-        log::error("VideoPlayer")
-            << "Couldn't create AVCodecContext" << log::end();
-        break;
-      }
-      context_.codec_context->thread_count = thread_count;
-
-      if (avcodec_parameters_to_context(context_.codec_context, codec_param) <
-          0) {
-        log::error("VideoPlayer")
-            << "Couldn't initialize AVCodecContext" << log::end();
-        break;
-      }
-
-      if (avcodec_open2(context_.codec_context, codec, nullptr) < 0) {
-        log::error("VideoPlayer") << "Couldn't open codec" << log::end();
-        break;
-      }
-
-      AVPixelFormat format = context_.codec_context->pix_fmt;
-      const AVPixFmtDescriptor *desc = av_pix_fmt_desc_get(format);
-      if (desc->flags & AV_PIX_FMT_FLAG_RGB) {
-        log::error("VideoPlayer")
-            << av_get_pix_fmt_name(format) << " is not supported" << log::end();
-        break;
-      } else if (desc->nb_components == 1) {
-        log::error("VideoPlayer")
-            << av_get_pix_fmt_name(format) << " is not supported" << log::end();
-        break;
-      } else {
-        if (!(context_.sws_context = sws_getContext(
-                  context_.width, context_.height,
-                  context_.codec_context->pix_fmt, context_.width,
-                  context_.height, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL,
-                  NULL))) {
-          log::error("VideoPlayer") << "Couldn't get sws context" << log::end();
-          break;
+      if (codec && codec_param->codec_type == AVMEDIA_TYPE_VIDEO) {
+        // H.264の場合、VideoToolboxを優先
+        if (std::string(codec->name) == "h264" &&
+            avcodec_find_decoder_by_name("h264_videotoolbox")) {
+          codec = avcodec_find_decoder_by_name("h264_videotoolbox");
         }
 
-        tex_.allocate(context_.width, context_.height, GL_RGB8);
-        tex_.setMinFilter(GL_LINEAR);
-        tex_.setMagFilter(GL_LINEAR);
-        std::vector<GLubyte> data(context_.width * context_.height * 3);
-        std::fill(data.begin(), data.end(), 0);
-        tex_.loadData(&data[0]);
+        context_.stream_index = i;
+        context_.width = codec_param->width;
+        context_.height = codec_param->height;
+        context_.time_base =
+            av_q2d(context_.format_context->streams[i]->time_base);
+        context_.frame_rate =
+            av_q2d(context_.format_context->streams[i]->r_frame_rate);
+        context_.duration = context_.format_context->duration / AV_TIME_BASE;
+        break;
       }
+    }
 
-      pixels_.allocate(context_.width, context_.height, 3);
+    if (context_.stream_index == -1) {
+      logger::error("VideoPlayer")
+          << "Couldn't find video stream" << logger::end();
+      return false;
+    }
 
-      // frame_buffers.clear();
-      // int num_buffers = context_.frame_rate / 10.0;
-      // for (int i = 0; i < num_buffers; i++) {
-      //   AVFrame *frame = av_frame_alloc();
-      //   if (!av_image_alloc(frame->data, frame->linesize, context_.width,
-      //                       context_.height, context_.codec_context->pix_fmt,
-      //                       1)) {
-      //     log::error("VideoPlayer")
-      //         << "Couldn't allocate decoded frame" << log::end();
-      //     continue;
-      //   }
-      //   frame_buffers.push_back(frame);
-      // }
-      state_.b_loaded = true;
+    if (!(context_.codec_context = avcodec_alloc_context3(codec))) {
+      logger::error("VideoPlayer")
+          << "Couldn't create AVCodecContext" << logger::end();
+      return false;
+    }
 
-      startThread([this]() { this->threadedFunction(); });
+    context_.codec_context->thread_count = thread_count;
 
-      return true;
-    } while (false);
+    if (avcodec_parameters_to_context(context_.codec_context, codec_param) <
+        0) {
+      logger::error("VideoPlayer")
+          << "Couldn't initialize AVCodecContext" << logger::end();
+      return false;
+    }
 
-    close();
-    return false;
+    if (avcodec_open2(context_.codec_context, codec, nullptr) < 0) {
+      logger::error("VideoPlayer") << "Couldn't open codec" << logger::end();
+      return false;
+    }
+
+    if (!(context_.sws_context = sws_getContext(
+              context_.width, context_.height, context_.codec_context->pix_fmt,
+              context_.width, context_.height, AV_PIX_FMT_RGB24,
+              SWS_FAST_BILINEAR,  // SWS_BICUBIC,
+              nullptr, nullptr, nullptr))) {
+      logger::error("VideoPlayer")
+          << "Couldn't get sws context" << logger::end();
+      return false;
+    }
+
+    tex_.allocate(context_.width, context_.height, GL_RGB8);
+    tex_.setMinFilter(GL_LINEAR);
+    tex_.setMagFilter(GL_LINEAR);
+
+    pixels_.allocate(context_.width, context_.height, 3);
+
+    state_.b_loaded = true;
+
+    startThread([this]() { this->threadedFunction(); });
+
+    return true;
   }
 
   void update() {
@@ -222,16 +185,18 @@ class VideoPlayer : public Thread {
     AVFrame *frame;
 
     {
+      bool b_should_notify = false;
       auto locker = getLock();
       while (frame_queues_.size()) {
         frame = frame_queues_.front();
         if (current_time > (frame->pts * context_.time_base)) {
           frame_queues_.pop_front();
-          notify();
+          b_should_notify = true;
         } else {
           break;
         }
       }
+      if (b_should_notify) notify();
       if (frame_queues_.empty()) return;
     }
 
@@ -340,7 +305,7 @@ class VideoPlayer : public Thread {
       int ret = av_seek_frame(context_.format_context, context_.stream_index,
                               pts, AVSEEK_FLAG_ANY);
       if (ret < 0) {
-        log::error("av_seek_frame") << av_err2str(ret) << log::end();
+        logger::error("av_seek_frame") << av_err2str(ret) << logger::end();
         return;
       }
 
@@ -351,7 +316,8 @@ class VideoPlayer : public Thread {
   void threadedFunction() {
     AVPacket *packet = av_packet_alloc();
     if (!packet) {
-      log::error("VideoPlayer") << "Couldn't allocate packet" << log::end();
+      logger::error("VideoPlayer")
+          << "Couldn't allocate packet" << logger::end();
       return;
     }
 
@@ -362,7 +328,8 @@ class VideoPlayer : public Thread {
       if (!av_image_alloc(frame->data, frame->linesize, context_.width,
                           context_.height, context_.codec_context->pix_fmt,
                           1)) {
-        log::error("VideoPlayer") << "Couldn't allocate frame" << log::end();
+        logger::error("VideoPlayer")
+            << "Couldn't allocate frame" << logger::end();
         continue;
       }
       frame_buffers.push_back(frame);
@@ -384,7 +351,8 @@ class VideoPlayer : public Thread {
       if (packet->stream_index == context_.stream_index) {
         ret = avcodec_send_packet(context_.codec_context, packet);
         if (ret < 0) {
-          log::error("avcodec_send_packet") << av_err2str(ret) << log::end();
+          logger::error("avcodec_send_packet")
+              << av_err2str(ret) << logger::end();
           continue;
         }
 
@@ -397,8 +365,8 @@ class VideoPlayer : public Thread {
           if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
             break;
           } else if (ret < 0) {
-            log::error("avcodec_receive_frame")
-                << av_err2str(ret) << log::end();
+            logger::error("avcodec_receive_frame")
+                << av_err2str(ret) << logger::end();
           }
 
           {

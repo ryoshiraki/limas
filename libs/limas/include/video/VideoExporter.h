@@ -258,6 +258,8 @@ class VideoExporter {
     is_exporting_ = true;
   }
 
+  uint32_t getRecordedFrameCount() const { return context_.frame_index; }
+
   void setVFlip(bool b_vflip) { b_vflip_ = b_vflip; }
   bool isExporting() const { return is_exporting_; }
   bool isVFlip() const { return b_vflip_; }
