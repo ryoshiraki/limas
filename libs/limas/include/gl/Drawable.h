@@ -24,7 +24,7 @@ class AttributeBase {
   virtual void update(const void *data, size_t size) = 0;
   virtual void bind() const = 0;
   virtual void unbind() const = 0;
-  virtual GLuint getID() const = 0;
+  virtual GLuint getId() const = 0;
   virtual GLsizei getSize() const = 0;
   virtual GLsizei getStride() const = 0;
 
@@ -58,7 +58,7 @@ class Attribute : public AttributeBase {
 
   void bind() const override { vbo_.bind(); }
   void unbind() const override { vbo_.unbind(); }
-  GLuint getID() const override { return vbo_.getID(); }
+  GLuint getId() const override { return vbo_.getId(); }
   GLsizei getSize() const override { return vbo_.getSize(); }
   GLsizei getStride() const { return vbo_.getStride(); }
 
@@ -78,7 +78,7 @@ class Drawable {
         std::make_shared<Attribute<T>>(location, data, dim, type);
     attributes_[location] = attr;
 
-    vao_.bindVbo(attr->getID(), location, dim, attr->getType(), GL_FALSE,
+    vao_.bindVbo(attr->getId(), location, dim, attr->getType(), GL_FALSE,
                  attr->getStride());
   }
 
@@ -118,7 +118,7 @@ class Drawable {
     auto it = attributes_.find(location);
     if (it != attributes_.end()) {
       auto &attr = it->second;
-      vao_.bindVbo(attr->getID(), location, attr->getDim(), attr->getType(),
+      vao_.bindVbo(attr->getId(), location, attr->getDim(), attr->getType(),
                    GL_FALSE, attr->getStride());
     } else {
       logger::warn("enableAttribute()")

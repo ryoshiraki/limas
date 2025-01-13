@@ -36,7 +36,7 @@ class Vao {
   template <typename T>
   void bindVbo(Vbo<T>& buf, GLuint location, GLint dim, GLenum type,
                const void* offset = 0) {
-    bindVbo(buf.getID(), location, dim, type, GL_FALSE, buf.getStride(),
+    bindVbo(buf.getId(), location, dim, type, GL_FALSE, buf.getStride(),
             offset);
   }
 
@@ -57,7 +57,7 @@ class Vao {
 
   template <typename T>
   void bindIbo(Ibo<T>& buf) {
-    bindIbo(buf.getID());
+    bindIbo(buf.getId());
   }
 
   void unbindIbo() {

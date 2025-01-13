@@ -41,7 +41,7 @@ inline void setColorHsv(float h, float s, float v, float a) {
 }
 
 inline void bindTexture(const TextureBase& tex) {
-  app::getRenderer()->bindTexture(tex.getID());
+  app::getRenderer()->bindTexture(tex.getId());
 }
 inline void unbindTexture() { app::getRenderer()->unbindTexture(); }
 
@@ -305,7 +305,7 @@ inline void drawTextureSubsection(const TextureBase& tex, float x, float y,
   app::getRenderer()->transformTexture(s / tex.getWidth(), t / tex.getHeight(),
                                        sw / tex.getWidth(),
                                        th / tex.getHeight());
-  app::getRenderer()->drawTexture(tex.getID(), glm::vec3(x, y, 0), w, h);
+  app::getRenderer()->drawTexture(tex.getId(), glm::vec3(x, y, 0), w, h);
 }
 
 inline void drawTexture(const TextureBase& tex, float x, float y, float w = 0,

@@ -4,6 +4,7 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "math/Drunk.h"
+#include "math/Easing.h"
 #include "math/Noise.h"
 #include "math/Random.h"
 
@@ -50,6 +51,15 @@ inline float map(float x, float x0, float x1, float y0, float y1,
                  bool b_clamp = false) {
   float y = y0 + (x - x0) * ((y1 - y0) / (x1 - x0));
   return b_clamp ? clamp(y, y0, y1) : y;
+}
+
+inline float mapWithEasing(
+    float x, float x0, float x1, float y0, float y1, bool b_clamp = false,
+    const std::function<float(float)>& easing = math::easing::none) {
+  float t = map(x, x0, x1, 0, 1, b_clamp);
+  t = easing(t);
+  float y = map(t, 0, 1, y0, y1, b_clamp);
+  return y;
 }
 
 // deprecated

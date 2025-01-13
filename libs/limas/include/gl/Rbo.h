@@ -34,7 +34,7 @@ class Rbo {
   void bind() { glBindRenderbuffer(GL_RENDERBUFFER, data_->id_); }
   void unbind() { glBindRenderbuffer(GL_RENDERBUFFER, 0); }
 
-  GLuint getID() const { return data_->id_; }
+  GLuint getId() const { return data_->id_; }
   GLsizei getWidth() const { return data_->width_; }
   GLsizei getHeight() const { return data_->height_; }
   glm::vec2 getSize() const { return glm::vec2(data_->width_, data_->height_); }

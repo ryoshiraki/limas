@@ -147,7 +147,7 @@ inline BasicJsonType loadJson(const std::string& path) {
 }
 
 template <typename BasicJsonType>
-inline void saveJson(const BasicJsonType& j, const std::string& path) {
+inline void saveJson(const std::string& path, const BasicJsonType& j) {
   std::ofstream ofs(path);
   if (!ofs) throw Exception("failed to write json to " + path);
   ofs << j.dump(4);

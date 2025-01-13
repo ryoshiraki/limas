@@ -85,7 +85,7 @@ class TextureBase {
  public:
   virtual ~TextureBase() {}
 
-  void bind() const { glBindTexture(getTarget(), getID()); }
+  void bind() const { glBindTexture(getTarget(), getId()); }
   void unbind() const { glBindTexture(getTarget(), 0); }
 
   void setMinFilter(GLint filter) {
@@ -122,14 +122,14 @@ class TextureBase {
                      size_t depth, GLenum internal_format,
                      std::optional<GLenum> format = std::nullopt,
                      std::optional<GLenum> type = std::nullopt) {
-    if (data_ == nullptr || getID() != id || getWidth() != width ||
+    if (data_ == nullptr || getId() != id || getWidth() != width ||
         getHeight() != height) {
       data_ = std::make_shared<TextureData>(id, target, width, height, depth,
                                             internal_format, format, type);
     }
   }
 
-  GLuint getID() const { return data_->id_; }
+  GLuint getId() const { return data_->id_; }
   GLenum getTarget() const { return data_->target_; }
   GLenum getInternalFormat() const { return data_->internal_format_; }
   GLenum getFormat() const { return data_->format_; }

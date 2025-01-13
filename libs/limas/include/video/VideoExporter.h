@@ -195,8 +195,7 @@ class VideoExporter {
   void unbind() {
     fbo_.unbind();
 
-    if (is_setup_ && is_exporting_ &&
-        pbo_.readTo(&pixel_data_, fbo_.getID(), 0)) {
+    if (is_setup_ && is_exporting_ && pbo_.readToPixels(&pixel_data_, fbo_)) {
       write(pixel_data_.data());
     }
   }

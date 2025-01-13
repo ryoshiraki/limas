@@ -233,7 +233,7 @@ class ShaderBase {
 
   void setUniformTexture(const std::string& name, const TextureBase& t,
                          int index) {
-    setUniformTexture(name, t.getTarget(), t.getID(), index);
+    setUniformTexture(name, t.getTarget(), t.getId(), index);
   }
 
   void bindUniformBlock(const std::string& name, const GLuint index) const {

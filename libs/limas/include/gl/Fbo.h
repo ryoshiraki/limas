@@ -36,7 +36,7 @@ class Fbo {
     bind();
     rbo_.bind();
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                              GL_RENDERBUFFER, rbo_.getID());
+                              GL_RENDERBUFFER, rbo_.getId());
     rbo_.unbind();
     unbind();
 
@@ -49,7 +49,7 @@ class Fbo {
     bind();
     rbo_.bind();
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                              GL_RENDERBUFFER, rbo_.getID());
+                              GL_RENDERBUFFER, rbo_.getId());
     rbo_.unbind();
     unbind();
 
@@ -63,7 +63,7 @@ class Fbo {
     bind();
     tex.bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
-                           tex.getID(), 0);
+                           tex.getId(), 0);
     tex.unbind();
     unbind();
     textures_.push_back(tex);
@@ -78,7 +78,7 @@ class Fbo {
     bind();
     tex.bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                           GL_TEXTURE_2D, tex.getID(), 0);
+                           GL_TEXTURE_2D, tex.getId(), 0);
     tex.unbind();
     unbind();
     textures_.push_back(tex);
@@ -94,7 +94,7 @@ class Fbo {
     tex.bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER,
                            GL_COLOR_ATTACHMENT0 + textures_.size(),
-                           GL_TEXTURE_2D, tex.getID(), 0);
+                           GL_TEXTURE_2D, tex.getId(), 0);
     attachments_.push_back(GL_COLOR_ATTACHMENT0 + textures_.size());
     tex.unbind();
     unbind();
@@ -104,7 +104,7 @@ class Fbo {
   }
 
   void bind() {
-    glBindFramebuffer(GL_FRAMEBUFFER, getID());
+    glBindFramebuffer(GL_FRAMEBUFFER, getId());
     glDrawBuffers(attachments_.size(), &attachments_[0]);
 
     viewport.push();
@@ -148,7 +148,7 @@ class Fbo {
     return is_completed;
   }
 
-  GLuint getID() const { return data_->id_; }
+  GLuint getId() const { return data_->id_; }
   GLsizei getWidth() const { return data_->width_; }
   GLsizei getHeight() const { return data_->height_; }
   glm::vec2 getSize() const { return glm::vec2(data_->width_, data_->height_); }

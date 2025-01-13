@@ -54,7 +54,7 @@ class BufferObject {
     update(data.data(), data.size(), offset);
   }
 
-  void bind() const { glBindBuffer(getTarget(), getID()); }
+  void bind() const { glBindBuffer(getTarget(), getId()); }
   void unbind() const { glBindBuffer(getTarget(), 0); }
 
   std::vector<T> getData(GLsizei offset, GLsizei count) {
@@ -68,7 +68,7 @@ class BufferObject {
     return data;
   }
 
-  GLuint getID() const { return data_->id_; }
+  GLuint getId() const { return data_->id_; }
   GLenum getTarget() const { return data_->target_; }
   GLsizei getStride() const { return data_->stride_; }
   GLsizei getSize() const { return data_->count_; }

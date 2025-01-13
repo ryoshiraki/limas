@@ -66,39 +66,38 @@ class Font {
     int x_max, y_max;
     int width, height;
     int advance_x, advance_y;
-    int x_offset;
+    int x_offset, y_offset;
     Pixels2D pixels;
   };
 
-  Font() : face_(nullptr) {}
-  virtual ~Font() {
-    if (face_) {
-      FT_Done_Face(face_);
-    }
-  }
+  Font() {}
+  virtual ~Font() {}
 
   bool load(const string& path, float point_size, float dpi,
             bool b_antialiased) {
-    if (FT_New_Face(getLibrary(), path.c_str(), 0, &face_)) {
+    FT_Face face;
+    if (FT_New_Face(getLibrary(), path.c_str(), 0, &face)) {
       logger::error("Font")
           << "Failed to load font from " << path << logger::end();
       return false;
     }
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    // glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     float pixel_size =
         (point_size * dpi) / 72.0f;  // Convert point size to pixel size
-    FT_Set_Pixel_Sizes(face_, 0, static_cast<FT_UInt>(pixel_size));
+    FT_Set_Pixel_Sizes(face, 0, static_cast<FT_UInt>(pixel_size));
 
     unit_size_.x_max = 0;
     unit_size_.y_max = 0;
     unit_size_.x_min = INT_MAX;
     unit_size_.y_min = INT_MAX;
 
+    auto characters = getAllCharacters(face);
+
     // Precompute character data and determine texture dimensions
     int total_advance_x = 0;
-    for (unsigned char c = CHAR_CODE_START; c < CHAR_CODE_END; ++c) {
-      if (FT_Load_Char(face_, c,
+    for (char32_t c : characters) {
+      if (FT_Load_Char(face, c,
                        b_antialiased ? FT_LOAD_RENDER
                                      : FT_LOAD_RENDER | FT_LOAD_MONOCHROME)) {
         logger::warn("Font")
@@ -106,7 +105,7 @@ class Font {
         continue;
       }
 
-      FT_GlyphSlot& slot = face_->glyph;
+      FT_GlyphSlot& slot = face->glyph;
       FT_Bitmap& bitmap = slot->bitmap;
       auto& ch = characters_[c];
 
@@ -151,19 +150,29 @@ class Font {
     unit_size_.height = unit_size_.y_max - unit_size_.y_min;
 
     // Texture dimensions
-    int tex_width = std::max(total_advance_x, unit_size_.width * NUM_CHARS);
-    int tex_height = unit_size_.height;
+    int max_tex_width = 2048;
+    int tex_width = std::min(total_advance_x, max_tex_width);
+    int tex_height =
+        ceil((float)total_advance_x / (float)max_tex_width) * unit_size_.height;
     Pixels2D pixels(tex_width, tex_height, 1);
 
     // Copy character pixels into the texture
     int x_offset = 0;
-    for (unsigned char c = CHAR_CODE_START; c < CHAR_CODE_END; ++c) {
+    int y_offset = 0;
+    for (char32_t c : characters) {
       auto& ch = characters_[c];
       if (ch.width == 0 || ch.height == 0) continue;
 
+      if (x_offset + ch.width > tex_width) {
+        x_offset = 0;
+        y_offset += unit_size_.height;
+      }
+
       pixels.loadData(&ch.pixels.getData()[0], ch.width, ch.height, x_offset,
-                      -unit_size_.y_min + ch.y_min);
+                      y_offset - unit_size_.y_min + ch.y_min);
       ch.x_offset = x_offset;
+      ch.y_offset = y_offset - unit_size_.y_min + ch.y_min;
+
       x_offset += ch.advance_x;
     }
 
@@ -174,7 +183,7 @@ class Font {
     texture_.setMinFilter(GL_LINEAR);
     texture_.setMagFilter(GL_LINEAR);
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    // glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
     return true;
   }
@@ -201,11 +210,12 @@ class Font {
       vertices.emplace_back(dx + ch.width, dy + ch.height, 0);
       vertices.emplace_back(dx, dy + ch.height, 0);
 
-      float tl = (float)ch.x_offset / texture_.getWidth();
-      float tr = (float)(ch.x_offset + ch.width) / texture_.getWidth();
-
-      float tt = (float)(ch.y_min - unit_size_.y_min) / unit_size_.height;
-      float tb = tt + ((float)ch.height / unit_size_.height);
+      float tw = texture_.getWidth();
+      float th = texture_.getHeight();
+      float tl = (float)ch.x_offset / tw;
+      float tr = tl + (float)ch.width / tw;
+      float tt = (float)(ch.y_offset) / th;
+      float tb = tt + (float)ch.height / th;
 
       texcoords.emplace_back(tl, tt);
       texcoords.emplace_back(tr, tt);
@@ -234,9 +244,28 @@ class Font {
   const gl::Texture2D& getTexture() const { return texture_; }
   gl::Texture2D& getTexture() { return texture_; }
 
+  const std::map<char32_t, Character>& getCharacters() const {
+    return characters_;
+  }
+
  protected:
-  FT_Face face_;
-  std::map<unsigned char, Character> characters_;
+  std::vector<char32_t> getAllCharacters(const FT_Face& face) {
+    std::vector<char32_t> characters;
+
+    FT_ULong charcode;
+    FT_UInt gindex;
+
+    charcode = FT_Get_First_Char(face, &gindex);
+
+    while (gindex != 0) {
+      characters.push_back(charcode);
+      charcode = FT_Get_Next_Char(face, charcode, &gindex);
+    }
+
+    return characters;
+  }
+
+  std::map<char32_t, Character> characters_;
   gl::Texture2D texture_;
   UnitSize unit_size_;
 };

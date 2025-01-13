@@ -50,7 +50,29 @@ class PboPacker {
   bool isAsync() const { return b_async_; }
 
   template <typename T>
-  bool readTo(std::vector<T>* data, GLuint fbo_id, int attachment_id = 0) {
+  bool readToPixelsFromTexture(std::vector<T>* data, GLuint target,
+                               GLuint texture_id) {
+    glBindTexture(target, texture_id);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, data_->ids_[flag_]);
+
+    glGetTexImage(target, 0, data_->format_, data_->type_, nullptr);
+
+    bool res = readTo(data);
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindTexture(target, 0);
+
+    return res;
+  }
+
+  template <typename T>
+  bool readToPixels(std::vector<T>* data, const gl::Texture2D& tex) {
+    return readToPixelsFromTexture(data, tex.getTarget(), tex.getId());
+  }
+
+  template <typename T>
+  bool readToPixelsFromFbo(std::vector<T>* data, GLuint fbo_id,
+                           int attachment_id = 0) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
     glReadBuffer(GL_COLOR_ATTACHMENT0 + attachment_id);
 
@@ -58,6 +80,23 @@ class PboPacker {
     glReadPixels(0, 0, data_->width_, data_->height_, data_->format_,
                  data_->type_, nullptr);
 
+    bool res = readTo(data);
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return res;
+  }
+
+  template <typename T>
+  bool readToPixels(std::vector<T>* data, const gl::Fbo& fbo,
+                    int attachment_id = 0) {
+    return readToPixelsFromFbo(data, fbo.getId(), attachment_id);
+  }
+
+ private:
+  template <typename T>
+  bool readTo(std::vector<T>* data) {
     if (b_async_)
       flag_ = (flag_ + 1) % 2;
     else
@@ -71,13 +110,9 @@ class PboPacker {
       glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     }
 
-    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     return (ptr != nullptr);
   }
 
- private:
   std::shared_ptr<BufferData> data_;
   uint flag_;
   bool b_async_;

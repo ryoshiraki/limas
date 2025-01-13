@@ -166,7 +166,7 @@ class Renderer : private Noncopyable {
 
   void drawBitmapString(const std::string& text, const glm::vec3& p) {
     auto meshes = font_.getMeshes(text);
-    bindTexture(font_.getTexture().getID());
+    bindTexture(font_.getTexture().getId());
     for (int i = 0; i < meshes.size(); i++) {
       pushMatrix();
       translate(
@@ -180,7 +180,7 @@ class Renderer : private Noncopyable {
 
   void drawLargeBitmapString(const std::string& text, const glm::vec3& p) {
     auto meshes = font_large_.getMeshes(text);
-    bindTexture(font_large_.getTexture().getID());
+    bindTexture(font_large_.getTexture().getId());
     for (int i = 0; i < meshes.size(); i++) {
       pushMatrix();
       translate(p + glm::vec3(i * font_large_.getCharacterWidth(), 0, 0));

@@ -127,7 +127,7 @@ class BasePixels3D {
   size_t getWidth() const { return width_; }
   size_t getHeight() const { return height_; }
   size_t getDepth() const { return depth_; }
-  size_t getSize() const { return width_ * height_ * depth_ * channels_; }
+  size_t getSize() const { return width_ * height_ * depth_; }
   size_t getNumChannels() const { return channels_; }
   size_t getPixelSizeInBytes() const { return sizeof(PixelType); }
   size_t getIndex(size_t x, size_t y, size_t z) const {
