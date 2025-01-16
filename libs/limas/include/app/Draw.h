@@ -72,6 +72,9 @@ inline MatrixStack& flip(bool x, bool y) {
 inline MatrixStack& rotate(const glm::mat3& rotation) {
   return app::getRenderer()->rotate(rotation);
 }
+inline MatrixStack& rotate(const glm::quat& quat) {
+  return app::getRenderer()->rotate(quat);
+}
 inline MatrixStack& rotateRadians(float theta, const glm::vec3& axis) {
   return app::getRenderer()->rotateRadians(theta, axis);
 }

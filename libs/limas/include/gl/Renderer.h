@@ -59,7 +59,7 @@ class Renderer : private Noncopyable {
     circle_ = prim::Circle(glm::vec3(0), 1, 256);
 
     sphere_ = prim::Sphere(1, 64, 32);
-    sphere_ = prim::Sphere(1, 64, 32, true);
+    wire_sphere_ = prim::Sphere(1, 64, 32, true);
     box_ = prim::Box(1, 1, 1);
     wire_box_ = prim::Box(1, 1, 1, true);
     cylinder_ = prim::Cylinder(1, 1, 32, 2);
@@ -335,6 +335,11 @@ class Renderer : private Noncopyable {
   MatrixStack& rotate(const glm::mat3& rotation) {
     return matrix_stack_.rotate(rotation);
   }
+
+  MatrixStack& rotate(const glm::quat& quat) {
+    return matrix_stack_.rotate(quat);
+  }
+
   MatrixStack& rotateRadians(float theta, const glm::vec3& axis) {
     return matrix_stack_.rotateRadians(theta, axis);
   }

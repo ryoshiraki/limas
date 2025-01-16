@@ -9,8 +9,8 @@ using namespace std;
 inline float getSignedArea(const std::vector<glm::vec2>& polygon) {
   float signed_area = 0.0f;
   for (size_t i = 0; i < polygon.size(); ++i) {
-    const T& v1 = polygon[i];
-    const T& v2 = polygon[(i + 1) % polygon.size()];
+    const auto& v1 = polygon[i];
+    const auto& v2 = polygon[(i + 1) % polygon.size()];
     signed_area += (v1.x * v2.y) - (v2.x * v1.y);
   }
   return signed_area;
@@ -108,15 +108,15 @@ inline float getAngle(const glm::vec2& v) { return std::atan2(v.y, v.x); }
 
 inline glm::quat getRotationBetween(const glm::vec3& _from,
                                     const glm::vec3& _to) {
-  from = glm::normalize(_from);
-  to = glm::normalize(_to);
+  auto from = glm::normalize(_from);
+  auto to = glm::normalize(_to);
 
   float cos_theta = glm::dot(from, to);
   glm::vec3 axis;
 
   if (cos_theta < -1 + math::eps()) {
     axis = glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), from);
-    if (math::length2(axis) < 0.01)
+    if (glm::length2(axis) < 0.01)
       axis = glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), from);
 
     axis = glm::normalize(axis);
