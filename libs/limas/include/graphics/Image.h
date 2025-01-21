@@ -53,6 +53,11 @@ class BaseImage {
     setFromPixels(new_pixels);
   }
 
+  void flip(bool flip_x, bool flip_y) {
+    pixels_.flip(flip_x, flip_y);
+    update();
+  }
+
   void update() { tex_.loadData(&pixels_.getData()[0]); }
 
   size_t getWidth() const { return tex_.getWidth(); }
@@ -63,76 +68,13 @@ class BaseImage {
   gl::Texture2D& getTexture() { return tex_; }
   BasePixels2D<PixelType>& getPixels() { return pixels_; }
 
+ protected:
   friend void swap(BaseImage<PixelType>& first, BaseImage<PixelType>& second) {
     using std::swap;
     swap(first.tex_, second.tex_);
     swap(first.pixels_, second.pixels_);
   }
 
-  static bool loadPixels(BasePixels2D<PixelType>* pixels,
-                         const std::string& filepath,
-                         int desired_num_channels = 0) {
-    int width, height, num_channels;
-    PixelType* data;
-    if constexpr (std::is_same_v<PixelType, float>) {
-      data = reinterpret_cast<PixelType*>(stbi_loadf(filepath.c_str(), &width,
-                                                     &height, &num_channels,
-                                                     desired_num_channels));
-    } else {
-      data = reinterpret_cast<PixelType*>(stbi_load(filepath.c_str(), &width,
-                                                    &height, &num_channels,
-                                                    desired_num_channels));
-    }
-    if (data == nullptr) return false;
-
-    if (desired_num_channels > 0) num_channels = desired_num_channels;
-    pixels->allocate(width, height, num_channels);
-    pixels->loadData(data);
-    stbi_image_free(data);
-    return true;
-  }
-
-  static bool loadPixelsFromMemory(BasePixels2D<PixelType>* pixels,
-                                   const PixelType* mem,
-                                   const unsigned int mem_len) {
-    int width, height, num_channels;
-    PixelType* data =
-        stbi_load_from_memory(mem, mem_len, &width, &height, &num_channels, 0);
-    if (data == nullptr) return false;
-    pixels->allocate(width, height, num_channels);
-    pixels->loadData(data);
-    stbi_image_free(data);
-    return true;
-  }
-
-  static bool savePixels(BasePixels2D<PixelType>& pixels,
-                         const std::string& filepath) {
-    auto ext = fs::getExtension(filepath);
-    if (ext == ".png")
-      return stbi_write_png(filepath.c_str(), pixels.getWidth(),
-                            pixels.getHeight(), pixels.getNumChannels(),
-                            &pixels.getData()[0], 0);
-    else if (ext == ".bmp")
-      return stbi_write_bmp(filepath.c_str(), pixels.getWidth(),
-                            pixels.getHeight(), pixels.getNumChannels(),
-                            &pixels.getData()[0]);
-    else if (ext == ".tga")
-      return stbi_write_tga(filepath.c_str(), pixels.getWidth(),
-                            pixels.getHeight(), pixels.getNumChannels(),
-                            &pixels.getData()[0]);
-    else if (ext == ".jpg")
-      return stbi_write_jpg(filepath.c_str(), pixels.getWidth(),
-                            pixels.getHeight(), pixels.getNumChannels(),
-                            &pixels.getData()[0], 0);
-    else if (ext.empty()) {
-      logger::warn() << "filepath have no extension." << logger::end();
-      return false;
-    }
-    logger::warn() << ext << " is not supported." << logger::end();
-    return false;
-  }
-
- protected:
   gl::Texture2D tex_;
   BasePixels2D<PixelType> pixels_;
 };
