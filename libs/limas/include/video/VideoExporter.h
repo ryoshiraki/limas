@@ -14,6 +14,7 @@ extern "C" {
 #include "gl/Shader.h"
 #include "gl/Texture2D.h"
 #include "gl/VboMesh.h"
+#include "graphics/ImageIO.h"
 #include "primitives/Primitives.h"
 #include "system/Logger.h"
 #include "utils/Stopwatch.h"
@@ -265,6 +266,27 @@ class VideoExporter {
   size_t getWidth() const { return fbo_.getWidth(); }
   size_t getHeight() const { return fbo_.getHeight(); }
   const gl::Texture2D &getTexture() const { return fbo_.getTexture(0); }
+
+  bool saveFrameAsImage(const std::string &path) {
+    if (!is_setup_) {
+      logger::error("VideoExporter")
+          << "VideoExporter is not set up" << logger::end();
+      return false;
+    }
+
+    Pixels2D pixels;
+    pixels.allocate(fbo_.getWidth(), fbo_.getHeight(), 4);
+
+    if (!pbo_.readToPixels(&pixels.getData(), fbo_)) {
+      logger::error("VideoExporter")
+          << "Failed to read pixels from FBO" << logger::end();
+      return false;
+    }
+
+    // pixels.flip(false, true);
+    ImageIO::savePixels(path, pixels);
+    return true;
+  }
 
  private:
   bool flush() {

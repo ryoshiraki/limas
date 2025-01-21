@@ -116,6 +116,29 @@ class BasePixels3D {
     return output;
   }
 
+  void flip(bool flip_x, bool flip_y, bool flip_z) {
+    std::vector<PixelType> flipped_data(data_.size());
+
+    for (size_t z = 0; z < depth_; ++z) {
+      size_t target_z = flip_z ? depth_ - 1 - z : z;
+      for (size_t y = 0; y < height_; ++y) {
+        size_t target_y = flip_y ? height_ - 1 - y : y;
+        for (size_t x = 0; x < width_; ++x) {
+          size_t target_x = flip_x ? width_ - 1 - x : x;
+
+          size_t src_idx = getIndex(x, y, z);
+          size_t dst_idx = getIndex(target_x, target_y, target_z);
+
+          for (size_t c = 0; c < channels_; ++c) {
+            flipped_data[dst_idx + c] = data_[src_idx + c];
+          }
+        }
+      }
+    }
+
+    data_ = std::move(flipped_data);
+  }
+
   BasePixels3D<PixelType> remapChannels(
       const std::vector<size_t>& channel_map) {
     BasePixels3D<PixelType> output(width_, height_, depth_, channel_map.size());
@@ -246,6 +269,10 @@ class BasePixels2D : public BasePixels3D<PixelType> {
     return BasePixels3D<PixelType>::getCropped(x, y, 0, width, height, 1);
   }
 
+  void flip(bool flip_x, bool flip_y) {
+    BasePixels3D<PixelType>::flip(flip_x, flip_y, false);
+  }
+
   BasePixels2D<PixelType> remapChannels(
       const std::vector<size_t>& channel_map) {
     BasePixels2D<PixelType> output(this->width_, this->height_,
@@ -308,6 +335,8 @@ class BasePixels1D : public BasePixels2D<PixelType> {
   BasePixels1D<PixelType> getCropped(size_t x, size_t width) const {
     return BasePixels2D<PixelType>::getCropped(x, 0, 0, width, 1, 1);
   }
+
+  void flip() { BasePixels3D<PixelType>::flip(true, false, false); }
 
   BasePixels1D<PixelType> remapChannels(
       const std::vector<size_t>& channel_map) {

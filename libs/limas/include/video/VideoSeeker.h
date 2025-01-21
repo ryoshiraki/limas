@@ -16,7 +16,6 @@ extern "C" {
 #include "gl/Texture2D.h"
 #include "graphics/Pixels.h"
 #include "system/Thread.h"
-#include "system/ThreadPool.h"
 #include "utils/Stopwatch.h"
 
 namespace limas {
@@ -70,118 +69,134 @@ class VideoSeeker {
   bool load(const std::string &filename, size_t thread_count = 8) {
     close();
 
-    do {
-      if (!(context_.format_context = avformat_alloc_context())) {
-        log::error("VideoPlayer")
-            << "Couldn't create AVFormatContext" << log::end();
-        break;
-      }
-
-      if (avformat_open_input(&context_.format_context, filename.c_str(),
-                              nullptr, nullptr) != 0) {
-        log::error("VideoPlayer") << "Couldn't open " << filename << log::end();
-        break;
-      }
-
-      if (avformat_find_stream_info(context_.format_context, nullptr) < 0) {
-        log::error("VideoPlayer")
-            << "Couldn't retrieve stream info" << log::end();
-        break;
-      }
-
-      av_dump_format(context_.format_context, 0, filename.c_str(), 0);
-
-      AVCodec *codec;
-      AVCodecParameters *codec_param;
-      context_.stream_index = -1;
-      for (int i = 0; i < context_.format_context->nb_streams; i++) {
-        codec_param = context_.format_context->streams[i]->codecpar;
-        codec =
-            const_cast<AVCodec *>(avcodec_find_decoder(codec_param->codec_id));
-        if (!codec) continue;
-
-        if (codec_param->codec_type == AVMEDIA_TYPE_VIDEO) {
-          context_.stream_index = i;
-          context_.width = codec_param->width;
-          context_.height = codec_param->height;
-          context_.time_base =
-              av_q2d(context_.format_context->streams[i]->time_base);
-          context_.frame_rate =
-              av_q2d(context_.format_context->streams[i]->r_frame_rate);
-          context_.duration = context_.format_context->duration / AV_TIME_BASE;
-          break;
-        }
-      }
-
-      if (context_.stream_index == -1) {
-        log::error("VideoPlayer") << "Couldn't find video stream" << log::end();
-        break;
-      }
-
-      if (!(context_.codec_context = avcodec_alloc_context3(codec))) {
-        log::error("VideoPlayer")
-            << "Couldn't create AVCodecContext" << log::end();
-        break;
-      }
-      context_.codec_context->thread_count = thread_count;
-      context_.codec_context->thread_type = FF_THREAD_FRAME | FF_THREAD_SLICE;
-
-      if (avcodec_parameters_to_context(context_.codec_context, codec_param) <
-          0) {
-        log::error("VideoPlayer")
-            << "Couldn't initialize AVCodecContext" << log::end();
-        break;
-      }
-
-      if (avcodec_open2(context_.codec_context, codec, nullptr) < 0) {
-        log::error("VideoPlayer") << "Couldn't open codec" << log::end();
-        break;
-      }
-
-      AVPixelFormat format = context_.codec_context->pix_fmt;
-      const AVPixFmtDescriptor *desc = av_pix_fmt_desc_get(format);
-      if (desc->flags & AV_PIX_FMT_FLAG_RGB) {
-        log::error("VideoPlayer")
-            << av_get_pix_fmt_name(format) << " is not supported" << log::end();
-        break;
-      } else if (desc->nb_components == 1) {
-        log::error("VideoPlayer")
-            << av_get_pix_fmt_name(format) << " is not supported" << log::end();
-        break;
+    auto log_error = [&](const std::string &message, int err_code = 0) {
+      if (err_code != 0) {
+        char err_buf[AV_ERROR_MAX_STRING_SIZE];
+        av_strerror(err_code, err_buf, sizeof(err_buf));
+        logger::error("VideoPlayer")
+            << message << ": " << err_buf << logger::end();
       } else {
-        if (!(context_.sws_context = sws_getContext(
-                  context_.width, context_.height,
-                  context_.codec_context->pix_fmt, context_.width,
-                  //   context_.height, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL,
-                  //   NULL,
-                  context_.height, AV_PIX_FMT_RGB24, SWS_FAST_BILINEAR, NULL,
-                  NULL,
+        logger::error("VideoPlayer") << message << logger::end();
+      }
+    };
 
-                  NULL))) {
-          log::error("VideoPlayer") << "Couldn't get sws context" << log::end();
-          break;
+    // AVFormatContextの割り当て
+    context_.format_context = avformat_alloc_context();
+    if (!context_.format_context) {
+      log_error("Couldn't create AVFormatContext");
+      return false;
+    }
+
+    // 入力ファイルを開く
+    int ret = avformat_open_input(&context_.format_context, filename.c_str(),
+                                  nullptr, nullptr);
+    if (ret < 0) {
+      log_error("Couldn't open file " + filename, ret);
+      close();
+      return false;
+    }
+
+    // ストリーム情報の取得
+    ret = avformat_find_stream_info(context_.format_context, nullptr);
+    if (ret < 0) {
+      log_error("Couldn't retrieve stream info", ret);
+      close();
+      return false;
+    }
+
+    av_dump_format(context_.format_context, 0, filename.c_str(), 0);
+
+    // ビデオストリームを探す
+    const AVCodec *codec = nullptr;
+    AVCodecParameters *codec_param = nullptr;
+    context_.stream_index = -1;
+
+    for (unsigned int i = 0; i < context_.format_context->nb_streams; i++) {
+      codec_param = context_.format_context->streams[i]->codecpar;
+      codec = avcodec_find_decoder(codec_param->codec_id);
+
+      if (codec && codec_param->codec_type == AVMEDIA_TYPE_VIDEO) {
+        // H.264の場合、VideoToolboxを優先
+        if (std::string(codec->name) == "h264" &&
+            avcodec_find_decoder_by_name("h264_videotoolbox")) {
+          codec = avcodec_find_decoder_by_name("h264_videotoolbox");
         }
 
-        tex_.allocate(context_.width, context_.height, GL_RGB8);
-        tex_.setMinFilter(GL_LINEAR);
-        tex_.setMagFilter(GL_LINEAR);
-        std::vector<GLubyte> data(context_.width * context_.height * 3);
-        std::fill(data.begin(), data.end(), 0);
-        tex_.loadData(&data[0]);
+        context_.stream_index = i;
+        context_.width = codec_param->width;
+        context_.height = codec_param->height;
+        context_.time_base =
+            av_q2d(context_.format_context->streams[i]->time_base);
+        context_.frame_rate =
+            av_q2d(context_.format_context->streams[i]->r_frame_rate);
+        context_.duration = context_.format_context->duration / AV_TIME_BASE;
+        break;
       }
+    }
 
-      pixels_.allocate(context_.width, context_.height, 3);
+    if (context_.stream_index == -1) {
+      log_error("Couldn't find video stream");
+      close();
+      return false;
+    }
 
-      state_.b_loaded = true;
+    // AVCodecContextの割り当て
+    context_.codec_context = avcodec_alloc_context3(codec);
+    if (!context_.codec_context) {
+      log_error("Couldn't create AVCodecContext");
+      close();
+      return false;
+    }
 
-      frame_ = av_frame_alloc();
-      packet_ = av_packet_alloc();
+    context_.codec_context->thread_count = thread_count;
 
-      return true;
-    } while (false);
+    ret = avcodec_parameters_to_context(context_.codec_context, codec_param);
+    if (ret < 0) {
+      log_error("Couldn't initialize AVCodecContext", ret);
+      close();
+      return false;
+    }
 
-    close();
-    return false;
+    ret = avcodec_open2(context_.codec_context, codec, nullptr);
+    if (ret < 0) {
+      log_error("Couldn't open codec", ret);
+      close();
+      return false;
+    }
+
+    // スケーリングコンテキストの作成
+    context_.sws_context = sws_getContext(
+        context_.width, context_.height, context_.codec_context->pix_fmt,
+        context_.width, context_.height, AV_PIX_FMT_RGB24, SWS_FAST_BILINEAR,
+        nullptr, nullptr, nullptr);
+
+    if (!context_.sws_context) {
+      log_error("Couldn't get sws context");
+      close();
+      return false;
+    }
+
+    // テクスチャとピクセルの初期化
+    tex_.allocate(context_.width, context_.height, GL_RGB8);
+    tex_.setMinFilter(GL_LINEAR);
+    tex_.setMagFilter(GL_LINEAR);
+    tex_.loadData(
+        std::vector<GLubyte>(context_.width * context_.height * 3, 0).data());
+
+    pixels_.allocate(context_.width, context_.height, 3);
+
+    // フレームとパケットの割り当て
+    frame_ = av_frame_alloc();
+    packet_ = av_packet_alloc();
+    if (!frame_ || !packet_) {
+      log_error("Couldn't allocate frame or packet");
+      close();
+      return false;
+    }
+
+    state_.b_loaded = true;
+
+    return true;
   }
 
   void update() {
@@ -195,9 +210,9 @@ class VideoSeeker {
       int ret = av_read_frame(context_.format_context, packet_);
       if (ret < 0) {
         if (ret == AVERROR_EOF) {
-          log::error("av_read_frame") << "EOF" << log::end();
+          logger::error("av_read_frame") << "EOF" << logger::end();
         } else {
-          log::error("av_read_frame") << av_err2str(ret) << log::end();
+          logger::error("av_read_frame") << av_err2str(ret) << logger::end();
         }
         break;
       }
@@ -205,7 +220,8 @@ class VideoSeeker {
       if (packet_->stream_index == context_.stream_index) {
         ret = avcodec_send_packet(context_.codec_context, packet_);
         if (ret < 0) {
-          log::error("avcodec_send_packet") << av_err2str(ret) << log::end();
+          logger::error("avcodec_send_packet")
+              << av_err2str(ret) << logger::end();
           av_packet_unref(packet_);
           continue;
         }
@@ -219,7 +235,8 @@ class VideoSeeker {
         }
 
         if (ret != AVERROR(EAGAIN) && ret < 0) {
-          log::error("avcodec_receive_frame") << av_err2str(ret) << log::end();
+          logger::error("avcodec_receive_frame")
+              << av_err2str(ret) << logger::end();
         }
       }
       av_packet_unref(packet_);
@@ -227,7 +244,7 @@ class VideoSeeker {
 
       attempts++;
     }
-    // log::info("update") << "attempts: " << attempts << log::end();
+    // logger::info("update") << "attempts: " << attempts << logger::end();
   }
 
   void processFrame() {
@@ -248,7 +265,7 @@ class VideoSeeker {
                             AVSEEK_FLAG_ANY);
 
     if (ret < 0) {
-      log::error("av_seek_frame") << av_err2str(ret) << log::end();
+      logger::error("av_seek_frame") << av_err2str(ret) << logger::end();
     }
 
     avcodec_flush_buffers(context_.codec_context);
