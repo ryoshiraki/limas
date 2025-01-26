@@ -33,7 +33,7 @@ class BasePolyline {
     return area * 0.5f;
   }
 
-  double getLength() const {
+  double getPerimeter() const {
     double length = 0.0f;
     for (std::size_t i = 1; i < vertices_.size(); ++i) {
       length += distance(vertices_[i - 1], vertices_[i]);
@@ -152,17 +152,23 @@ class BasePolyline {
   BasePolyline<V> getResampledBySpacing(float space) const {
     if (space == 0 || getNumVertices() == 0) return *this;
     BasePolyline<V> poly;
-    float total_length = getLength();
+    float total_length = getPerimeter();
     float length = 0;
-    for (float length = 0; length <= total_length; length += space) {
+    for (length = 0; length <= total_length; length += space) {
       auto v = getPointAtLength(length);
       poly.addVertex(v);
     }
+
+    if (length > total_length) {
+      auto v = getPointAtLength(total_length);
+      poly.addVertex(v);
+    }
+
     return poly;
   }
 
   BasePolyline<V> getResampledByCount(int count) const {
-    float total_length = getLength();
+    float total_length = getPerimeter();
     if (count < 2) {
       logger::warn("Polyline")
           << "getResampledByCount(): requested " << count

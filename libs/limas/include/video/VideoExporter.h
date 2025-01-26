@@ -265,6 +265,9 @@ class VideoExporter {
   bool isVFlip() const { return b_vflip_; }
   size_t getWidth() const { return fbo_.getWidth(); }
   size_t getHeight() const { return fbo_.getHeight(); }
+  glm::vec2 getSize() const {
+    return glm::vec2(fbo_.getWidth(), fbo_.getHeight());
+  }
   const gl::Texture2D &getTexture() const { return fbo_.getTexture(0); }
 
   bool saveFrameAsImage(const std::string &path) {

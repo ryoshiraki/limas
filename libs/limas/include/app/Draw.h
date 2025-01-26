@@ -107,6 +107,10 @@ inline MatrixStack& setOrthoView(float width, float height,
 }
 
 #pragma mark DRAW VAOs
+inline void drawArrays(GLenum type, GLsizei first, GLsizei count) {
+  app::getRenderer()->drawArrays(type, first, count);
+}
+
 inline void drawArrays(const Vao& vao, GLenum mode, GLint count) {
   app::getRenderer()->drawArrays(vao, mode, count);
 }

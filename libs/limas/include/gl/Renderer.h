@@ -26,6 +26,8 @@ class Renderer : private Noncopyable {
   ShaderBase* current_shader_;
   bool b_should_unbind_;
 
+  gl::Vao vao_;
+
   VboMesh dot;
   VboMesh segment_;
   VboMesh rectangle_;
@@ -75,6 +77,10 @@ class Renderer : private Noncopyable {
     b_should_unbind_ = true;
 
     uniforms_stack_.push(DefaultUniforms());
+  }
+
+  void drawArrays(GLenum type, GLsizei first, GLsizei count) {
+    vao_.drawArrays(type, first, count);
   }
 
   void drawArrays(const Vao& vao, GLenum mode, GLint count) {
