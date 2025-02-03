@@ -75,7 +75,7 @@ class Logger : private Noncopyable {
     current_level_ = level;
     if (level >= level_) {
       *stream_ << std::right << std::noshowpos << std::setfill(' ')
-               << std::setw(0) << "[" << getTimestamp() << "] ["
+               << std::setw(0) << "[" << utils::getTimestamp() << "] ["
                << ((level == LogLevel::INFO)    ? "info"
                    : (level == LogLevel::WARN)  ? "warn"
                    : (level == LogLevel::ERROR) ? "error"
@@ -86,29 +86,6 @@ class Logger : private Noncopyable {
       }
     }
     return *this;
-  }
-
-  std::string getTimestamp() const {
-    using namespace std::chrono;
-    auto now = std::chrono::system_clock::now();
-    auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(now);
-    auto fraction = now - seconds;
-    auto milliseconds =
-        std::chrono::duration_cast<std::chrono::milliseconds>(fraction);
-
-    std::time_t time = std::chrono::system_clock::to_time_t(now);
-
-    std::tm time_buf;
-#if defined(_WIN32) || defined(_WIN64)
-    localtime_s(&time_buf, &time);
-#else
-    localtime_r(&time, &time_buf);
-#endif
-
-    std::ostringstream oss;
-    oss << std::put_time(&time_buf, "%Y-%m-%d %H:%M:%S") << '.'
-        << std::setfill('0') << std::setw(3) << milliseconds.count();
-    return oss.str();
   }
 };
 

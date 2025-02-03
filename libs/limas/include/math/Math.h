@@ -54,11 +54,11 @@ inline float map(float x, float x0, float x1, float y0, float y1,
 }
 
 inline float mapWithEasing(
-    float x, float x0, float x1, float y0, float y1, bool b_clamp = false,
+    float x, float x0, float x1, float y0, float y1,
     const std::function<float(float)>& easing = math::easing::none) {
-  float t = map(x, x0, x1, 0, 1, b_clamp);
+  float t = map(x, x0, x1, 0, 1, true);
   t = easing(t);
-  float y = map(t, 0, 1, y0, y1, b_clamp);
+  float y = map(t, 0, 1, y0, y1, true);
   return y;
 }
 

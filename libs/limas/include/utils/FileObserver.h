@@ -62,9 +62,10 @@ class FileObserver {
 
   template <class ObserverClass>
   void watch(const std::string& path, ObserverClass* observer,
-             void (ObserverClass::*callback)(const std::string&)) {
+             void (ObserverClass::*callback)(const std::string&),
+             bool b_call_immediately = false) {
     auto f = std::bind(callback, observer, std::placeholders::_1);
-    watch(path, f);
+    watch(path, f, b_call_immediately);
   }
 
   void watch(const std::string& path,
@@ -83,6 +84,19 @@ class FileObserver {
       watch->setCallback(callback);
       watches_.insert(std::make_pair(path, watch));
     }
+  }
+
+  template <class ObserverClass>
+  void callAndWatch(const std::string& path, ObserverClass* observer,
+                    void (ObserverClass::*callback)(const std::string&)) {
+    watch(path, observer, callback);
+    (observer->*callback)(path);
+  }
+
+  void callAndWatch(const std::string& path,
+                    const std::function<void(const std::string&)>& callback) {
+    watch(path, callback);
+    callback(path);
   }
 
   void stopWatching(const std::string& path) {

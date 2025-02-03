@@ -54,8 +54,8 @@ class Swatch {
     pbo_.allocate(fbo_.getWidth(), fbo_.getHeight(),
                   fbo_.getTextures()[0].getInternalFormat());
     pixels_.allocate(width, height, 4);
-    shader_.load(fs::getCommonResourcesPath("shaders/swatch.vert"),
-                 fs::getCommonResourcesPath("shaders/swatch.frag"));
+    shader_.load(fs::getCommonResourcePath("shaders/swatch.vert"),
+                 fs::getCommonResourcePath("shaders/swatch.frag"));
 
     for (int i = 0; i < 3; i++) {
       float rad = math::twopi() / 3 * i + math::pi();
@@ -90,14 +90,14 @@ class Swatch {
     mesh.addVertex(glm::vec3(0, 0, 0));
     mesh.addVertex(glm::vec3(0, fbo_.getHeight(), 0));
 
-    auto front = handles_[0]->getColor().toGlm();
+    auto front = handles_[0]->getColor().toVec();
     mesh.addColor(glm::vec4(front));
     mesh.addColor(glm::vec4(front));
 
     for (int i = 0; i < handles_.size(); i++) {
       auto& c = handles_[i];
       float pos = c->getPosition().x;
-      auto col = c->getColor().toGlm();
+      auto col = c->getColor().toVec();
 
       mesh.addVertex(glm::vec3(pos, 0, 0));
       mesh.addVertex(glm::vec3(pos, fbo_.getHeight(), 0));
@@ -117,7 +117,7 @@ class Swatch {
     mesh.addVertex(glm::vec3(fbo_.getWidth(), 0, 0));
     mesh.addVertex(glm::vec3(fbo_.getWidth(), fbo_.getHeight(), 0));
 
-    auto back = handles_.back()->getColor().toGlm();
+    auto back = handles_.back()->getColor().toVec();
     mesh.addColor(glm::vec4(back));
     mesh.addColor(glm::vec4(back));
 
@@ -151,8 +151,8 @@ class Swatch {
   }
 
   Pixels2D getPixels() {
-    if (!pbo_.readTo(&pixels_.getData(), fbo_.getID(), 0)) {
-      log::error("Swatch") << "failed to get pixels" << log::end();
+    if (!pbo_.readToPixels(&pixels_.getData(), fbo_)) {
+      logger::error("Swatch") << "failed to get pixels" << logger::end();
     }
     return pixels_;
   }

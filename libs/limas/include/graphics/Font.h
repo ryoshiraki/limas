@@ -73,8 +73,8 @@ class Font {
   Font() {}
   virtual ~Font() {}
 
-  bool load(const string& path, float point_size, float dpi,
-            bool b_antialiased) {
+  bool load(const string& path, float point_size, float dpi = 96,
+            bool b_antialiased = true) {
     FT_Face face;
     if (FT_New_Face(getLibrary(), path.c_str(), 0, &face)) {
       logger::error("Font")
@@ -204,7 +204,7 @@ class Font {
       int index_offset = vertices.size();
 
       float dx = x + x_offset + ch.x_min;
-      float dy = y + ch.y_min;
+      float dy = y + ch.y_min - unit_size_.y_min;
       vertices.emplace_back(dx, dy, 0);
       vertices.emplace_back(dx + ch.width, dy, 0);
       vertices.emplace_back(dx + ch.width, dy + ch.height, 0);
@@ -240,6 +240,47 @@ class Font {
 
     return mesh;
   }
+
+  // glm::vec4 getBoundingBox(const std::string& text, float x, float y,
+  //                          float spacing = 0) const {
+  //   float x_min = std::numeric_limits<float>::max();
+  //   float y_min = std::numeric_limits<float>::max();
+  //   float x_max = std::numeric_limits<float>::lowest();
+  //   float y_max = std::numeric_limits<float>::lowest();
+
+  //   float x_offset = 0;  // X方向のオフセット
+
+  //   for (char c : text) {
+  //     auto it = characters_.find(c);
+  //     if (it == characters_.end()) continue;  // 未知の文字はスキップ
+
+  //     const auto& ch = it->second;
+
+  //     // 文字の四隅を計算
+  //     float char_x_min = x + x_offset + ch.x_min;
+  //     float char_y_min = y + ch.y_min;
+  //     float char_x_max = char_x_min + ch.width;
+  //     float char_y_max = char_y_min + ch.height;
+
+  //     // バウンディングボックスの拡張
+  //     x_min = std::min(x_min, char_x_min);
+  //     y_min = std::min(y_min, char_y_min);
+  //     x_max = std::max(x_max, char_x_max);
+  //     y_max = std::max(y_max, char_y_max);
+
+  //     // 次の文字のオフセットを計算
+  //     x_offset += ch.advance_x + spacing;
+  //   }
+
+  //   // テキストが空の場合、デフォルトのサイズを返す
+  //   if (text.empty()) {
+  //     x_min = x_max = x;
+  //     y_min = y_max = y;
+  //   }
+
+  //   // glm::vec4(x_min, y_min, x_max, y_max) を返す
+  //   return glm::vec4(x_min, y_min, x_max, y_max);
+  // }
 
   const gl::Texture2D& getTexture() const { return texture_; }
   gl::Texture2D& getTexture() { return texture_; }

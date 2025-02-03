@@ -329,8 +329,8 @@ inline void drawTexture(const TextureBase& tex, float x, float y, float w = 0,
   }
 }
 
-inline void drawFont(const Font& font, const std::string& text, float x,
-                     float y) {
+inline void drawFontString(const Font& font, const std::string& text, float x,
+                           float y) {
   bindTexture(font.getTexture());
   gl::VboMesh mesh = font.getMesh(text, x, y);
   drawMesh(mesh, GL_TRIANGLES);
