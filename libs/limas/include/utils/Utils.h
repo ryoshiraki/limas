@@ -1,10 +1,28 @@
 #pragma once
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__APPLE__)
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 #include "system/Exception.h"
 
 namespace limas {
 namespace utils {
 
 using namespace std;
+
+#ifdef _WIN32
+inline size_t getScreenWidth() { return GetSystemMetrics(SM_CXSCREEN); }
+inline size_t getScreenHeight() { returnGetSystemMetrics(SM_CYSCREEN); }
+#elif defined(__APPLE__)
+inline size_t getScreenWidth() {
+  return CGDisplayPixelsWide(CGMainDisplayID());
+}
+inline size_t getScreenHeight() {
+  return CGDisplayPixelsHigh(CGMainDisplayID());
+}
+#endif
 
 template <class T>
 inline void print(const T& o) {

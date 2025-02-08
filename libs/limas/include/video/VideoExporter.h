@@ -270,7 +270,7 @@ class VideoExporter {
   }
   const gl::Texture2D &getTexture() const { return fbo_.getTexture(0); }
 
-  bool saveFrameAsImage(const std::string &path) {
+  bool saveCurrentFrame(const std::string &path) {
     if (!is_setup_) {
       logger::error("VideoExporter")
           << "VideoExporter is not set up" << logger::end();

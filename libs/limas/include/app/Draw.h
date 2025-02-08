@@ -313,6 +313,7 @@ inline void drawTextureSubsection(const TextureBase& tex, float x, float y,
                                        sw / tex.getWidth(),
                                        th / tex.getHeight());
   app::getRenderer()->drawTexture(tex.getId(), glm::vec3(x, y, 0), w, h);
+  app::getRenderer()->transformTexture(0, 0, 1, 1);
 }
 
 inline void drawTexture(const TextureBase& tex, float x, float y, float w = 0,
